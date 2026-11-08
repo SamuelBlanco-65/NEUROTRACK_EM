@@ -138,6 +138,36 @@ y se marca la anterior como **Reemplazada por D-00X**.
 
 ---
 
+## D-009 · Actividades (T2): "Lógica" queda bloqueada sin juego real; Memoria falla rápido
+
+- **Fecha:** 2026-11-08
+- **Estado:** Vigente
+- **Contexto:** RF-003 exige 1-2 actividades cognitivas, no las 4 que insinúa el export de
+  Stitch (Memoria, Atención, Movimiento, Lógica). El export muestra "Lógica" bloqueada hasta
+  nivel 3 de Memoria, pero no hay un diseño de ese juego. Además, el juego de Memoria
+  (repetir una secuencia de figuras) inicialmente esperaba a que se agotaran todos los toques
+  para evaluar, lo que permitía seguir tocando después de ya haberse equivocado.
+- **Decisión:**
+  1. Implementar solo Memoria + Atención (cognitivas) y Movimiento (motriz) — cumple RF-003/
+     RF-004 sin inventar contenido de Lógica que no está diseñado. El tile "Lógica" se deja
+     siempre bloqueado con el mismo texto del export ("se abre al llegar a nivel 3 de
+     Memoria"), para no prometer una pantalla que no existe.
+  2. El juego de Memoria **falla rápido**: un toque fuera de orden termina la ronda de
+     inmediato (no se espera a agotar los toques). Se decidió así tras una observación directa
+     del usuario de que el resaltado de "correcto" en una figura podía convivir con un
+     resultado final de "incorrecto" si solo se evaluaba al final — confuso y, para un público
+     con fatiga cognitiva, contraproducente.
+  3. Se agregó **`expo-haptics`** (no estaba instalado) para dar vibración de éxito/error en
+     cada toque de Memoria — cierra un hueco real de RNF-009 ("háptica complementaria") que
+     antes decía "aún no aplica".
+- **Alternativas consideradas:** Implementar Lógica con un mini-juego inventado — descartado,
+  habría sido contenido no pedido por el enunciado y sin diseño de Stitch que lo respalde.
+- **Consecuencias:** RF-003/RF-004 cubiertos con alcance defendible. Si más adelante se agrega
+  Lógica, hay que decidir su propio diseño desde cero (no hay export de Stitch de esa pantalla).
+- **Requisitos relacionados:** RF-003, RF-004, RNF-009
+
+---
+
 ## Cosas que el material pedía y quedan fuera (con su razón)
 - **Perfil del médico** — marcado como opcional/futuro en §I-C y §IV-C. (REC-003)
 - **Biomarcadores / sensores / wearables** — requieren validación clínica y años de estudio

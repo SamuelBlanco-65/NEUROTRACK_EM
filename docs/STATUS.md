@@ -1,15 +1,14 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-08 · **Rama:** master · Últimos commits: b09139c (feat(T0.5): capa de datos
-y autenticación con Supabase), 2c1190c (feat(T0): base de navegación, tema accesible y store
-Redux Toolkit), 399a8e3 (chore: config+requisitos+diseño), 741ef4a (Initial commit).
-**Repo remoto creado y pusheado.** `git status` limpio: nada sin commitear al cerrar esta sesión.
-**Queda vivo un Metro de esta sesión:** `npx expo start --android` en el puerto **8081**, app
-abierta en el emulador vía Expo Go, lista para que el usuario pruebe T1 manualmente (login,
-registro de síntomas, calendario). **Revisa antes de levantar uno nuevo**: `netstat -ano | grep
-808` y, si sigue vivo, o lo reusas o lo matas con `taskkill //PID <pid> //F` antes de abrir
-otro — tener dos Metro conectados al mismo emulador causó un bug real en una sesión anterior
-(ver "Ya intentado, no repetir").
+**Fecha:** 2026-11-08 · **Rama:** master · Último commit: b42b1df (feat(T1): registro y
+calendario de síntomas, RF-001/RF-002). **Todo el trabajo de T2 de esta sesión queda SIN
+COMMITEAR** (no se pidió commit en ninguna ronda) — ver lista exacta de archivos en
+"Siguiente acción concreta".
+**Queda vivo un Metro de esta sesión** en el puerto **8081** (PID visto en `netstat`: 12484),
+con el emulador conectado y el usuario probando T2 en vivo. **Revisa antes de levantar uno
+nuevo**: `netstat -ano | grep 808` y, si sigue vivo, reúsalo o mátalo con
+`taskkill //PID <pid> //F` antes de abrir otro — tener dos Metro conectados al mismo emulador
+causó un bug real en una sesión anterior (ver "Ya intentado, no repetir").
 
 ## ⚠️ Equipo y co-autoría Git (LEER ANTES DE CUALQUIER COMMIT)
 Proyecto en equipo de 3. **TODO commit debe atribuir a los tres.** El autor es Samuel
@@ -195,10 +194,185 @@ Implicación clave: cada integrante debe escribir y ENTENDER su parte (30% + 40%
   un proceso backgrounded — **se resolvió con `adb shell am force-stop host.exp.exponent` +
   reabrir** (reinicio completo, no solo recarga de JS). Si vuelve a pasar, ese es el arreglo.
 
+## T2 — Actividades: COMPLETO y verificado por el usuario en emulador (2026-11-08)
+- **RF-003 (cognitivas) + RF-004 (motriz) implementados sin probar.** Código:
+  - `supabase/migrations/20261109000000_activity_progress.sql`: tabla `activity_progress`
+    (`patient_id`, `area`, `level`) + RLS. **Falta que el usuario la ejecute en el SQL Editor
+    de Supabase**, igual que se hizo con `symptom_logs` en T1.
+  - `src/features/activities/` (types, constants, `logic.ts` puro —generación de rondas y
+    subida de nivel, testeable sin UI—, api, componentes `area-tile`, `shape-button`,
+    `feedback-badge`, `session-header`).
+  - `src/store/slices/activities-slice.ts`: progreso por área + máquina de estados de la
+    sesión (`memorizar` → `responder` → `resultado` → `completada`), registrado en `store.ts`.
+  - `src/app/(paciente)/actividades.tsx` reescrito (antes `TabScreenStub`): hero "sesión de
+    hoy" (sugiere el área con menor nivel), grilla de 3 áreas + tarjeta "Lógica" bloqueada.
+  - `src/app/actividad/[area].tsx` (modal, patrón igual a `registrar-sintoma/`): implementa
+    las 3 áreas en una sola pantalla con estados según la fase de la sesión.
+  - **Memoria**: secuencia de figuras a memorizar sin cronómetro ("Listo, continuar" a su
+    ritmo), luego repetirla tocando 4 botones grandes. 5 niveles (secuencia de 3 a 7).
+  - **Atención**: encontrar la figura distinta entre 5 a 9 opciones (según nivel), sin tiempo límite.
+  - **Movimiento**: 3 a 6 pasos guiados (banco fijo de 6 instrucciones, p.ej. "Levanta ambos
+    brazos..."), se marcan como hechos a su ritmo; 4 niveles. Sube de nivel al completar la
+    sesión completa (no exige precisión, solo participación — tono de acompañamiento).
+  - Subida de nivel por precisión, no velocidad (RF-003): 2 de 3 rondas correctas para
+    memoria/atención; completar la sesión para movimiento.
+  - **Lógica queda bloqueada a propósito** (decisión de alcance, no bug): el stitch original
+    la muestra como "se abre al llegar a nivel 3 de Memoria", pero no se implementó el juego
+    de lógica (no es obligatorio, RF-003 solo pide 1-2 actividades cognitivas). El tile queda
+    siempre bloqueado con ese mismo texto para no prometer una pantalla que no existe.
+- `typecheck` y `lint` limpios (`npx tsc --noEmit`, `npx eslint`).
+- **Sin verificar en emulador todavía** — ver decisión de proceso abajo.
+
+### Ronda 2 (mismo día): bug real + fidelidad contra Stitch corregida
+El usuario tomó las primeras capturas (`artifacts/t2/`) y encontró 3 problemas reales:
+1. **Bug: la pantalla de Atención aparecía completamente en blanco.** Causa:
+   `sessionStarted` en `activities-slice.ts` fijaba la fase inicial en `'memorizar'` para
+   cualquier área que no fuera `movimiento` — pero el bloque de render de `'memorizar'` solo
+   existe para `memoria` (depende de `session.memoriaRound`, que es `null` en Atención). Con
+   fase `'memorizar'` y sin `memoriaRound`, ningún bloque de la pantalla cumplía su condición
+   y no se pintaba nada. Corregido: la fase inicial ahora es `'memorizar'` solo si
+   `area === 'memoria'`; `'responder'` para las demás. **No se habría detectado solo leyendo
+   el código superficialmente** — confirma otra vez por qué importa verificar en emulador.
+2. **Las figuras de respuesta (Memoria/Atención) no eran fieles a Stitch**: en el diseño
+   (`paciente_actividad_en_curso/screen.png`) cada opción es una tarjeta alta (~170dp) con el
+   ícono dentro de un círculo grande (64dp) centrado; la implementación original ponía un
+   ícono pequeño (30px) pegado arriba de una tarjeta corta. Corregido en
+   `src/features/activities/shape-button.tsx`: tarjeta `minHeight: 170`, ícono de 32px dentro
+   de un círculo de 64dp centrado, texto en `labelLg` debajo.
+3. **El resumen de sesión no se parecía al de Stitch**
+   (`paciente_actividad_sesi_n_completada/screen.png`): faltaban el desglose de aciertos, el
+   nivel actual en una tarjeta separada, el banner de refuerzo y el botón "Repetir". Reescrito
+   `SesionCompletada` en `src/app/actividad/[area].tsx`: ícono circular, dos tarjetas de
+   estadística (**Aciertos X de Y** / **Nivel actual N de M**, cada una con su propio ícono y
+   texto de refuerzo), banner tipo "tip" con ícono, botón primario "Volver a actividades" (con
+   ícono) y botón secundario "Repetir" (reinicia la sesión en el nivel ya alcanzado — para
+   esto `sessionStarted` ahora también acepta `{area, level}` explícito, porque el nivel nuevo
+   puede no estar aún persistido en Supabase cuando se dispara "Repetir").
+- `typecheck` y `lint` siguen limpios tras estos cambios.
+- **Capturas de la ronda 1 (`t2-memoria-*`, `t2-sesion-completada.png`, `t2-movimiento-pasos.png`,
+  `t2-logica-bloqueada.png`) quedaron desactualizadas** por el rediseño de las tarjetas de
+  figura y del resumen — hay que volver a tomarlas. La de Atención directamente no existía
+  (pantalla en blanco); ahora sí debería renderizar.
+
+### Ronda 3 (mismo día): Memoria reconstruido 1:1 contra `paciente_actividad_en_curso` / `_respuesta_bien`
+El usuario señaló que Memoria seguía sin parecerse al export de Stitch (más allá del tamaño de
+ícono ya corregido en la ronda 2). Se leyó el `code.html` de ambas pantallas línea por línea y
+se reconstruyó la pantalla de sesión para que coincida en estructura, no solo en estilo:
+- **Encabezado genérico nuevo** (`session-header.tsx`): ícono de pausa (sale de la sesión) +
+  título centrado **"Sesión de ejercicio"** (ya no el nombre del área) + avatar decorativo a la
+  derecha, igual que el export. Debajo, un pill **"Paso N de M"** + barra segmentada — en
+  Memoria/responder, N/M es la posición dentro de la secuencia a repetir (no la ronda), tal
+  como se ve literalmente en el export ("Paso 2 de 4").
+- **Tarjeta de instrucciones** (`InstructionCard`, nuevo, dentro de `[area].tsx`): ícono circular
+  + titular en negrita + chip inferior con ícono y texto atenuado — antes era texto plano.
+  Reutilizada en Memoria, Atención y Movimiento para que las 3 áreas compartan el mismo
+  lenguaje visual.
+- **Feedback por cada toque, no solo al final**: antes `memoriaShapeTapped` solo evaluaba la
+  secuencia completa al final (la UI no mostraba nada hasta terminar). Ahora, sin tocar la
+  lógica de la slice, la pantalla **deriva** si el último toque fue correcto comparando
+  `memoriaAnswer` contra `memoriaRound.sequence` en esa posición, y usa eso para: (a) resaltar
+  con borde + insignia (✓ o ✕) la tarjeta de la figura recién tocada (`ShapeButton` ahora acepta
+  `feedback="correcto"|"incorrecto"`), y (b) mostrar un banner inferior en vivo ("¡Bien!
+  Paso reconocido con éxito." / "Vamos, tú puedes...") — igual que `paciente_actividad_
+  respuesta_bien`. El tablero de 4 figuras se queda visible todo el tiempo (ya no se reemplaza
+  por una pantalla de resultado aparte).
+- **Botón "Ver la secuencia otra vez"** (nuevo): reducer `memorizeReplayRequested` en
+  `activities-slice.ts` — vuelve a la fase `memorizar` con la misma secuencia (sin generar una
+  nueva ni penalizar), tal como el export ("sin penalización"). Visible siempre durante
+  responder/resultado de Memoria.
+- `sessionStarted` ahora acepta `ActivityArea | {area, level}` para que "Repetir" en el resumen
+  pueda arrancar en el nivel recién alcanzado sin esperar la confirmación async de Supabase.
+- `typecheck` y `lint` limpios tras la reconstrucción.
+- **Pendiente de capturar de nuevo**: toda la carpeta `t2-memoria-*` (memorizar, responder con
+  feedback en vivo, y el estado tras completar la secuencia) y, de paso, confirmar que Atención
+  y Movimiento también se ven bien con la nueva `InstructionCard` y el encabezado genérico.
+
+### Ronda 4 (mismo día): confusión real de UX señalada por el usuario, corregida
+El usuario probó Memoria y señaló dos problemas de claridad genuinos (no de fidelidad visual):
+1. **"Paso 1 de 1" no se entendía.** Causa: el pill del encabezado usaba siempre la palabra
+   "Paso" tanto para "ronda de la sesión" (p. ej. en Movimiento, donde sí son pasos) como para
+   "posición dentro de la secuencia que hay que repetir" en Memoria — la misma palabra con dos
+   significados distintos según la pantalla. Corregido: `SessionHeader` ahora recibe un prop
+   `unit` (`session-header.tsx`) y cada fase elige la palabra correcta en `getHeaderProgress`
+   (`[area].tsx`): **"Figura N de M"** mientras se repite la secuencia en Memoria, **"Paso N de
+   M"** en Movimiento (pasos reales), **"Ronda N de 3"** en el resto.
+2. **La figura marcada no se desmarcaba y no había ninguna señal además de la visual.**
+   Corregido con dos cambios:
+   - **Falla rápido** (`activities-slice.ts`, `memoriaShapeTapped`): antes se esperaba a que
+     se agotaran todos los toques para evaluar la secuencia completa; un toque fuera de orden
+     ahora termina la ronda de inmediato. Esto además evita que el resaltado de una figura y el
+     veredicto final de la ronda puedan contradecirse.
+   - **Resaltado transitorio + háptica** (`[area].tsx`, `MemoriaResponderBlock`): el borde/
+     insignia de la figura tocada ahora se limpia solo a los ~900ms si la ronda sigue en marcha
+     (no es el último toque ni fue un error que la termine); si la ronda ya terminó, se deja
+     fijo para que se vea qué pasó. Se instaló **`expo-haptics`** (no estaba, era un hueco real
+     de RNF-009 "háptica complementaria") y cada toque dispara una vibración de éxito o de
+     error — sustituye el sonido que pedía el usuario (RNF-006/009: nunca depender solo de un
+     canal sensorial).
+- `typecheck` y `lint` limpios tras estos cambios.
+- **RNF-009 mejora**: ya hay háptica real en Memoria (antes decía "aún no aplica, no hay
+  recordatorios en T0" — ahora sí aplica a esta pantalla). Falta extenderla a Atención/
+  Movimiento si se quiere consistencia total entre las 3 áreas.
+- Pendiente seguir probando en emulador: confirmar que la vibración se siente y que el
+  resaltado desaparece solo tras ~1s cuando la ronda sigue viva.
+
+**Confirmado por el usuario (2026-11-08): la ronda 4 funciona como se esperaba** (falla
+rápido, resaltado transitorio, vibración). **T2 queda cerrado**: RF-003 y RF-004 pasan a
+Verificado en `REQUISITOS.md`. Las capturas en `artifacts/t2/` siguen siendo de la ronda 1
+(versión visual anterior) — quedan como evidencia parcial del layout general, no del
+comportamiento final; si se quiere evidencia fotográfica fiel al diseño actual, hay que
+retomarlas en una sesión futura, pero no bloquea cerrar la tarea.
+
+### Decisión de proceso: desde ahora, el usuario toma las capturas (ahorro de tokens)
+A partir de esta sesión, **el usuario levanta el emulador, navega y toma las capturas**;
+el agente ya no usa `agent-device`/`uiautomator` para esto (ver razón en
+"Ya intentado, no repetir" — el tap-a-ciegas es caro en tokens y falla silenciosamente).
+El agente sigue comparando las capturas contra `docs/diseno/stitch-export/` y ajustando
+estilos. Esto quedó anotado también en `.claude/skills/revisar-ui/SKILL.md`.
+
+**Capturas de T2 — volver a tomar todas** (el rediseño de tarjetas y resumen invalidó las
+de la ronda 1; déjalas en `artifacts/t2/` sobrescribiendo las viejas):
+1. `t2-actividades-lista.png` — pantalla `Actividades` tal cual carga (tab "Actividades").
+   Comparar contra `docs/diseno/stitch-export/paciente_actividades/screen.png`.
+2. `t2-memoria-memorizar.png` — tocar la tarjeta "Memoria" (o el hero si sugiere Memoria) →
+   pantalla "Memoriza esta secuencia" antes de tocar "Listo, continuar".
+3. `t2-memoria-responder.png` — tras tocar "Listo, continuar": pantalla con los 4 botones
+   grandes (ahora con el ícono en un círculo centrado, tarjeta más alta) para repetir la secuencia.
+4. `t2-memoria-resultado.png` — tras completar la secuencia (acertada o no): tarjeta de
+   feedback ("¡Bien hecho!" o "Esta vez no..."), con el botón "Continuar".
+5. `t2-atencion-responder.png` — entra a "Atención": grilla de figuras con el intruso a
+   encontrar. **Antes esta pantalla salía en blanco (bug ya corregido) — confirmar que ahora
+   se ve el contenido.**
+6. `t2-movimiento-pasos.png` — entrar a "Movimiento": lista de pasos con checkboxes y el
+   botón "Terminé esta sesión" (probar que arranca deshabilitado hasta marcar todos los pasos).
+7. `t2-sesion-completada.png` — completar las 3 rondas de cualquier área (o la sesión de
+   Movimiento): pantalla "Sesión completada" **rediseñada** con ícono circular, las dos
+   tarjetas "Aciertos X de Y" / "Nivel actual N de M", el banner de refuerzo y los botones
+   "Volver a actividades" + "Repetir".
+8. `t2-logica-bloqueada.png` — la tarjeta "Lógica" en la grilla, con el candado y el texto
+   de desbloqueo (sin cambios, pero conviene reconfirmar).
+
+**Qué probar en cada una** (además de comparar visualmente contra Stitch):
+- Que el botón "Terminé esta sesión" de Movimiento esté **visiblemente deshabilitado**
+  (opacidad reducida) hasta marcar todos los pasos — no solo por color.
+- Que el badge de resultado tenga ícono + texto, no solo un color de fondo (RNF-006).
+- Que los 4 botones de figuras en Memoria/Atención tengan al menos 48dp de alto (RNF-005).
+- Qué pasa si se toca "Salir de la actividad" (ícono X del encabezado) a mitad de una
+  ronda: debe volver a la lista de Actividades sin guardar progreso parcial.
+- En "Sesión completada", tocar "Repetir": debe quedarse en la misma pantalla y arrancar
+  una sesión nueva ya en el nivel alcanzado (no en el nivel con el que se empezó).
+- Con el lector de pantalla activo (TalkBack), si el tiempo alcanza: que cada paso de
+  Movimiento y cada figura anuncien su texto/ícono, no solo "botón".
+
 ## Siguiente acción concreta
-**Arrancar T2** (siguiente del plan: actividades de estimulación cognitiva/motriz — RF-003/RF-004)
-o el ítem que el usuario priorice. T1 queda cerrado: RF-001 y RF-002 Verificados en
-`docs/REQUISITOS.md`.
+**T2 cerrado y commiteado** (RF-003, RF-004 Verificados — confirmado por el usuario en
+emulador tras la ronda 4). **Arrancar T3** (historial/progreso, RF-005).
+
+Pendiente suelto de T2 (no bloquea T3): el usuario debe ejecutar
+`supabase/migrations/20261109000000_activity_progress.sql` en el SQL Editor de Supabase si
+no lo ha hecho ya, para que `persistAreaLevel` deje de fallar silenciosamente. Y si se quiere
+evidencia fotográfica fiel al diseño final de Memoria/Atención/Movimiento, retomar las
+capturas de `artifacts/t2/` (las actuales son de la ronda 1, visualmente desactualizadas).
 
 Pendientes en paralelo (no bloquean lo anterior):
 - Confirmar la **fecha de entrega** con el profesor (Duda 3, única duda crítica abierta).
@@ -208,6 +382,16 @@ Pendientes en paralelo (no bloquean lo anterior):
   tablas de dominio.
 
 ## Ya intentado, no repetir
+- **No uses `useEffect` para derivar/mostrar feedback transitorio de un toque (ej. "resaltar
+  la última opción tocada y borrarla sola a los 900ms"): el lint de este repo
+  (`react-hooks/set-state-in-effect`, en `eslint.config.js`) lo rechaza como error, no como
+  warning — "Calling setState synchronously within an effect can trigger cascading renders".
+  Pasó en `src/app/actividad/[area].tsx` al construir el resaltado de `MemoriaResponderBlock`.
+  **Patrón que sí pasa el lint:** mover el `setState` + `setTimeout` al manejador del evento
+  (`onPress`/`onTap`), no a un `useEffect` disparado por el cambio de props/estado; usar
+  `useRef` solo para guardar el id del `setTimeout` y limpiarlo en el cleanup de un efecto
+  vacío (`useEffect(() => () => clearTimeout(ref.current), [])`), que no cuenta como
+  "setState en el cuerpo del efecto" porque no llama `setState` ahí.
 - **No usar coordenadas "a ojo" leídas de una captura para `adb shell input tap`: fallan
   silenciosamente.** Varias veces un tap que se veía centrado en el botón (según el PNG) no
   disparaba nada — probablemente porque el PNG se escala (0.3x o el factor que use la captura)
@@ -274,8 +458,10 @@ haya algo funcionando. Obligatorio primero; recomendados al final.)_
 - [x] **T0.5. Capa de datos + auth** — proyecto Supabase, cliente, registro/login, sesión
   en almacenamiento seguro, manejo de errores y offline. (RF-011, RNF-012, RT-004)
   Verificado en emulador — ver sección "T0.5 — Capa de datos + auth" arriba.
-- [ ] **T1. Síntomas** — registro + calendario, persistidos con sync. (RF-001, RF-002)
-- [ ] **T2. Actividades** — set reducido (1–2 cognitivas + 1 motriz), dificultad progresiva. (RF-003, RF-004)
+- [x] **T1. Síntomas** — registro + calendario, persistidos con sync. (RF-001, RF-002)
+  Verificado en emulador — ver sección "T1 — Síntomas" arriba.
+- [x] **T2. Actividades** — set reducido (1–2 cognitivas + 1 motriz), dificultad progresiva. (RF-003, RF-004)
+  Verificado por el usuario en emulador tras 4 rondas de ajustes — ver sección "T2 — Actividades" arriba.
 - [ ] **T3. Progreso** — historial y comparación actual vs pasado. (RF-005)
 - [ ] **T4. Cuidador** — vinculación con consentimiento, observaciones, recordatorios
   (visual+háptica), acceso sincronizado a lo autorizado. (RF-006, RF-008, RF-012)

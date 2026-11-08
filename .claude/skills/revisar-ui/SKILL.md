@@ -8,6 +8,20 @@ description: Verifica una pantalla en el emulador Android y guarda la evidencia 
 Regla que no se rompe: **nunca afirmes haber visto una pantalla que no capturaste.**
 Si no hay captura, el estado del requisito es "Implementado sin probar".
 
+> **Desde la sesión de T2 (2026-11-08): el usuario es quien levanta el emulador, navega
+> y toma las capturas — no el agente.** Decisión explícita para ahorrar tokens: el loop de
+> `adb`/`uiautomator dump`/agent-device para tocar a ciegas y encontrar bounds es caro y
+> propenso a fallos silenciosos (ver "Ya intentado, no repetir" en `docs/STATUS.md`). En vez
+> de eso, al terminar la implementación de una tarea, entrega al usuario:
+> 1. La lista exacta de pantallas/estados a capturar, con nombre de archivo sugerido
+>    (`artifacts/<tarea>-<estado>.png`) emparejado con el `screen.png` de Stitch equivalente.
+> 2. El paso a paso de navegación para llegar a cada una (qué tocar, en qué orden).
+> 3. Qué probar en cada una (valores límite, estados de error, accesibilidad a simple vista).
+> Luego espera a que el usuario deje las capturas en `artifacts/` y retómalo desde el paso 5
+> (comparar contra el diseño). Pasos 1-4 de abajo solo aplican si en algún momento se vuelve
+> a automatizar la captura (por ejemplo, para una verificación puntual que el usuario pida
+> que hagas tú).
+
 ## 1. Prepara el entorno
 - Revisa `docs/ENTORNO.md`: ahí están los arreglos de PATH y emulador de este equipo.
 - Si `adb` no se encuentra, exporta la ruta absoluta del SDK en esta sesión de terminal
