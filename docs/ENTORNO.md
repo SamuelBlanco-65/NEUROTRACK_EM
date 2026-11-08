@@ -6,9 +6,11 @@ de entorno nuevo, anótalo aquí **y** en la plantilla, para no volver a perder 
 ## Equipo
 - Windows. Terminal: PowerShell y, dentro de VS Code, también Git Bash.
 - Verificación solo en emulador Android. No hay iOS disponible.
-- Node: comprobar con `node -v` al empezar. Expo moderno pide una versión reciente;
-  si aparece `EBADENGINE`, actualizar con `winget install OpenJS.NodeJS.LTS`
-  y **cerrar y reabrir todas las terminales y VS Code** para que tome la versión nueva.
+- Node: comprobar con `node -v` al empezar. Expo SDK 58 exige ≥22.13 y `agent-device` exige
+  ≥22.12; con Node 20.x ambos avisan (`EBADENGINE`) o bloquean directamente (`expo lint`,
+  `expo install` se niegan a correr), aunque `npx eslint`/`npx tsc` directos sí funcionan.
+  Actualizar con `winget install OpenJS.NodeJS.LTS` y **cerrar y reabrir todas las terminales
+  y VS Code** para que tome la versión nueva.
 
 ## adb y el SDK de Android
 `adb` existe pero normalmente **no está en el PATH**. En cada sesión de terminal nueva

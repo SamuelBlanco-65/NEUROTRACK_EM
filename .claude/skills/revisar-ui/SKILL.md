@@ -22,9 +22,12 @@ Si no hay captura, el estado del requisito es "Implementado sin probar".
 - Si Metro falla, pasa a `/depurar` en vez de seguir.
 
 ## 3. Captura
-- Con agent-device hay que **abrir una sesión antes de capturar**; un `screenshot`
-  sin sesión abierta falla. Abre la app primero y captura después.
-- Alternativa que funciona sin agent-device:
+- Preferido: agent-device (herramientas `automation_*`). Hay que **abrir una sesión antes
+  de capturar**; un `screenshot` sin sesión abierta falla. Abre la app primero y captura
+  después. Con sesión abierta puedes también tocar (`automation_tap`), hacer scroll
+  (`automation_scroll`) y buscar vistas por `testID` (`automation_find_view`) para navegar
+  a cada pantalla y provocar sus estados sin pedirle al usuario que lo haga a mano.
+- Alternativa si agent-device no está disponible:
   `adb exec-out screencap -p > artifacts/<nombre>.png`
 - Nombra los archivos `artifacts/<tarea>-<estado>.png`
   (por ejemplo `t4-panel-vacio.png`, `t4-panel-error.png`).
@@ -39,11 +42,21 @@ Para cada pantalla, captura los que apliquen:
 Un requisito que describe un estado (una alerta, un color de aviso, un badge) no está
 verificado hasta que exista la captura de **ese** estado.
 
-## 5. Compara con el diseño
-- Abre la referencia de `docs/DESIGN.md` (y la captura de diseño si existe en `docs/diseno/`).
-- Enumérame las diferencias que encuentres. No "arregles" el diseño por tu cuenta
-  ni cambies decisiones de `DESIGN.md` sin proponerlo primero.
-- Si el diseño contradice el enunciado, manda el enunciado y anótalo.
+## 5. Compara con el diseño y ajusta hasta la fidelidad exacta
+- Referencia por defecto: el `screen.png` (y `code.html` si hace falta detalle de
+  layout/valores) de `docs/diseno/stitch-export/` para esa misma pantalla. Si no existe
+  export de Stitch para esa pantalla, usa `docs/DESIGN.md`.
+- Loop autónomo: captura → compara visualmente contra la referencia → ajusta estilos
+  (colores, spacing, tipografía, radios, alineación — siempre vía tokens de `src/theme/`,
+  nunca literales) → recaptura → repite hasta que coincida. No necesitas pedir aprobación
+  para este tipo de ajuste visual; el usuario puede seguir el emulador en vivo.
+- **Excepción que sí requiere detenerte y preguntar primero:** cualquier ajuste que toque
+  un token o regla de accesibilidad (contraste, área táctil ≥48dp, un estado comunicado
+  solo por color, escalado de texto). Esos son requisitos de dominio (RNF-002/004/005),
+  no decisiones estéticas — si el PNG de Stitch choca con ellos, repórtalo y espera
+  decisión antes de "corregir" hacia el PNG.
+- Si el diseño (Stitch o DESIGN.md) contradice el enunciado, manda el enunciado y anótalo
+  en vez de seguir el diseño a ciegas.
 
 ## 6. Cierra
 1. Actualiza en `docs/REQUISITOS.md` las filas verificadas, citando el nombre del archivo

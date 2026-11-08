@@ -8,29 +8,51 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { Provider as StoreProvider } from 'react-redux';
 
+import { supabase } from '@/lib/supabase';
+import { bootstrapSession, sessionEnded } from '@/store/slices/auth-slice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { store } from '@/store/store';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function AppShell() {
+  const dispatch = useAppDispatch();
+  const authStatus = useAppSelector((state) => state.auth.status);
   const [fontsLoaded] = useFonts({
     AtkinsonHyperlegibleNext_400Regular,
     AtkinsonHyperlegibleNext_700Bold,
   });
+  const ready = fontsLoaded && authStatus !== 'bootstrapping';
 
   useEffect(() => {
-    if (fontsLoaded) {
+    dispatch(bootstrapSession());
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        dispatch(sessionEnded());
+      }
+    });
+
+    return () => subscription.subscription.unsubscribe();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (ready) {
       SplashScreen.hide();
     }
-  }, [fontsLoaded]);
+  }, [ready]);
 
-  if (!fontsLoaded) {
+  if (!ready) {
     return null;
   }
 
+  return <Stack screenOptions={{ headerShown: false }} />;
+}
+
+export default function RootLayout() {
   return (
     <StoreProvider store={store}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <AppShell />
     </StoreProvider>
   );
 }

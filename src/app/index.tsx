@@ -12,7 +12,9 @@ import { Spacing } from '@/theme';
 export default function SeleccionDePerfilScreen() {
   const dispatch = useAppDispatch();
   const selected = useAppSelector((state) => state.profile.selected);
+  const authStatus = useAppSelector((state) => state.auth.status);
 
+  if (selected && authStatus !== 'authenticated') return <Redirect href="/(auth)/acceder" />;
   if (selected === 'paciente') return <Redirect href="/(paciente)/inicio" />;
   if (selected === 'cuidador') return <Redirect href="/(cuidador)/inicio" />;
 

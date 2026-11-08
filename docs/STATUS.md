@@ -1,8 +1,13 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-08 · **Rama:** master · Últimos commits: 399a8e3 (chore: config+requisitos+diseño),
-741ef4a (Initial commit). **Repo remoto creado y pusheado.** Sin commitear: nada (working tree
-limpio tras el commit de esta sesión, salvo lo que cambie esta sesión de cierre: STATUS/REQUISITOS).
+**Fecha:** 2026-11-08 · **Rama:** master · Últimos commits: 2c1190c (feat(T0): base de
+navegación, tema accesible y store Redux Toolkit), 399a8e3 (chore: config+requisitos+diseño),
+741ef4a (Initial commit). **Repo remoto creado y pusheado.**
+**Sin commitear:** `docs/enunciado/aclaraciones.md` — respuestas del profesor de una sesión
+anterior (Dudas 1,2,4,5,6 resueltas + Duda 7 movida a "sin preguntar"), nunca se comiteó.
+No tiene relación con T0; decidir en la próxima sesión si se comitea solo o junto con algo más.
+Un proceso de `npx expo start --android` puede seguir corriendo en background de esta sesión
+(pid 678/680 al cerrar) — revisar con `ps -ef | grep expo` antes de levantar otro.
 
 ## ⚠️ Equipo y co-autoría Git (LEER ANTES DE CUALQUIER COMMIT)
 Proyecto en equipo de 3. **TODO commit debe atribuir a los tres.** El autor es Samuel
@@ -57,6 +62,57 @@ Implicación clave: cada integrante debe escribir y ENTENDER su parte (30% + 40%
 - Requisitos actualizados: RT-001, RT-002 → Verificado. RT-006, RNF-003/004/005/007/009 →
   Implementado sin probar (ver detalle en `REQUISITOS.md`).
 
+## T0.5 — Capa de datos + auth: COMPLETO y verificado en emulador (2026-11-08)
+- **Proyecto Supabase creado** por el usuario (dashboard web). Claves en `.env` (fuera de git,
+  bloqueado por hook del proyecto para que Claude no lo lea/escriba) y `.env.example` con los
+  nombres (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — la *publishable
+  key* es pública por diseño, equivalente a la antigua `anon key`).
+- **`src/lib/supabase.ts`**: cliente Supabase con sesión persistida vía patrón `LargeSecureStore`
+  (AES-256 + clave corta en `expo-secure-store`, blob cifrado en `@react-native-async-storage/
+  async-storage`). Necesario porque `expo-secure-store` solo permite ~2048 bytes por valor en
+  Android y el JWT de sesión de Supabase lo supera; con el adaptador simple la sesión nunca
+  sobrevivía a un reinicio (bug real encontrado y corregido en esta sesión, ver "Bugs" abajo).
+- **`src/features/auth/`**: `api.ts` (signIn/signUp/signOut/getActiveSession contra Supabase,
+  clasificación de errores sin-conexión/credenciales/validación/servidor en español) y
+  `types.ts`. **`src/store/slices/auth-slice.ts`**: estado `bootstrapping|unauthenticated|
+  authenticating|authenticated`, thunks de login/register/logout/bootstrap, maneja el caso
+  "registro exitoso pero correo sin confirmar" (`pendingConfirmationEmail`) sin autenticar en falso.
+- **Pantalla `src/app/(auth)/acceder.tsx`**: login + registro en una sola pantalla con pestañas
+  (fiel al export de Stitch `acceder_iniciar_sesi_n` / `acceder_crear_cuenta`), `TextField`
+  reutilizable (`src/components/text-field.tsx`) con validación de borde doble-codificada
+  (ícono + texto + borde, nunca solo color — RNF-006), estado "Enviando..." con spinner, aviso
+  de confirmación de correo pendiente. `ScrollView` + `KeyboardAvoidingView` para que los campos
+  no queden tapados por el teclado (bug real encontrado y corregido).
+- **`src/app/index.tsx`** y **`src/app/_layout.tsx`** actualizados: bootstrap de sesión al
+  arrancar (antes de ocultar el splash), redirección a `/(auth)/acceder` si no hay sesión al
+  elegir perfil, redirección directa a inicio si ya está autenticado.
+- **Verificado end-to-end en emulador (`agent-device`/`adb`)**: registro real contra Supabase,
+  inicio de sesión real, error "correo no confirmado" traducido y con ícono, aviso de cuenta
+  creada pendiente de confirmar, persistencia de sesión real tras reinicio de la app (una vez
+  arreglado el bug de SecureStore). Capturas en `artifacts/t05/`.
+- **Bugs reales encontrados y corregidos en esta sesión** (ninguno se habría visto solo
+  leyendo código):
+  1. `signIn`/`signUp` armaban la "sesión" a partir de `data.user` en vez de `data.session` →
+     con confirmación de correo obligatoria (activada en este proyecto Supabase), un registro
+     sin confirmar *parecía* autenticar y redirigía a Inicio, pero no había sesión real: al
+     reiniciar la app, se perdía. Corregido en `features/auth/api.ts` para usar `data.session`.
+  2. Mensaje de error de Supabase ("Email not confirmed") llegaba crudo en inglés a la UI.
+     Corregido con clasificación explícita en `toAuthError`.
+  3. `expo-secure-store` limita cada valor a ~2048 bytes en Android; el JWT de Supabase lo
+     excede y el `setItemAsync` fallaba silenciosamente. Corregido con el patrón
+     `LargeSecureStore` (ver arriba).
+  4. Quedó un proceso de Metro viejo corriendo en el puerto 8081 de una sesión anterior
+     (lo advertía este mismo STATUS). El emulador quedó conectado a los dos bundles a la vez,
+     causando un error real (`Cannot read property 'status' of undefined`) por inconsistencia
+     de módulos entre Fast Refresh de dos instancias. Cerrado (`taskkill`), confirmado con el
+     usuario antes de matarlo.
+  5. Falla de automatización (no bug de la app): `adb shell input text` con espacios literales
+     corta la cadena; usar `%s`. Y los taps con coordenadas fijas se desalinean en cuanto el
+     teclado abre o hay un banner de error que desplaza el layout — hay que recapturar antes de
+     cada tap en vez de encadenar coordenadas a ciegas.
+- Pendiente para T1: RLS en las tablas de dominio (aún no hay tablas más allá de auth).
+- Requisitos actualizados: **RF-011 → Verificado**. RNF-012 → Implementado sin probar (falta RLS).
+
 ## Hecho en esta sesión (2026-11-08)
 - **Llegó el enunciado oficial de Fase 3** (`docs/enunciado/Course Project Phase 3...pdf`).
   Verificado: leído con `pdftotext`. Trae rúbrica, entregables y formato. Se actualizaron
@@ -99,21 +155,28 @@ Implicación clave: cada integrante debe escribir y ENTENDER su parte (30% + 40%
 - Proyecto Expo andamiado con la plantilla por defecto de `create-expo`.
 
 ## Siguiente acción concreta
-T0 completo y verificado (ver sección de arriba). Dos caminos posibles, a elegir con el usuario:
-1) **Commitear T0** (con los 3 Co-Authored-By) antes de seguir, o
-2) Arrancar **T0.5 — Capa de datos + auth**: proyecto Supabase, cliente, registro/login, sesión
-   en almacenamiento seguro (`expo-secure-store`), manejo de errores de red y offline.
-   (RF-011, RNF-012, RT-004).
+**T0 y T0.5 comiteados/listos para commitear.** Arrancar **T1 — Síntomas**: pantalla de
+registro de síntomas (RF-001) y calendario (RF-002) contra Supabase, con tabla propia +
+RLS (paciente dueño de sus datos; cuidador solo si hay vínculo autorizado, que llega con T4).
+Usar `/pantalla-nueva` para cada pantalla y `/revisar-ui` contra el export de Stitch antes de
+marcar como Verificado.
 **Recordatorio: cada commit con los 3 Co-Authored-By (ver sección de equipo arriba).**
-**El servidor de Expo (`npx expo start --android`) puede seguir corriendo en background de la
-sesión anterior — revisar antes de levantar otro.**
-Pendientes en paralelo (no bloquean T0):
+**Antes de levantar `npx expo start`: revisar que no quede un proceso de Metro de una sesión
+anterior en otro puerto (`netstat -ano | grep 808`) — causó un bug real esta sesión.**
+Pendientes en paralelo (no bloquean T1):
 - Confirmar la **fecha de entrega** con el profesor (Duda 3, única duda crítica abierta).
 - Que Amelyn y Mariana **acepten** la invitación de colaboración del repo.
 - Borrar el repo de prueba temporal `coauthor-test` (requiere scope `delete_repo` o hacerlo por web).
-- Más adelante: `docs/ENTREGA-FINAL.md` (ENT-002) y `README.md` (ENT-003).
+- Más adelante: `docs/ENTREGA-FINAL.md` (ENT-002), `README.md` (ENT-003), RLS cuando existan
+  tablas de dominio.
 
 ## Ya intentado, no repetir
+- **No asumir que basta un proceso de Metro corriendo.** Si una sesión anterior dejó
+  `npx expo start` vivo en otro puerto, el emulador se conecta a ambos bundles a la vez y
+  produce errores de runtime que parecen bugs de código (p. ej. `Cannot read property 'status'
+  of undefined`) pero son solo inconsistencia entre dos instancias de Fast Refresh. Revisar
+  `netstat -ano | grep 808` (Windows) antes de levantar uno nuevo; matar el viejo con
+  `taskkill //PID <pid> //F` tras confirmar con el usuario.
 - Leer el PDF con el visor integrado (`Read` con `pages`): falla, falta `pdftoppm`.
   Usar `pdftotext -layout` (disponible en `/mingw64/bin`).
 - **Autenticar el MCP de Stitch: NO reintentar.** Falla siempre con
@@ -142,19 +205,22 @@ Pendientes en paralelo (no bloquean T0):
   `npx expo lint` avisan/bloquean por esto; `npx eslint` directo y `npx tsc` sí funcionan. No
   bloqueante todavía, pero conviene actualizar Node pronto (`winget install OpenJS.NodeJS.LTS`,
   ver `docs/ENTORNO.md`). `agent-device` ya requiere Node ≥22.12 y está instalado aparte.
-- **`NativeTabs` no hereda el tema solo:** si no se le pasan `backgroundColor`/`iconColor`/
-  `labelStyle`/`indicatorColor` explícitamente, Android le aplica su estilo "Material You" por
-  defecto (gris/lavanda), no el tema de la app. Siempre pasar esos props con los tokens de
-  `src/theme/` en cualquier `_layout.tsx` nuevo que use `NativeTabs`.
+- **Esquema de color oscuro sin verificar visualmente.** `DarkColors` (`src/theme/colors.ts`) es
+  derivado y fue auditado por cálculo de contraste, pero no se capturó en el emulador con el
+  tema oscuro activo (RNF-003/007 quedaron en "Implementado sin probar" por esto). Para
+  verificar: forzar dark mode en el emulador (`adb shell "cmd uimode night yes"`) y repetir el
+  pase de capturas de `artifacts/t0/`.
 
 ## Plan de implementación
 _(Cada tarea indica los IDs de requisito que cubre. Orden pensado para que siempre
 haya algo funcionando. Obligatorio primero; recomendados al final.)_
-- [ ] **T0. Base** — tokens de tema accesibles (`src/theme/`), navegación por perfil,
+- [x] **T0. Base** — tokens de tema accesibles (`src/theme/`), navegación por perfil,
   estados carga/error/vacío, accesibilidad ampliada (`Label/Hint/Role/State`, `hitSlop`,
   `lineHeight`, `testID`) y store de **Redux Toolkit** (`src/store/`). (RT-001, RT-006, RNF-001..009)
-- [ ] **T0.5. Capa de datos + auth** — proyecto Supabase, cliente, registro/login, sesión
+  Comiteado en `2c1190c`, verificado en emulador — ver sección "T0 — Base" arriba.
+- [x] **T0.5. Capa de datos + auth** — proyecto Supabase, cliente, registro/login, sesión
   en almacenamiento seguro, manejo de errores y offline. (RF-011, RNF-012, RT-004)
+  Verificado en emulador — ver sección "T0.5 — Capa de datos + auth" arriba.
 - [ ] **T1. Síntomas** — registro + calendario, persistidos con sync. (RF-001, RF-002)
 - [ ] **T2. Actividades** — set reducido (1–2 cognitivas + 1 motriz), dificultad progresiva. (RF-003, RF-004)
 - [ ] **T3. Progreso** — historial y comparación actual vs pasado. (RF-005)
