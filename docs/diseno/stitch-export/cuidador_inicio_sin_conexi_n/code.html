@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-dim": "#dcdad5", "surface-container-lowest": "#ffffff", "surface-container-low": "#f6f3ee", "secondary-fixed-dim": "#b9cacb", "inverse-on-surface": "#f3f0eb", "surface-container-high": "#ebe8e3", "tertiary": "#46392d", "on-primary-container": "#98cfdd", "error-container": "#ffdad6", "surface-container": "#f0ede9", "primary-fixed": "#b3ecfa", "on-primary-fixed-variant": "#0b4e5a", "outline-variant": "#bfc8ca", "on-error": "#ffffff", "on-secondary-fixed-variant": "#3a494b", "on-surface": "#1c1c19", "primary": "#00424d", "on-error-container": "#93000a", "tertiary-container": "#5e5043", "on-tertiary-fixed": "#241a0f", "on-surface-variant": "#40484a", "error": "#ba1a1a", "tertiary-fixed-dim": "#d6c3b2", "surface-tint": "#2c6672", "on-secondary": "#ffffff", "on-primary": "#ffffff", "on-tertiary": "#ffffff", "primary-fixed-dim": "#98cfdd", "surface-bright": "#fcf9f4", "on-tertiary-container": "#d6c3b2", "surface-variant": "#e5e2dd", "inverse-surface": "#31302d", "tertiary-fixed": "#f3dfcd", "inverse-primary": "#98cfdd", "primary-container": "#1e5a66", "outline": "#70787b", "on-primary-fixed": "#001f25", "secondary": "#526162", "on-secondary-fixed": "#0f1e1f", "on-background": "#1c1c19", "surface": "#fcf9f4", "on-secondary-container": "#576768", "background": "#fcf9f4", "secondary-fixed": "#d5e6e7", "surface-container-highest": "#e5e2dd", "secondary-container": "#d5e6e7", "on-tertiary-fixed-variant": "#514437" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "space-xs": "0.375rem", "space-sm": "0.75rem", "space-lg": "1.5rem", "margin-mobile": "1.25rem", "gutter-mobile": "1rem", "space-md": "1rem", "gutter": "1rem", "space-xl": "2.25rem", "margin": "1.25rem" }, fontFamily: { "body-sm": ["Atkinson Hyperlegible Next"], "headline-sm": ["Atkinson Hyperlegible Next"], "body-lg": ["Atkinson Hyperlegible Next"], "headline-md": ["Atkinson Hyperlegible Next"], "headline-lg": ["Atkinson Hyperlegible Next"], "label-lg": ["Atkinson Hyperlegible Next"], "body-md": ["Atkinson Hyperlegible Next"], "label-sm": ["Atkinson Hyperlegible Next"], "label-md": ["Atkinson Hyperlegible Next"] }, fontSize: { "body-sm": ["15px", { lineHeight: "22px", fontWeight: "400" }], "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "700" }], "body-lg": ["19px", { lineHeight: "28px", fontWeight: "400" }], "headline-md": ["24px", { lineHeight: "32px", fontWeight: "700" }], "headline-lg": ["28px", { lineHeight: "36px", fontWeight: "700" }], "label-lg": ["17px", { lineHeight: "24px", fontWeight: "700" }], "body-md": ["17px", { lineHeight: "26px", fontWeight: "400" }], "label-sm": ["13px", { lineHeight: "18px", fontWeight: "700" }], "label-md": ["15px", { lineHeight: "20px", fontWeight: "700" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md min-h-screen flex flex-col antialiased selection:bg-secondary-fixed"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_12px_rgba(70,57,45,0.06)]"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[28px]">spa</span><h1 class="font-headline-sm text-headline-sm text-on-surface">Inicio</h1></div><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 w-full bg-surface pt-16 pb-24"><div class="flex flex-col w-full px-margin-mobile pb-space-xl gap-space-lg">
+<!-- Top Banner: Offline State Notification -->
+<div aria-live="polite" class="w-full bg-tertiary-fixed text-on-tertiary-fixed rounded-lg p-space-md shadow-sm flex items-center justify-between gap-space-sm" role="status">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-full bg-tertiary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary text-[20px]">cloud_off</span>
+</div>
+<span class="font-label-md text-label-md truncate">Sin conexión. Mostrando lo último guardado.</span>
+</div>
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-tertiary shrink-0 animate-pulse" title="Modo sin conexión"></span>
+</div>
+<!-- Caregiver Greeting & Sync State -->
+<section class="flex flex-col gap-space-xs">
+<div class="flex items-baseline justify-between">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Hola, Andrés</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">history</span>
+        9:35 a. m.
+      </span>
+</div>
+<div class="flex flex-wrap items-center gap-space-xs mt-0.5">
+<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary-fixed text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-label-sm text-label-sm">Acompañas a María</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+        Última sincronización: hoy 9:35 a. m.
+      </span>
+</div>
+</section>
+<!-- Main Patient Status Card -->
+<section class="w-full bg-surface-container-lowest rounded-lg p-5 shadow-[0_4px_16px_rgba(70,57,45,0.06)] flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">vital_signs</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Cómo va María hoy</h3>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant">En caché</span>
+</div>
+<!-- Symptom Severity Gauge -->
+<div class="p-space-sm rounded-DEFAULT bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Fatiga</span>
+<!-- Severity Chip with 3 bars indicator -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<div aria-label="Nivel moderado: 2 de 3 barras" class="flex items-center gap-0.5">
+<span class="w-1 h-3 rounded-full bg-tertiary"></span>
+<span class="w-1 h-3 rounded-full bg-tertiary"></span>
+<span class="w-1 h-3 rounded-full bg-tertiary/30"></span>
+</div>
+<span>Moderado</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Registrada a las 9:30 a. m.</p>
+</div>
+<!-- Medication Status Tracker -->
+<div class="flex items-center gap-3 p-space-sm rounded-DEFAULT bg-surface-container-lowest">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[18px]">check</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface">Medicación de la mañana tomada</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Confirmado a las 8:15 a. m.</span>
+</div>
+</div>
+<!-- Privacy & Sovereignty Indicator -->
+<div class="flex items-center gap-2 pt-1 pb-1">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0">visibility</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ves lo que María decidió compartir.</p>
+</div>
+<!-- Primary Action: Offline-ready Observation -->
+<div class="flex flex-col items-center gap-1.5 pt-1">
+<button class="w-full h-14 rounded-full bg-primary-container text-surface-container-lowest font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] transition-transform" id="btn-nueva-observacion" type="button">
+<span class="material-symbols-outlined text-[22px]">edit_note</span>
+<span>Anotar una observación</span>
+</button>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">sync</span>
+        Se sincronizará al recuperar conexión
+      </span>
+</div>
+</section>
+<!-- Section: Needs Attention -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[20px]">notifications_active</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Necesita atención</h3>
+</div>
+<div class="bg-surface-container rounded-DEFAULT p-space-md flex items-center justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-full bg-tertiary-fixed-dim/40 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-tertiary text-[20px]">schedule</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface">Pausa vespertina pendiente</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">No se marcó la pausa de las 4:30 p. m.</p>
+</div>
+</div>
+<!-- Action Button without stark borders -->
+<button class="shrink-0 h-10 px-4 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-center gap-1 active:bg-secondary-fixed transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Recordarle</span>
+</button>
+</div>
+</section>
+<!-- Caregiver Support & Rest Card -->
+<section class="w-full bg-tertiary-fixed rounded-lg p-5 flex items-center justify-between gap-space-md shadow-sm">
+<div class="flex flex-col gap-1 min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-tertiary-fixed">¿Y tú cómo estás?</span>
+<p class="font-body-md text-body-md text-on-tertiary-fixed-variant">Cuidar también cansa. Dedícate un respiro consciente hoy.</p>
+<a class="inline-flex items-center gap-1 font-label-md text-label-md text-tertiary pt-2 active:underline" href="#">
+<span>Ver apoyo para ti</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest/80 shrink-0 flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-tertiary text-[32px]">self_improvement</span>
+</div>
+</section>
+</div>
+<script>
+  // Simple micro-interaction for the observation button in offline mode
+  document.getElementById('btn-nueva-observacion')?.addEventListener('click', function() {
+    const feedbackToast = document.createElement('div');
+    feedbackToast.className = 'fixed bottom-24 left-5 right-5 p-4 rounded-lg bg-inverse-surface text-inverse-on-surface font-label-sm text-label-sm shadow-xl flex items-center gap-2 z-40 transition-all';
+    feedbackToast.innerHTML = '<span class="material-symbols-outlined text-primary-fixed">cloud_queue</span><span>Borrador guardado localmente en tu teléfono.</span>';
+    document.body.appendChild(feedbackToast);
+    setTimeout(() => feedbackToast.remove(), 2600);
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_16px_rgba(70,57,45,0.06)]" data-active-classes="bg-secondary-container text-primary font-label-sm"><div class="h-20 px-space-xs flex items-center justify-around"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[52px] px-space-xs py-1 rounded-full transition-colors bg-secondary-container text-primary font-label-sm" data-path="inicio" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center"><span class="material-symbols-outlined text-[24px]">home</span></div><span class="font-label-sm text-label-sm tracking-tight text-center">Inicio</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[52px] px-space-xs py-1 rounded-full text-on-surface-variant transition-colors hover:text-on-surface" data-path="observaciones" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center"><span class="material-symbols-outlined text-[24px]">visibility</span></div><span class="font-label-sm text-label-sm tracking-tight text-center">Observaciones</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[52px] px-space-xs py-1 rounded-full text-on-surface-variant transition-colors hover:text-on-surface" data-path="acompanar" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center"><span class="material-symbols-outlined text-[24px]">handshake</span></div><span class="font-label-sm text-label-sm tracking-tight text-center">Acompañar</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[52px] px-space-xs py-1 rounded-full text-on-surface-variant transition-colors hover:text-on-surface" data-path="recordatorios" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center"><span class="material-symbols-outlined text-[24px]">notifications</span></div><span class="font-label-sm text-label-sm tracking-tight text-center">Recordatorios</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[52px] px-space-xs py-1 rounded-full text-on-surface-variant transition-colors hover:text-on-surface" data-path="apoyo" href="#"><div class="w-12 h-8 rounded-full flex items-center justify-center"><span class="material-symbols-outlined text-[24px]">volunteer_activism</span></div><span class="font-label-sm text-label-sm tracking-tight text-center">Apoyo</span></a></div></nav></body></html>

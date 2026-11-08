@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@100..900&display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary": "#526162", "on-secondary-fixed-variant": "#3a494b", "on-error-container": "#93000a", "surface-container-highest": "#e5e2dd", "on-surface-variant": "#40484a", "error": "#ba1a1a", "surface-container": "#f0ede9", "surface": "#fcf9f4", "secondary-fixed-dim": "#b9cacb", "tertiary-container": "#5e5043", "error-container": "#ffdad6", "on-primary": "#ffffff", "outline-variant": "#bfc8ca", "primary-fixed-dim": "#98cfdd", "secondary-container": "#d5e6e7", "primary-container": "#1e5a66", "outline": "#70787b", "on-secondary-container": "#576768", "surface-tint": "#2c6672", "on-secondary-fixed": "#0f1e1f", "surface-dim": "#dcdad5", "primary-fixed": "#b3ecfa", "secondary-fixed": "#d5e6e7", "on-surface": "#1c1c19", "inverse-on-surface": "#f3f0eb", "tertiary-fixed-dim": "#d6c3b2", "tertiary": "#46392d", "on-error": "#ffffff", "on-tertiary": "#ffffff", "inverse-primary": "#98cfdd", "on-primary-fixed-variant": "#0b4e5a", "surface-container-high": "#ebe8e3", "on-secondary": "#ffffff", "surface-variant": "#e5e2dd", "on-tertiary-container": "#d6c3b2", "surface-bright": "#fcf9f4", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#241a0f", "surface-container-low": "#f6f3ee", "on-primary-fixed": "#001f25", "primary": "#00424d", "on-primary-container": "#98cfdd", "tertiary-fixed": "#f3dfcd", "background": "#fcf9f4", "on-background": "#1c1c19", "on-tertiary-fixed-variant": "#514437", "inverse-surface": "#31302d" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "space-lg": "1.5rem", "gutter-mobile": "1rem", "space-xl": "2.25rem", "gutter": "1rem", "space-sm": "0.75rem", "margin": "1.25rem", "margin-mobile": "1.25rem", "space-md": "1rem", "space-xs": "0.375rem" }, "fontFamily": { "label-sm": ["Atkinson Hyperlegible Next"], "headline-lg": ["Atkinson Hyperlegible Next"], "body-lg": ["Atkinson Hyperlegible Next"], "headline-sm": ["Atkinson Hyperlegible Next"], "body-sm": ["Atkinson Hyperlegible Next"], "label-lg": ["Atkinson Hyperlegible Next"], "label-md": ["Atkinson Hyperlegible Next"], "headline-md": ["Atkinson Hyperlegible Next"], "body-md": ["Atkinson Hyperlegible Next"] }, "fontSize": { "label-sm": ["13px", { "lineHeight": "18px", "fontWeight": "700" }], "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "body-lg": ["19px", { "lineHeight": "28px", "fontWeight": "400" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "700" }], "body-sm": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-lg": ["17px", { "lineHeight": "24px", "fontWeight": "700" }], "label-md": ["15px", { "lineHeight": "20px", "fontWeight": "700" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }], "body-md": ["17px", { "lineHeight": "26px", "fontWeight": "400" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#fcf9f4;color:#1c1c19;overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_12px_rgba(72,54,38,0.06)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs"><button aria-label="Volver" class="w-12 h-12 rounded-full flex items-center justify-center text-on-surface transition-colors hover:bg-surface-container" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate">Nueva Observación</h1></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full min-h-screen pt-16 pb-safe px-margin-mobile bg-surface flex flex-col"><div class="flex flex-col w-full relative">
+<!-- Dimmed caregiver background dashboard (simulating app state beneath bottom sheet) -->
+<div class="flex flex-col w-full opacity-35 pointer-events-none select-none filter blur-[1px] space-y-space-md mb-4">
+<!-- Patient Context Summary Card -->
+<div class="w-full bg-surface-container-lowest rounded-lg p-space-md shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary-container font-headline-sm text-headline-sm">
+          M
+        </div>
+<div class="flex flex-col min-w-0">
+<p class="font-headline-sm text-headline-sm text-on-surface truncate">María González</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Esclerosis Múltiple RR • Seguimiento diario</p>
+</div>
+</div>
+</div>
+<!-- Previous Observations Feed Preview -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<p class="font-label-md text-label-md text-secondary">Bitácora de observaciones</p>
+<span class="font-label-sm text-label-sm text-primary">3 registradas</span>
+</div>
+<div class="w-full bg-surface-container-lowest rounded p-space-md shadow-sm space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-primary bg-secondary-container px-space-sm py-1 rounded-full">Movilidad</span>
+<span class="font-body-sm text-body-sm text-outline">Ayer, 4:15 p. m.</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Poco equilibrio al levantarse del sillón. Usó el bastón de apoyo con calma.</p>
+</div>
+<div class="w-full bg-surface-container-lowest rounded p-space-md shadow-sm space-y-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary-container bg-tertiary-fixed px-space-sm py-1 rounded-full">Fatiga</span>
+<span class="font-body-sm text-body-sm text-outline">Hace 2 días</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">Siesta reparadora después del almuerzo; mejor semblante al anochecer.</p>
+</div>
+</div>
+</div>
+<!-- Warm Floating Modal / Bottom Sheet Layer -->
+<section aria-label="Nueva observación para cuidador" class="relative z-20 w-full bg-surface-container-lowest rounded-t-xl rounded-b-lg shadow-[0_4px_32px_rgba(72,54,38,0.14)] p-space-md pb-space-lg flex flex-col space-y-space-md">
+<!-- Top Drag Handle -->
+<div aria-hidden="true" class="flex justify-center items-center pt-1">
+<div class="w-12 h-1.5 bg-surface-container-highest rounded-full"></div>
+</div>
+<!-- Modal Header -->
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-tight">Nueva observación</h2>
+<p class="font-body-md text-body-md text-secondary mt-0.5">Registra detalles cotidianos que notes en María.</p>
+</div>
+<button aria-label="Cerrar modal" class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-on-surface transition-colors hover:bg-surface-container-high shrink-0" type="button">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</div>
+<!-- Category Selector Section -->
+<div class="flex flex-col space-y-space-xs">
+<p class="font-label-sm text-label-sm text-secondary tracking-wider uppercase">Categoría</p>
+<!-- Interactive Chips with >=48dp touch targets -->
+<div aria-label="Seleccionar categoría de observación" class="flex flex-wrap gap-2.5" role="radiogroup">
+<!-- Selected Pill 1: Ánimo -->
+<button aria-checked="true" class="h-12 px-space-md rounded-full bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-space-xs shadow-sm transition-transform active:scale-95" role="radio" type="button">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">sentiment_satisfied</span>
+<span>Ánimo</span>
+<span class="material-symbols-outlined text-[18px] ml-0.5">check</span>
+</button>
+<!-- Pill 2: Movilidad -->
+<button aria-checked="false" class="h-12 px-space-md rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xs transition-colors hover:bg-surface-container active:scale-95" role="radio" type="button">
+<span class="material-symbols-outlined text-[20px]">directions_walk</span>
+<span>Movilidad</span>
+</button>
+<!-- Pill 3: Fatiga -->
+<button aria-checked="false" class="h-12 px-space-md rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xs transition-colors hover:bg-surface-container active:scale-95" role="radio" type="button">
+<span class="material-symbols-outlined text-[20px]">battery_alert</span>
+<span>Fatiga</span>
+</button>
+<!-- Pill 4: Medicación -->
+<button aria-checked="false" class="h-12 px-space-md rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xs transition-colors hover:bg-surface-container active:scale-95" role="radio" type="button">
+<span class="material-symbols-outlined text-[20px]">medication</span>
+<span>Medicación</span>
+</button>
+<!-- Pill 5: Otro -->
+<button aria-checked="false" class="h-12 px-space-md rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xs transition-colors hover:bg-surface-container active:scale-95" role="radio" type="button">
+<span class="material-symbols-outlined text-[20px]">edit_note</span>
+<span>Otro</span>
+</button>
+</div>
+</div>
+<!-- Text Note Input Section -->
+<div class="flex flex-col space-y-space-xs">
+<label class="font-label-sm text-label-sm text-secondary tracking-wider uppercase" for="caregiver-observation-text">
+        ¿Qué notaste?
+      </label>
+<div class="relative w-full rounded bg-surface-container-low p-space-sm focus-within:bg-surface-container transition-colors">
+<textarea class="w-full bg-transparent text-on-surface font-body-md text-body-md resize-none outline-none placeholder:text-outline" id="caregiver-observation-text" placeholder="Describe lo que observaste (comportamiento, equilibrio, energía...)" rows="3">Estuvo más callada en la tarde. Parecía con la energía más baja de lo habitual al sentarse a la mesa.</textarea>
+<!-- Accessible Voice Dictation Pill Button -->
+<div class="flex justify-end pt-space-xs">
+<button aria-label="Dictar observación por voz" class="h-11 px-space-md rounded-full bg-secondary-container text-on-secondary-fixed-variant font-label-md text-label-md flex items-center gap-space-xs shadow-sm hover:opacity-90 active:scale-95 transition-all" id="voice-dictation-btn" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">mic</span>
+<span class="font-label-md text-label-md text-primary">Dictar por voz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Date & Time Row -->
+<div class="flex items-center justify-between py-space-sm px-space-xs bg-surface-container-low rounded">
+<div class="flex items-center gap-space-xs text-on-surface">
+<span class="material-symbols-outlined text-[22px] text-primary">schedule</span>
+<span class="font-label-md text-label-md">Hoy, 6:10 p. m.</span>
+</div>
+<button class="h-12 px-space-sm rounded-full text-primary font-label-md text-label-md flex items-center gap-1 hover:bg-surface-container-high transition-colors" type="button">
+<span>Cambiar</span>
+<span class="material-symbols-outlined text-[18px]">edit_calendar</span>
+</button>
+</div>
+<!-- Private Caregiver Safeguard Reminder Card -->
+<div class="w-full bg-tertiary-fixed rounded p-space-sm flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-surface-container-lowest flex items-center justify-center text-tertiary shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-tertiary-fixed-variant leading-snug">
+        Esta nota quedará en tu bitácora de cuidador para compartir en consulta médica.
+      </p>
+</div>
+<!-- Primary Action Button -->
+<div class="pt-space-xs">
+<button class="w-full h-14 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-md transition-all active:scale-[0.98] hover:shadow-lg" id="save-observation-btn" type="button">
+<span class="material-symbols-outlined text-[22px]">check_circle</span>
+<span>Guardar observación</span>
+</button>
+</div>
+</section>
+</div>
+<script>
+  (function() {
+    const chips = document.querySelectorAll('[role="radio"]');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => {
+          c.setAttribute('aria-checked', 'false');
+          c.className = 'h-12 px-space-md rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-space-xs transition-colors hover:bg-surface-container active:scale-95';
+          const existingCheck = c.querySelector('.check-indicator');
+          if (existingCheck) existingCheck.remove();
+        });
+        chip.setAttribute('aria-checked', 'true');
+        chip.className = 'h-12 px-space-md rounded-full bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-space-xs shadow-sm transition-transform active:scale-95';
+        if (!chip.querySelector('.check-indicator')) {
+          const check = document.createElement('span');
+          check.className = 'material-symbols-outlined text-[18px] ml-0.5 check-indicator';
+          check.innerText = 'check';
+          chip.appendChild(check);
+        }
+      });
+    });
+
+    const micBtn = document.getElementById('voice-dictation-btn');
+    if (micBtn) {
+      micBtn.addEventListener('click', () => {
+        const textLabel = micBtn.querySelector('span:last-child');
+        const icon = micBtn.querySelector('.material-symbols-outlined');
+        if (textLabel.innerText === 'Dictar por voz') {
+          textLabel.innerText = 'Escuchando...';
+          icon.classList.add('animate-pulse');
+        } else {
+          textLabel.innerText = 'Dictar por voz';
+          icon.classList.remove('animate-pulse');
+        }
+      });
+    }
+  })();
+</script></main></body></html>

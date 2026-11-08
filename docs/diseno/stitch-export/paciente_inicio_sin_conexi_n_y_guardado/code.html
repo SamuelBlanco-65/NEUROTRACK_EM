@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#fcf9f4;color:#1c1c19;font-family:'Atkinson Hyperlegible Next',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container-highest": "#e5e2dd", "on-secondary": "#ffffff", "on-surface-variant": "#40484a", "surface-bright": "#fcf9f4", "tertiary-fixed": "#f3dfcd", "primary-container": "#1e5a66", "tertiary-fixed-dim": "#d6c3b2", "on-error": "#ffffff", "surface-container-high": "#ebe8e3", "on-secondary-container": "#576768", "on-primary-fixed-variant": "#0b4e5a", "on-primary-container": "#98cfdd", "on-primary": "#ffffff", "error": "#ba1a1a", "tertiary": "#46392d", "outline": "#70787b", "outline-variant": "#bfc8ca", "on-primary-fixed": "#001f25", "on-tertiary-fixed": "#241a0f", "inverse-surface": "#31302d", "secondary-fixed-dim": "#b9cacb", "on-error-container": "#93000a", "surface-container": "#f0ede9", "surface": "#fcf9f4", "error-container": "#ffdad6", "on-secondary-fixed-variant": "#3a494b", "secondary-fixed": "#d5e6e7", "on-background": "#1c1c19", "on-tertiary": "#ffffff", "on-tertiary-fixed-variant": "#514437", "surface-container-lowest": "#ffffff", "on-surface": "#1c1c19", "surface-container-low": "#f6f3ee", "surface-tint": "#2c6672", "inverse-primary": "#98cfdd", "primary-fixed-dim": "#98cfdd", "secondary": "#526162", "background": "#fcf9f4", "on-tertiary-container": "#d6c3b2", "tertiary-container": "#5e5043", "surface-dim": "#dcdad5", "primary-fixed": "#b3ecfa", "inverse-on-surface": "#f3f0eb", "primary": "#00424d", "surface-variant": "#e5e2dd", "secondary-container": "#d5e6e7", "on-secondary-fixed": "#0f1e1f" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "gutter": "1rem", "margin-mobile": "1.25rem", "space-md": "1rem", "gutter-mobile": "1rem", "space-xs": "0.375rem", "space-sm": "0.75rem", "space-lg": "1.5rem", "margin": "1.25rem", "space-xl": "2.25rem" }, fontFamily: { "headline-lg": ["Atkinson Hyperlegible Next"], "label-lg": ["Atkinson Hyperlegible Next"], "body-lg": ["Atkinson Hyperlegible Next"], "headline-md": ["Atkinson Hyperlegible Next"], "headline-sm": ["Atkinson Hyperlegible Next"], "label-sm": ["Atkinson Hyperlegible Next"], "body-sm": ["Atkinson Hyperlegible Next"], "label-md": ["Atkinson Hyperlegible Next"], "body-md": ["Atkinson Hyperlegible Next"] }, fontSize: { "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "label-lg": ["17px", { "lineHeight": "24px", "fontWeight": "700" }], "body-lg": ["19px", { "lineHeight": "28px", "fontWeight": "400" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "700" }], "label-sm": ["13px", { "lineHeight": "18px", "fontWeight": "700" }], "body-sm": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-md": ["15px", { "lineHeight": "20px", "fontWeight": "700" }], "body-md": ["17px", { "lineHeight": "26px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe"><div class="h-16 px-margin flex items-center justify-between shadow-[0_1px_8px_rgba(72,54,38,0.04)]"><div class="flex items-center min-w-0 pr-space-sm"><h1 class="font-headline-sm text-headline-sm text-on-surface truncate">Inicio</h1></div><div class="flex items-center justify-end"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full px-margin-mobile pt-16 pb-24 bg-surface"><div class="flex flex-col w-full space-y-space-lg pb-10">
+<!-- Offline Notice Banner -->
+<div class="w-full bg-tertiary-fixed rounded-DEFAULT p-space-sm shadow-sm flex items-center gap-space-sm text-on-tertiary-fixed-variant">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed-dim/40 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px] text-tertiary">cloud_off</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-sm text-body-sm text-tertiary leading-snug">
+        Sin conexión. Lo que registres se guardará y se enviará después.
+      </p>
+</div>
+</div>
+<!-- Warm Personal Greeting -->
+<section class="flex flex-col space-y-space-xs">
+<span class="font-label-md text-label-md text-secondary tracking-wide">Jueves 24 de octubre</span>
+<div class="flex items-baseline justify-between">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Hola, María</h2>
+<span class="inline-flex items-center px-space-xs py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+        Paso tranquilo
+      </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">¿Cómo acompaña el cuerpo esta mañana?</p>
+</section>
+<!-- Interactive Check-in Hero Card -->
+<section class="bg-surface-container-lowest rounded-lg p-space-lg shadow-sm flex flex-col space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">spa</span>
+<span class="font-label-md text-label-md text-primary">Chequeo diario</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">Tómate tu tiempo</span>
+</div>
+<!-- Quick Sensation Feeling Chips -->
+<div class="flex flex-wrap gap-space-xs" id="energy-chips">
+<button class="energy-chip min-h-[48px] px-space-md py-space-xs rounded-full bg-secondary-container text-on-secondary-fixed font-label-md text-label-md flex items-center gap-1.5 transition-all shadow-sm active:scale-95" type="button">
+<span class="w-2.5 h-2.5 rounded-full bg-primary shrink-0"></span>
+        Con energía
+      </button>
+<button class="energy-chip min-h-[48px] px-space-md py-space-xs rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 transition-all active:scale-95" type="button">
+<span>Fatiga leve</span>
+</button>
+<button class="energy-chip min-h-[48px] px-space-md py-space-xs rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 transition-all active:scale-95" type="button">
+<span>Con pesadez</span>
+</button>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full h-14 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-sm hover:opacity-95 active:scale-[0.99] transition-all" id="btn-registrar" type="button">
+<span class="material-symbols-outlined text-[24px]">favorite</span>
+<span>Registrar cómo me siento</span>
+</button>
+</section>
+<!-- Daily Schedule Section ("Tu plan de hoy") -->
+<section class="flex flex-col space-y-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Tu plan de hoy</h3>
+<span class="font-label-sm text-label-sm text-secondary">3 pautas</span>
+</div>
+<div class="flex flex-col space-y-space-xs">
+<!-- Item 1: Medication (Done) -->
+<article class="min-h-[56px] p-space-md rounded-DEFAULT bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">medication</span>
+</div>
+<div class="min-w-0">
+<h4 class="font-label-md text-label-md text-on-surface truncate">Medicación matutina</h4>
+<p class="font-body-sm text-body-sm text-secondary">9:00 a.m. • Dosis habitual</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5 px-space-sm py-1.5 rounded-full bg-surface-container-highest text-secondary shrink-0">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-sm text-label-sm font-bold text-on-surface">Tomada</span>
+</div>
+</article>
+<!-- Item 2: Stretching (Active/Next) -->
+<article class="min-h-[56px] p-space-md rounded-DEFAULT bg-surface-container-lowest shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary text-[20px]">self_improvement</span>
+</div>
+<div class="min-w-0">
+<h4 class="font-label-md text-label-md text-on-surface truncate">Estiramiento suave</h4>
+<p class="font-body-sm text-body-sm text-secondary">11:00 a.m. • 10 min en silla</p>
+</div>
+</div>
+<button class="h-10 min-w-[96px] px-space-md rounded-full bg-secondary-container text-on-secondary-fixed font-label-md text-label-md flex items-center justify-center hover:opacity-90 active:scale-95 transition-all shrink-0" type="button">
+          Empezar
+        </button>
+</article>
+<!-- Item 3: Active Rest (Pending) -->
+<article class="min-h-[56px] p-space-md rounded-DEFAULT bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-[20px]">bedtime</span>
+</div>
+<div class="min-w-0">
+<h4 class="font-label-md text-label-md text-on-surface truncate">Pausa activa</h4>
+<p class="font-body-sm text-body-sm text-secondary">4:30 p.m. • Respiración guiada</p>
+</div>
+</div>
+<button class="h-10 min-w-[84px] px-space-sm rounded-full bg-surface-container-lowest text-on-surface font-label-md text-label-md shadow-sm flex items-center justify-center hover:bg-surface-container-high active:scale-95 transition-all shrink-0" type="button">
+          Marcar
+        </button>
+</article>
+</div>
+</section>
+<!-- Weekly Consistency Card ("Esta semana") -->
+<section class="bg-surface-container-lowest rounded-lg p-space-lg shadow-sm flex flex-col space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">calendar_month</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Esta semana</h3>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">4 de 7 días</span>
+</div>
+<!-- 7 Day Circles Tracker -->
+<div class="grid grid-cols-7 gap-1 text-center">
+<!-- Lun: Completed -->
+<div class="flex flex-col items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary">L</span>
+<div class="w-9 h-9 rounded-full bg-secondary-container text-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<!-- Mar: Completed -->
+<div class="flex flex-col items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary">M</span>
+<div class="w-9 h-9 rounded-full bg-secondary-container text-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<!-- Mie: Completed -->
+<div class="flex flex-col items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary">X</span>
+<div class="w-9 h-9 rounded-full bg-secondary-container text-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<!-- Jue: Today (Saved) -->
+<div class="flex flex-col items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-primary font-bold">J</span>
+<div class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm ring-offset-2">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<!-- Vie: Future -->
+<div class="flex flex-col items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary">V</span>
+<div class="w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant/40 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+</div>
+</div>
+<!-- Sab: Future/Rest -->
+<div class="flex flex-col items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary">S</span>
+<div class="w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant/40 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+</div>
+</div>
+<!-- Dom: Future/Rest -->
+<div class="flex flex-col items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary">D</span>
+<div class="w-9 h-9 rounded-full bg-surface-container-high text-on-surface-variant/40 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+</div>
+</div>
+</div>
+<!-- Reassuring Message -->
+<div class="rounded-DEFAULT bg-surface-container-low p-space-sm flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">sentiment_satisfied</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+        Registraste 4 días. Los días de descanso también cuentan y cuidan tu bienestar.
+      </p>
+</div>
+</section>
+<!-- Feedback Toast / Snackbar Floating Above Tabbar -->
+<div class="sticky bottom-4 z-40 w-full flex justify-center px-space-xs pointer-events-auto" id="save-toast">
+<div class="w-full max-w-sm h-14 rounded-full bg-[#123C44] text-white px-space-lg flex items-center justify-between shadow-xl transition-all duration-300 transform translate-y-0">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-7 h-7 rounded-full bg-[#2F6B4F] flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-label-md text-label-md text-white tracking-wide truncate">Registro guardado</span>
+</div>
+<button aria-label="Cerrar notificación" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 active:scale-90 text-white/80 transition-colors" onclick="document.getElementById('save-toast').classList.add('opacity-0','pointer-events-none')" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interaction for Chip selection with tremor-safe tap target
+  const chips = document.querySelectorAll('.energy-chip');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => {
+        c.className = 'energy-chip min-h-[48px] px-space-md py-space-xs rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 transition-all active:scale-95';
+        const dot = c.querySelector('.energy-dot');
+        if (dot) dot.remove();
+      });
+      chip.className = 'energy-chip min-h-[48px] px-space-md py-space-xs rounded-full bg-secondary-container text-on-secondary-fixed font-label-md text-label-md flex items-center gap-1.5 transition-all shadow-sm active:scale-95';
+      const newDot = document.createElement('span');
+      newDot.className = 'w-2.5 h-2.5 rounded-full bg-primary shrink-0 energy-dot';
+      chip.prepend(newDot);
+    });
+  });
+
+  // Re-trigger feedback toast on button tap
+  const btnRegistrar = document.getElementById('btn-registrar');
+  const toast = document.getElementById('save-toast');
+  if (btnRegistrar && toast) {
+    btnRegistrar.addEventListener('click', () => {
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(72,54,38,0.05)]" data-active-classes="text-primary font-bold [&amp;&gt;div]:bg-secondary-container [&amp;&gt;div]:text-primary [&amp;&gt;div]:shadow-sm"><div class="flex justify-around items-center h-20 px-space-xs"><a aria-current="page" class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 transition-all text-primary font-bold [&amp;&gt;div]:bg-secondary-container [&amp;&gt;div]:text-primary [&amp;&gt;div]:shadow-sm" data-path="inicio" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">home</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Inicio</span></a><a class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-all hover:text-on-surface" data-path="calendario" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">calendar_today</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Calendario</span></a><a class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-all hover:text-on-surface" data-path="actividades" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">checklist</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Actividades</span></a><a class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-all hover:text-on-surface" data-path="progreso" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">monitoring</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Progreso</span></a><a class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-all hover:text-on-surface" data-path="apoyo" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">diversity_1</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Apoyo</span></a></div></nav></body></html>

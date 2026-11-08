@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#fcf9f4;color:#1c1c19;font-family:'Atkinson Hyperlegible Next',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container-highest": "#e5e2dd", "on-secondary": "#ffffff", "on-surface-variant": "#40484a", "surface-bright": "#fcf9f4", "tertiary-fixed": "#f3dfcd", "primary-container": "#1e5a66", "tertiary-fixed-dim": "#d6c3b2", "on-error": "#ffffff", "surface-container-high": "#ebe8e3", "on-secondary-container": "#576768", "on-primary-fixed-variant": "#0b4e5a", "on-primary-container": "#98cfdd", "on-primary": "#ffffff", "error": "#ba1a1a", "tertiary": "#46392d", "outline": "#70787b", "outline-variant": "#bfc8ca", "on-primary-fixed": "#001f25", "on-tertiary-fixed": "#241a0f", "inverse-surface": "#31302d", "secondary-fixed-dim": "#b9cacb", "on-error-container": "#93000a", "surface-container": "#f0ede9", "surface": "#fcf9f4", "error-container": "#ffdad6", "on-secondary-fixed-variant": "#3a494b", "secondary-fixed": "#d5e6e7", "on-background": "#1c1c19", "on-tertiary": "#ffffff", "on-tertiary-fixed-variant": "#514437", "surface-container-lowest": "#ffffff", "on-surface": "#1c1c19", "surface-container-low": "#f6f3ee", "surface-tint": "#2c6672", "inverse-primary": "#98cfdd", "primary-fixed-dim": "#98cfdd", "secondary": "#526162", "background": "#fcf9f4", "on-tertiary-container": "#d6c3b2", "tertiary-container": "#5e5043", "surface-dim": "#dcdad5", "primary-fixed": "#b3ecfa", "inverse-on-surface": "#f3f0eb", "primary": "#00424d", "surface-variant": "#e5e2dd", "secondary-container": "#d5e6e7", "on-secondary-fixed": "#0f1e1f" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "gutter": "1rem", "margin-mobile": "1.25rem", "space-md": "1rem", "gutter-mobile": "1rem", "space-xs": "0.375rem", "space-sm": "0.75rem", "space-lg": "1.5rem", "margin": "1.25rem", "space-xl": "2.25rem" }, fontFamily: { "headline-lg": ["Atkinson Hyperlegible Next"], "label-lg": ["Atkinson Hyperlegible Next"], "body-lg": ["Atkinson Hyperlegible Next"], "headline-md": ["Atkinson Hyperlegible Next"], "headline-sm": ["Atkinson Hyperlegible Next"], "label-sm": ["Atkinson Hyperlegible Next"], "body-sm": ["Atkinson Hyperlegible Next"], "label-md": ["Atkinson Hyperlegible Next"], "body-md": ["Atkinson Hyperlegible Next"] }, fontSize: { "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "label-lg": ["17px", { "lineHeight": "24px", "fontWeight": "700" }], "body-lg": ["19px", { "lineHeight": "28px", "fontWeight": "400" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "700" }], "label-sm": ["13px", { "lineHeight": "18px", "fontWeight": "700" }], "body-sm": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-md": ["15px", { "lineHeight": "20px", "fontWeight": "700" }], "body-md": ["17px", { "lineHeight": "26px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe"><div class="h-16 px-margin flex items-center justify-between shadow-[0_1px_8px_rgba(72,54,38,0.04)]"><div class="flex items-center min-w-0 pr-space-sm"><h1 class="font-headline-sm text-headline-sm text-on-surface truncate">Inicio</h1></div><div class="flex items-center justify-end"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full px-margin-mobile pt-16 pb-24 bg-surface"><div class="flex flex-col w-full pb-8 space-y-space-xl">
+<!-- 1. Bloque de Saludo -->
+<section class="flex flex-col pt-space-sm px-space-xs">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Hola, María</h2>
+<p class="font-body-md text-body-md text-secondary mt-1">Jueves 24 de octubre</p>
+</section>
+<!-- 2. Hero Card: Estado del Día -->
+<section class="bg-tertiary-fixed rounded-[1.5rem] p-5 shadow-[0_4px_16px_rgba(72,54,38,0.06)] flex flex-col space-y-space-md">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-tertiary-fixed">¿Cómo te sientes hoy?</h3>
+<p class="font-body-sm text-body-sm text-tertiary mt-1">Toca lo que notes. Puedes cambiarlo después.</p>
+</div>
+<!-- Chips táctiles para registro -->
+<div class="flex flex-wrap gap-2.5 pt-1" id="symptom-chips">
+<button class="symptom-chip min-h-[48px] px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-2 shadow-sm transition-transform active:scale-95 text-left" data-state="idle" type="button">
+<span class="material-symbols-outlined text-[20px] text-tertiary">battery_low</span>
+<span class="font-label-md text-label-md">Fatiga</span>
+</button>
+<button class="symptom-chip min-h-[48px] px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-2 shadow-sm transition-transform active:scale-95 text-left" data-state="idle" type="button">
+<span class="material-symbols-outlined text-[20px] text-tertiary">pulse_alert</span>
+<span class="font-label-md text-label-md">Dolor</span>
+</button>
+<button class="symptom-chip min-h-[48px] px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-2 shadow-sm transition-transform active:scale-95 text-left" data-state="idle" type="button">
+<span class="material-symbols-outlined text-[20px] text-tertiary">visibility</span>
+<span class="font-label-md text-label-md">Visión</span>
+</button>
+<button class="symptom-chip min-h-[48px] px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-2 shadow-sm transition-transform active:scale-95 text-left" data-state="idle" type="button">
+<span class="material-symbols-outlined text-[20px] text-tertiary">accessibility_new</span>
+<span class="font-label-md text-label-md">Equilibrio</span>
+</button>
+<button class="symptom-chip min-h-[48px] px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-2 shadow-sm transition-transform active:scale-95 text-left" data-state="idle" type="button">
+<span class="material-symbols-outlined text-[20px] text-tertiary">psychology</span>
+<span class="font-label-md text-label-md">Concentración</span>
+</button>
+<button class="symptom-chip min-h-[48px] px-4 py-2.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-2 shadow-sm transition-transform active:scale-95 text-left" data-state="idle" type="button">
+<span class="material-symbols-outlined text-[20px] text-tertiary">sentiment_satisfied</span>
+<span class="font-label-md text-label-md">Ánimo</span>
+</button>
+<button class="symptom-chip min-h-[48px] px-4 py-2.5 rounded-full bg-surface-container-low text-on-tertiary-fixed-variant flex items-center gap-2 shadow-sm transition-transform active:scale-95 text-left" data-state="idle" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">spark</span>
+<span class="font-label-md text-label-md">Me siento bien</span>
+</button>
+</div>
+<!-- Botón Principal -->
+<div class="pt-2">
+<button class="w-full h-14 min-h-[56px] rounded-full bg-primary-container text-on-primary flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98]" id="btn-save-checkin" type="button">
+<span class="material-symbols-outlined text-[24px]">favorite</span>
+<span class="font-label-lg text-label-lg">Registrar cómo me siento</span>
+</button>
+</div>
+</section>
+<!-- 3. Sección: Tu Plan de Hoy -->
+<section class="flex flex-col space-y-space-md">
+<div class="px-space-xs">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Tu plan de hoy</h3>
+</div>
+<div class="flex flex-col space-y-3">
+<!-- Fila 1: Medicación -->
+<article class="bg-surface-container rounded-[1rem] p-4 flex items-center justify-between gap-3 shadow-sm min-h-[56px]">
+<div class="flex items-center gap-3.5 min-w-0">
+<div class="flex flex-col items-center justify-center shrink-0 w-12 text-center">
+<span class="font-label-md text-label-md text-on-surface">9:00</span>
+<span class="font-body-sm text-body-sm text-secondary -mt-1">a. m.</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[22px]" style="font-variation-settings: 'FILL' 1;">medication</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-label-md text-label-md text-on-surface leading-snug">Medicación de la mañana</h4>
+<p class="font-body-sm text-body-sm text-secondary">Fingolimod 0,5 mg</p>
+</div>
+</div>
+<div class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low text-primary-container">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="font-label-sm text-label-sm">Tomada</span>
+</div>
+</article>
+<!-- Fila 2: Estiramiento -->
+<article class="bg-surface-container rounded-[1rem] p-4 flex items-center justify-between gap-3 shadow-sm min-h-[56px]">
+<div class="flex items-center gap-3.5 min-w-0">
+<div class="flex flex-col items-center justify-center shrink-0 w-12 text-center">
+<span class="font-label-md text-label-md text-on-surface">11:00</span>
+<span class="font-body-sm text-body-sm text-secondary -mt-1">a. m.</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[22px]">self_improvement</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-label-md text-label-md text-on-surface leading-snug">Estiramiento y respiración suave</h4>
+<p class="font-body-sm text-body-sm text-secondary">10 min · Se puede hacer sentada</p>
+</div>
+</div>
+<button class="shrink-0 min-h-[48px] min-w-[76px] px-4 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md shadow-sm active:scale-95 transition-transform flex items-center justify-center" type="button">
+          Empezar
+        </button>
+</article>
+<!-- Fila 3: Pausa activa -->
+<article class="bg-surface-container rounded-[1rem] p-4 flex items-center justify-between gap-3 shadow-sm min-h-[56px]">
+<div class="flex items-center gap-3.5 min-w-0">
+<div class="flex flex-col items-center justify-center shrink-0 w-12 text-center">
+<span class="font-label-md text-label-md text-on-surface">4:30</span>
+<span class="font-body-sm text-body-sm text-secondary -mt-1">p. m.</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[22px]">water_drop</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-label-md text-label-md text-on-surface leading-snug">Pausa activa e hidratación</h4>
+<p class="font-body-sm text-body-sm text-secondary">Vaso con agua y descanso ocular</p>
+</div>
+</div>
+<button class="shrink-0 min-h-[48px] min-w-[76px] px-4 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md shadow-sm active:scale-95 transition-transform flex items-center justify-center" type="button">
+          Marcar
+        </button>
+</article>
+</div>
+</section>
+<!-- 4. Resumen Semanal -->
+<section class="bg-surface-container-lowest rounded-[1rem] p-4 shadow-[0_4px_16px_rgba(72,54,38,0.06)] flex flex-col space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Esta semana</h3>
+<span class="font-label-sm text-label-sm text-secondary">Semana 43</span>
+</div>
+<!-- 7 Días de la semana -->
+<div class="grid grid-cols-7 gap-1.5 py-1">
+<!-- Lunes (Registrado) -->
+<div class="flex flex-col items-center gap-1">
+<span class="font-label-sm text-label-sm text-secondary">L</span>
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+</div>
+<!-- Martes (Registrado) -->
+<div class="flex flex-col items-center gap-1">
+<span class="font-label-sm text-label-sm text-secondary">M</span>
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+</div>
+<!-- Miércoles (Registrado) -->
+<div class="flex flex-col items-center gap-1">
+<span class="font-label-sm text-label-sm text-secondary">X</span>
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+</div>
+<!-- Jueves (Hoy) -->
+<div class="flex flex-col items-center gap-1">
+<span class="font-label-sm text-label-sm text-primary font-bold">J</span>
+<div class="w-10 h-10 rounded-full bg-secondary-container text-primary flex items-center justify-center shadow-sm">
+<span class="font-label-md text-label-md">Hoy</span>
+</div>
+</div>
+<!-- Viernes (Futuro) -->
+<div class="flex flex-col items-center gap-1">
+<span class="font-label-sm text-label-sm text-secondary">V</span>
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-secondary flex items-center justify-center">
+<span class="font-label-sm text-label-sm">25</span>
+</div>
+</div>
+<!-- Sábado (Futuro) -->
+<div class="flex flex-col items-center gap-1">
+<span class="font-label-sm text-label-sm text-secondary">S</span>
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-secondary flex items-center justify-center">
+<span class="font-label-sm text-label-sm">26</span>
+</div>
+</div>
+<!-- Domingo (Futuro) -->
+<div class="flex flex-col items-center gap-1">
+<span class="font-label-sm text-label-sm text-secondary">D</span>
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-secondary flex items-center justify-center">
+<span class="font-label-sm text-label-sm">27</span>
+</div>
+</div>
+</div>
+<div class="pt-1 flex flex-col space-y-3">
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+        Registraste 4 días. Los días de descanso también cuentan.
+      </p>
+<a class="inline-flex items-center gap-1.5 text-primary font-label-md text-label-md min-h-[48px] self-start focus:outline-none" href="#">
+<span>Ver mi progreso</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</a>
+</div>
+</section>
+</div>
+<script>
+  document.querySelectorAll('.symptom-chip').forEach(button => {
+    button.addEventListener('click', () => {
+      const isSelected = button.getAttribute('data-state') === 'active';
+      if (isSelected) {
+        button.setAttribute('data-state', 'idle');
+        button.classList.remove('bg-primary-container', 'text-on-primary');
+        button.classList.add('bg-surface-container-lowest', 'text-on-surface');
+        const icon = button.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.remove('text-on-primary');
+      } else {
+        button.setAttribute('data-state', 'active');
+        button.classList.remove('bg-surface-container-lowest', 'text-on-surface');
+        button.classList.add('bg-primary-container', 'text-on-primary');
+        const icon = button.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.add('text-on-primary');
+      }
+    });
+  });
+
+  const saveBtn = document.getElementById('btn-save-checkin');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
+      const originalText = saveBtn.innerHTML;
+      saveBtn.innerHTML = `
+        <span class="material-symbols-outlined text-[24px]">done</span>
+        <span class="font-label-lg text-label-lg">¡Registrado con éxito!</span>
+      `;
+      saveBtn.classList.replace('bg-primary-container', 'bg-secondary');
+      setTimeout(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.classList.replace('bg-secondary', 'bg-primary-container');
+      }, 2400);
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(72,54,38,0.05)]" data-active-classes="text-primary font-bold [&amp;&gt;div]:bg-secondary-container [&amp;&gt;div]:text-primary [&amp;&gt;div]:shadow-sm"><div class="flex justify-around items-center h-20 px-space-xs"><a aria-current="page" class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 transition-all text-primary font-bold [&amp;&gt;div]:bg-secondary-container [&amp;&gt;div]:text-primary [&amp;&gt;div]:shadow-sm" data-path="inicio" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">home</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Inicio</span></a><a class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-all hover:text-on-surface" data-path="calendario" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">calendar_today</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Calendario</span></a><a class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-all hover:text-on-surface" data-path="actividades" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">checklist</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Actividades</span></a><a class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-all hover:text-on-surface" data-path="progreso" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">monitoring</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Progreso</span></a><a class="group flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-all hover:text-on-surface" data-path="apoyo" href="#"><div class="w-14 h-8 rounded-full flex items-center justify-center transition-colors mb-0.5"><span class="material-symbols-outlined text-[24px]">diversity_1</span></div><span class="font-label-sm text-label-sm leading-tight tracking-tight">Apoyo</span></a></div></nav></body></html>
