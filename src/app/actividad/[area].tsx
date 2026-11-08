@@ -21,6 +21,7 @@ import {
   movimientoSessionFinished,
   movimientoStepToggled,
   persistAreaLevel,
+  recordActivitySession,
   roundContinued,
   sessionEnded,
   sessionStarted,
@@ -45,6 +46,14 @@ export default function ActividadSesionScreen() {
       dispatch(sessionStarted(area));
     }
   }, [area, session, dispatch]);
+
+  const loggedSessionRef = useRef<SessionState | null>(null);
+  useEffect(() => {
+    if (session && session.phase === 'completada' && loggedSessionRef.current !== session) {
+      loggedSessionRef.current = session;
+      dispatch(recordActivitySession({ area: session.area }));
+    }
+  }, [session, dispatch]);
 
   function exitSession() {
     dispatch(sessionEnded());

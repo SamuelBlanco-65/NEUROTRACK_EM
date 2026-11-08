@@ -93,3 +93,21 @@ export async function listSymptomLogsForMonth(
   if (error) throw toSymptomsError(error);
   return (data as SymptomLogRow[]).map(toSymptomLog);
 }
+
+/** Para la pantalla de Progreso (RF-005): un rango arbitrario en vez de un mes calendario. */
+export async function listSymptomLogsBetween(
+  patientId: string,
+  startISO: string,
+  endISO: string
+): Promise<SymptomLog[]> {
+  const { data, error } = await supabase
+    .from('symptom_logs')
+    .select('id, symptom_type, severity, note, occurred_at')
+    .eq('patient_id', patientId)
+    .gte('occurred_at', startISO)
+    .lt('occurred_at', endISO)
+    .order('occurred_at', { ascending: true });
+
+  if (error) throw toSymptomsError(error);
+  return (data as SymptomLogRow[]).map(toSymptomLog);
+}

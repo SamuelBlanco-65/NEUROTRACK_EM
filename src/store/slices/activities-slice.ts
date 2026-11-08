@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { listAreaProgress, saveAreaLevel } from '@/features/activities/api';
+import { listAreaProgress, logActivitySession, saveAreaLevel } from '@/features/activities/api';
 import { MAX_LEVEL, ROUNDS_PER_SESSION } from '@/features/activities/constants';
 import {
   checkAtencionAnswer,
@@ -82,6 +82,22 @@ export const persistAreaLevel = createAsyncThunk<
   try {
     await saveAreaLevel(patientId, area, level);
     return { area, level };
+  } catch (error) {
+    return rejectWithValue(error as ActivitiesError);
+  }
+});
+
+/** Historial de sesiones completadas, para la pantalla de Progreso (RF-005). Intento único:
+ * si falla por offline, se pierde esa sesión del historial pero no bloquea nada (RNF-012). */
+export const recordActivitySession = createAsyncThunk<
+  void,
+  { area: ActivityArea },
+  { state: RootState; rejectValue: ActivitiesError }
+>('activities/recordSession', async ({ area }, { getState, rejectWithValue }) => {
+  const patientId = getState().auth.session?.userId;
+  if (!patientId) return rejectWithValue({ errorClass: 'inesperado', message: 'No hay sesión activa' });
+  try {
+    await logActivitySession(patientId, area);
   } catch (error) {
     return rejectWithValue(error as ActivitiesError);
   }

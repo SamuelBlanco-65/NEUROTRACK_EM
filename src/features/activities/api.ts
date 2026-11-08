@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import type { ActivitiesError, ActivityArea, AreaProgress } from './types';
+import type { ActivitiesError, ActivityArea, ActivitySession, AreaProgress } from './types';
 
 type PostgrestLikeError = { code: string; message: string };
 
@@ -46,4 +46,31 @@ export async function saveAreaLevel(patientId: string, area: ActivityArea, level
     );
 
   if (error) throw toActivitiesError(error);
+}
+
+/** Registra una sesión completada para el historial de Progreso (RF-005). */
+export async function logActivitySession(patientId: string, area: ActivityArea): Promise<void> {
+  const { error } = await supabase.from('activity_sessions').insert({ patient_id: patientId, area });
+  if (error) throw toActivitiesError(error);
+}
+
+export async function listActivitySessionsBetween(
+  patientId: string,
+  startISO: string,
+  endISO: string
+): Promise<ActivitySession[]> {
+  const { data, error } = await supabase
+    .from('activity_sessions')
+    .select('id, area, completed_at')
+    .eq('patient_id', patientId)
+    .gte('completed_at', startISO)
+    .lt('completed_at', endISO)
+    .order('completed_at', { ascending: true });
+
+  if (error) throw toActivitiesError(error);
+  return (data as { id: string; area: ActivityArea; completed_at: string }[]).map((row) => ({
+    id: row.id,
+    area: row.area,
+    completedAt: row.completed_at,
+  }));
 }

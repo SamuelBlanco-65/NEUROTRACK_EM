@@ -31,3 +31,10 @@ export type MovimientoRound = {
 };
 
 export type RoundResult = 'correcto' | 'incorrecto';
+
+/** Una sesión de actividad completada, para el historial de Progreso (RF-005). */
+export type ActivitySession = {
+  id: string;
+  area: ActivityArea;
+  completedAt: string;
+};
