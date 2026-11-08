@@ -1,8 +1,10 @@
 # Diseño — Neurotrack EM
 
-Propuesta visual. **Pendiente de aprobación** hasta que el usuario lo confirme por escrito.
-Nada de esto se implementa antes de esa aprobación. Los valores de color son una propuesta:
-`accessibility-reviewer` debe validar el contraste y el daltonismo antes de fijarlos.
+**Aprobado para T0** (2026-11-08): los tokens de la sección 2 ya están implementados en
+`src/theme/` y pasaron la auditoría de `accessibility-reviewer` (contraste ≥4.5:1 en ambos
+esquemas, sin hallazgos de severidad alta — ver `docs/REQUISITOS.md` RNF-003/004/005/007/009).
+Los 5 hallazgos menores detectados ya se corrigieron en el código (check visual de selección,
+`accessibilityRole="header"`, `accessibilityState busy`, nota de uso de `outline`).
 
 Regla que manda sobre todo lo demás: si una decisión de diseño contradice el enunciado,
 gana el enunciado, y la contradicción se anota en la sección 7.
@@ -15,35 +17,44 @@ tableros clínicos densos. La lección de MSCopilot manda: menos texto, menos fa
 
 ## 2. Tokens (`src/theme/`)
 
-**Colores** — un color significa siempre lo mismo en toda la app. *(Propuesta a validar.)*
+Implementados a partir del export de Stitch (`docs/diseno/stitch-export/`), paleta Material 3.
+Ver `src/theme/colors.ts`, `typography.ts`, `spacing.ts`.
 
-| Token | Valor (propuesta) | Significado |
+**Colores** — esquema claro tomado literal del export; el **oscuro/bajo brillo es derivado**
+(roles `inverse-*` de M3) porque el export no trae esquema oscuro. *(Pendiente de validación
+de `accessibility-reviewer` en esta sesión — ver resultado abajo.)*
+
+| Rol | Claro | Oscuro (derivado) |
 |---|---|---|
-| `bg` | `#F7FAFC` (claro) / `#14181D` (bajo brillo) | Fondo de pantalla |
-| `surface` | `#FFFFFF` / `#1E242B` | Tarjeta / contenedor |
-| `text` / `textMuted` | `#1A2027` / `#5A6472` (claro) | Texto principal / secundario |
-| `ok` / `warn` / `danger` | `#2E7D5B` / `#B26A00` / `#B23A48` | Estados (siempre con ícono + texto) |
-| `accent` | `#2B6CB0` | Acción principal |
+| `primary` / `onPrimary` | `#00424d` / `#ffffff` | `#98cfdd` / `#00363f` |
+| `secondary` / `onSecondary` | `#526162` / `#ffffff` | `#b9cacb` / `#243536` |
+| `tertiary` / `onTertiary` | `#46392d` / `#ffffff` | `#d6c3b2` / `#3b2e22` |
+| `error` / `onError` | `#ba1a1a` / `#ffffff` | `#ffb4ab` / `#690005` |
+| `background` / `onBackground` | `#fcf9f4` / `#1c1c19` | `#1c1c19` / `#e5e2dd` |
+| `surface` / `onSurface` | `#fcf9f4` / `#1c1c19` | `#1c1c19` / `#e5e2dd` |
 
-Contraste a comprobar antes de aprobar: mínimo 4,5:1 para texto normal, en claro y en bajo
-brillo. Evitar blanco puro sobre negro puro (§V-D4). La paleta se valida contra protanopia,
-deuteranopia y tritanopia (§V-D3). Los estados `ok/warn/danger` **nunca** comunican solo por
-color: siempre acompañan ícono y texto (§V-D3, §V-D6).
+Contraste exigido: mínimo 4,5:1 para texto normal, en claro y en oscuro. Evitar blanco puro
+sobre negro puro (§V-D4) — ninguno de los dos esquemas usa `#000000`/`#ffffff` como superficie.
+La paleta se valida contra protanopia, deuteranopia y tritanopia (§V-D3). Ningún estado se
+comunica solo por color: siempre ícono + texto (§V-D3, §V-D6; ver RNF-006).
 
-**Espaciado:** escala 4 / 8 / 12 / 16 / 24 / 32 · **Radios:** 8 / 12 / 16 ·
-**Área táctil mínima:** 48×48 dp (§V-C).
+**Espaciado:** `xs` 6 · `sm` 12 · `md` 16 · `lg` 24 · `xl` 36 · `margin` 20 (dp).
+**Radios:** `default` 16 · `lg` 32 · `xl` 48 · `full` 9999.
+**Área táctil mínima:** 48×48 dp, vía `MinTouchSize` + `hitSlop` donde aplica (§V-C, RNF-005).
 
-**Tipografía** *(respeta el escalado de fuente del sistema, §V-D2)*
+**Tipografía** — Atkinson Hyperlegible Next (diseñada para baja visión/dislexia), respeta el
+escalado de fuente del sistema (§V-D2):
 
-| Estilo | Tamaño / peso | Uso |
-|---|---|---|
-| Título | 28 / bold | Encabezado de pantalla (uno por pantalla) |
-| Subtítulo | 20 / semibold | Secciones |
-| Cuerpo | 17 / regular | Texto general |
-| Etiqueta | 15 / medium | Controles y metadatos |
+| Estilo | Tamaño / interlineado / peso |
+|---|---|
+| `headlineLg` | 28 / 36 / bold |
+| `headlineMd` | 24 / 32 / bold |
+| `headlineSm` | 20 / 28 / bold |
+| `bodyLg` / `bodyMd` / `bodySm` | 19 / 17 / 15, regular |
+| `labelLg` / `labelMd` / `labelSm` | 17 / 15 / 13, bold |
 
-**Iconografía:** SF Symbols en iOS vía `expo-symbols` y equivalentes en Android; confirmar el
-set y su licencia al implementar y anotarlo en el README si exige atribución.
+**Iconografía:** Material Symbols vía `NativeTabs.Trigger.Icon` (`md="..."`), consistente con
+el export de Stitch; no se usa `expo-symbols` (solo Android, sin iOS en este proyecto).
 
 ## 3. Estructura de pantalla
 Encabezado fijo con el título; contenido desplazable debajo; una acción principal destacada.
