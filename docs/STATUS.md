@@ -1,13 +1,15 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-08 · **Rama:** master · Últimos commits: 2c1190c (feat(T0): base de
-navegación, tema accesible y store Redux Toolkit), 399a8e3 (chore: config+requisitos+diseño),
-741ef4a (Initial commit). **Repo remoto creado y pusheado.**
-**Sin commitear:** `docs/enunciado/aclaraciones.md` — respuestas del profesor de una sesión
-anterior (Dudas 1,2,4,5,6 resueltas + Duda 7 movida a "sin preguntar"), nunca se comiteó.
-No tiene relación con T0; decidir en la próxima sesión si se comitea solo o junto con algo más.
-Un proceso de `npx expo start --android` puede seguir corriendo en background de esta sesión
-(pid 678/680 al cerrar) — revisar con `ps -ef | grep expo` antes de levantar otro.
+**Fecha:** 2026-11-08 · **Rama:** master · Últimos commits: b09139c (feat(T0.5): capa de datos
+y autenticación con Supabase), 2c1190c (feat(T0): base de navegación, tema accesible y store
+Redux Toolkit), 399a8e3 (chore: config+requisitos+diseño), 741ef4a (Initial commit).
+**Repo remoto creado y pusheado.** `git status` limpio: nada sin commitear al cerrar esta sesión.
+**Queda vivo un Metro de esta sesión:** `npx expo start --android` en el puerto **8081**, app
+abierta en el emulador vía Expo Go, lista para que el usuario pruebe T1 manualmente (login,
+registro de síntomas, calendario). **Revisa antes de levantar uno nuevo**: `netstat -ano | grep
+808` y, si sigue vivo, o lo reusas o lo matas con `taskkill //PID <pid> //F` antes de abrir
+otro — tener dos Metro conectados al mismo emulador causó un bug real en una sesión anterior
+(ver "Ya intentado, no repetir").
 
 ## ⚠️ Equipo y co-autoría Git (LEER ANTES DE CUALQUIER COMMIT)
 Proyecto en equipo de 3. **TODO commit debe atribuir a los tres.** El autor es Samuel
@@ -154,16 +156,51 @@ Implicación clave: cada integrante debe escribir y ENTENDER su parte (30% + 40%
   https://stitch.googleapis.com/mcp`) para leer paleta/tipografía/estructura desde Stitch.
 - Proyecto Expo andamiado con la plantilla por defecto de `create-expo`.
 
+## T1 — Síntomas: COMPLETO y verificado en emulador (2026-11-08)
+- **RF-001 (registro) + RF-002 (calendario) Verificados.** Código:
+  - `supabase/migrations/20261108000000_symptom_logs.sql`: tabla `symptom_logs` + RLS
+    (`auth.uid() = patient_id`). **Ya ejecutada por el usuario en el SQL Editor de Supabase.**
+  - `src/features/symptoms/` (types, constants, api, calendar, wizard-header, wizard-actions).
+  - `src/store/slices/symptoms-slice.ts` (draft del wizard + caché de registros por mes),
+    registrado en `src/store/store.ts`.
+  - `src/app/registrar-sintoma/` (paso-1 tipo de síntoma, paso-2 severidad, paso-3 nota+guardar;
+    modal de 3 pasos siguiendo `docs/diseno/stitch-export/paciente_registrar_c_mo_me_siento_paso_2
+    /3`; el paso 1 no está en el export, se diseñó igual a los otros 2 — aprobado por el usuario).
+  - `src/app/(paciente)/calendario.tsx` reescrito (antes era `TabScreenStub`): grid del mes,
+    detalle del día, FAB "Registrar", estados carga/error/vacío.
+  - Ficha completa aprobada por el usuario antes de maquetar (lista de tipos de síntoma fija:
+    Fatiga/Visión borrosa/Dolor/Debilidad/Equilibrio/Otro; dictado por voz del export queda
+    fuera, es REC-001).
+- `typecheck` y `lint` pasan limpio.
+- **Verificado en emulador (`agent-device`/`adb`) con cuenta real de Supabase:**
+  flujo completo paso 1→2→3 dos veces (con nota y sin nota), vuelta automática al calendario,
+  indicador de día y detalle con 1 y luego 2 registros, badge de severidad con ícono+texto.
+  Capturas en `artifacts/t1/`: `wizard-paso1.png`, `wizard-paso2.png`, `wizard-paso3.png`,
+  `calendario-vacio-hoy.png`, `calendario-dia-con-registros.png`.
+- **Bugs reales encontrados y corregidos durante la verificación:**
+  1. `src/app/(auth)/acceder.tsx`: el error de `register` solo se mostraba en `mode === 'login'`;
+     en modo "Crear cuenta" un fallo (correo duplicado, rate limit, etc.) no mostraba nada —
+     parecía que el botón no hacía nada. Arreglado: el error se muestra en ambos modos.
+  2. `src/features/symptoms/api.ts`: `toSymptomsError` usaba `error instanceof PostgrestError`,
+     que en este runtime nunca era `true` (cualquier error de Supabase caía al mensaje genérico
+     "Algo salió mal"). Cambiado a detección por duck-typing (`code`/`message`) + caso explícito
+     para tabla inexistente (`PGRST205`) + `console.warn` para errores verdaderamente inesperados.
+  3. `createSymptomLog` dejaba `occurred_at` al default `now()` del servidor; se cambió a mandar
+     el reloj del dispositivo (`new Date().toISOString()`) para que coincida siempre con el "hoy"
+     que calcula el calendario del lado del cliente.
+- **No verificado con captura dedicada:** estado de error de red del calendario (código revisado,
+  lógicamente correcto) y navegación entre meses con datos.
+- Durante la sesión se encontró un `TurboModuleRegistry: 'RNGetRandomValues' could not be found`
+  causado por el estado nativo/JS desincronizado tras varios *reloads* con `adb am start` sobre
+  un proceso backgrounded — **se resolvió con `adb shell am force-stop host.exp.exponent` +
+  reabrir** (reinicio completo, no solo recarga de JS). Si vuelve a pasar, ese es el arreglo.
+
 ## Siguiente acción concreta
-**T0 y T0.5 comiteados/listos para commitear.** Arrancar **T1 — Síntomas**: pantalla de
-registro de síntomas (RF-001) y calendario (RF-002) contra Supabase, con tabla propia +
-RLS (paciente dueño de sus datos; cuidador solo si hay vínculo autorizado, que llega con T4).
-Usar `/pantalla-nueva` para cada pantalla y `/revisar-ui` contra el export de Stitch antes de
-marcar como Verificado.
-**Recordatorio: cada commit con los 3 Co-Authored-By (ver sección de equipo arriba).**
-**Antes de levantar `npx expo start`: revisar que no quede un proceso de Metro de una sesión
-anterior en otro puerto (`netstat -ano | grep 808`) — causó un bug real esta sesión.**
-Pendientes en paralelo (no bloquean T1):
+**Arrancar T2** (siguiente del plan: actividades de estimulación cognitiva/motriz — RF-003/RF-004)
+o el ítem que el usuario priorice. T1 queda cerrado: RF-001 y RF-002 Verificados en
+`docs/REQUISITOS.md`.
+
+Pendientes en paralelo (no bloquean lo anterior):
 - Confirmar la **fecha de entrega** con el profesor (Duda 3, única duda crítica abierta).
 - Que Amelyn y Mariana **acepten** la invitación de colaboración del repo.
 - Borrar el repo de prueba temporal `coauthor-test` (requiere scope `delete_repo` o hacerlo por web).
@@ -171,6 +208,22 @@ Pendientes en paralelo (no bloquean T1):
   tablas de dominio.
 
 ## Ya intentado, no repetir
+- **No usar coordenadas "a ojo" leídas de una captura para `adb shell input tap`: fallan
+  silenciosamente.** Varias veces un tap que se veía centrado en el botón (según el PNG) no
+  disparaba nada — probablemente porque el PNG se escala (0.3x o el factor que use la captura)
+  y las coordenadas reales del dispositivo no coinciden 1:1 con los píxeles del PNG. **Técnica
+  que sí funciona siempre:** `adb shell uiautomator dump //sdcard/window_dump.xml` +
+  `adb pull //sdcard/window_dump.xml` y leer el `bounds="[x1,y1][x2,y2]"` del elemento por su
+  `resource-id` (el `testID` de RN se expone ahí tal cual) o `content-desc` (el
+  `accessibilityLabel`), y tapear el centro exacto de esos bounds. En Git Bash, usar `//sdcard/…`
+  (doble slash) para que no traduzca la ruta como si fuera de Windows.
+  El `mcp__plugin_expo_expo__automation_*` no sirvió: pide `simulatorSessionId` (EAS Simulator,
+  de pago) o un túnel `expo-mcp` que no estaba conectado con solo pasar `projectRoot`.
+- El autocompletado de Android (Gboard) puede **pisar el contenido de un `TextInput`** con un
+  valor guardado de un intento anterior en el mismo campo, sobre todo justo después de que
+  aparece el teclado. Si un campo muestra texto raro tras escribir, no asumas que tu `input text`
+  falló: limpia con `KEYCODE_MOVE_END` + varios `KEYCODE_DEL` y vuelve a escribir, y verifica con
+  una captura antes de seguir al siguiente campo.
 - **No asumir que basta un proceso de Metro corriendo.** Si una sesión anterior dejó
   `npx expo start` vivo en otro puerto, el emulador se conecta a ambos bundles a la vez y
   produce errores de runtime que parecen bugs de código (p. ej. `Cannot read property 'status'

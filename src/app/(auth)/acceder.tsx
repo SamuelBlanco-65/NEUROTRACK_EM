@@ -182,7 +182,7 @@ export default function AccederScreen() {
             keyboardType="email-address"
             autoComplete="email"
             textContentType="emailAddress"
-            errorText={camposInvalidos.correo ?? (mode === 'login' ? authError?.message : undefined)}
+            errorText={camposInvalidos.correo ?? authError?.message}
             testID="acceder-correo"
           />
           <TextField

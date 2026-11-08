@@ -1,0 +1,95 @@
+import { supabase } from '@/lib/supabase';
+import type { SymptomLog, SymptomLogDraft, SymptomsError } from './types';
+
+type PostgrestLikeError = { code: string; message: string; details?: string; hint?: string };
+
+function isPostgrestLikeError(error: unknown): error is PostgrestLikeError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    'message' in error &&
+    typeof (error as { code: unknown }).code === 'string'
+  );
+}
+
+type SymptomLogRow = {
+  id: string;
+  symptom_type: SymptomLog['symptomType'];
+  severity: SymptomLog['severity'];
+  note: string | null;
+  occurred_at: string;
+};
+
+function toSymptomLog(row: SymptomLogRow): SymptomLog {
+  return {
+    id: row.id,
+    symptomType: row.symptom_type,
+    severity: row.severity,
+    note: row.note,
+    occurredAt: row.occurred_at,
+  };
+}
+
+function toSymptomsError(error: unknown): SymptomsError {
+  if (isPostgrestLikeError(error)) {
+    if (error.code === 'PGRST205') {
+      return {
+        errorClass: 'servidor',
+        message: 'Falta crear la tabla de síntomas en la base de datos (ver supabase/migrations)',
+      };
+    }
+    if (error.code === 'PGRST301' || error.code === '401') {
+      return { errorClass: 'validacion', message: 'Tu sesión expiró, vuelve a iniciar sesión' };
+    }
+    if (error.code.startsWith('23')) {
+      return { errorClass: 'validacion', message: 'Revisa los datos del registro' };
+    }
+    return { errorClass: 'servidor', message: 'Falló el servidor, inténtalo de nuevo en un momento' };
+  }
+  if (error instanceof TypeError) {
+    return { errorClass: 'sin-conexion', message: 'Revisa tu conexión e inténtalo de nuevo' };
+  }
+  console.warn('[symptoms] error inesperado', error);
+  return { errorClass: 'inesperado', message: 'Algo salió mal, inténtalo de nuevo' };
+}
+
+export async function createSymptomLog(patientId: string, draft: SymptomLogDraft): Promise<SymptomLog> {
+  const { data, error } = await supabase
+    .from('symptom_logs')
+    .insert({
+      patient_id: patientId,
+      symptom_type: draft.symptomType,
+      severity: draft.severity,
+      note: draft.note,
+      // Reloj del dispositivo, no el del servidor: así coincide con el "hoy" que ve el
+      // paciente en el calendario (evita que un registro caiga en otro día por desfase horario).
+      occurred_at: new Date().toISOString(),
+    })
+    .select('id, symptom_type, severity, note, occurred_at')
+    .single();
+
+  if (error) throw toSymptomsError(error);
+  return toSymptomLog(data as SymptomLogRow);
+}
+
+/** `month` es 0-indexado (0 = enero), igual que `Date`. */
+export async function listSymptomLogsForMonth(
+  patientId: string,
+  year: number,
+  month: number
+): Promise<SymptomLog[]> {
+  const start = new Date(year, month, 1).toISOString();
+  const end = new Date(year, month + 1, 1).toISOString();
+
+  const { data, error } = await supabase
+    .from('symptom_logs')
+    .select('id, symptom_type, severity, note, occurred_at')
+    .eq('patient_id', patientId)
+    .gte('occurred_at', start)
+    .lt('occurred_at', end)
+    .order('occurred_at', { ascending: true });
+
+  if (error) throw toSymptomsError(error);
+  return (data as SymptomLogRow[]).map(toSymptomLog);
+}
