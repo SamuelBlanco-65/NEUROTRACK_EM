@@ -1,7 +1,7 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-08 · **Rama:** master · Último commit: `df0582b` (feat(T3): historial y
-progreso del paciente, RF-005). Working tree limpio, pusheado a `origin/master`.
+**Fecha:** 2026-11-08 · **Rama:** master · Último commit: `2f6f58f` (feat(T4): módulo del
+cuidador, RF-006/RF-008/RF-012). Working tree limpio tras ese commit.
 
 ## ⚠️ Equipo y co-autoría Git (LEER ANTES DE CUALQUIER COMMIT)
 Proyecto en equipo de 3. **TODO commit debe atribuir a los tres.** El autor es Samuel
