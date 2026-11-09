@@ -168,6 +168,35 @@ y se marca la anterior como **Reemplazada por D-00X**.
 
 ---
 
+## D-010 · Vinculación paciente-cuidador (T4): código de 6 caracteres, sin tabla de perfiles, sin "notas" del paciente
+
+- **Fecha:** 2026-11-08
+- **Estado:** Vigente (RF-012 implementado sin probar, ver `docs/STATUS.md`)
+- **Contexto:** RF-012 exige vínculo con consentimiento explícito y acceso del cuidador
+  restringido por RLS a lo que el paciente autorice (D-002). El export de Stitch sugiere un
+  código de invitación de 6 caracteres y una pantalla de permisos granulares por categoría.
+- **Decisión:**
+  1. **Código corto reclamable, no QR ni enlace profundo**: más simple de implementar sin
+     `expo-camera`/deep linking, y suficiente para el caso de uso (cuidador y paciente están
+     juntos o se llaman por teléfono al vincularse).
+  2. **`caregiver_email`/`caregiver_name` se guardan directo en la fila de `caregiver_links`**
+     en el momento en que el cuidador reclama el código, en vez de hacer join contra
+     `auth.users` desde el cliente — Supabase no expone `auth.users` a `authenticated` por
+     RLS, y crear una tabla de perfiles espejo es más alcance del que da tiempo en esta ronda.
+  3. **El toggle "Mis notas" del export de Stitch se dejó fuera** de los permisos
+     (`share_sintomas`/`share_progreso`/`share_recordatorios` sí se implementaron): no existe
+     ninguna funcionalidad de "notas personales del paciente" en el MVP, así que el permiso no
+     tendría nada que controlar. Si se agrega esa funcionalidad más adelante, se añade el flag.
+- **Alternativas consideradas:** Tabla `profiles` espejo de `auth.users` con trigger de
+  sincronización — da nombres/correos siempre actualizados, pero es infraestructura adicional
+  no pedida por ningún RF; se deja como mejora futura si hace falta en otro módulo.
+- **Consecuencias:** El nombre/correo del cuidador que ve el paciente queda "congelado" al
+  momento de la solicitud (no se actualiza si el cuidador cambia su nombre después). Aceptable
+  para el alcance del semestre.
+- **Requisitos relacionados:** RF-012, RNF-012
+
+---
+
 ## Cosas que el material pedía y quedan fuera (con su razón)
 - **Perfil del médico** — marcado como opcional/futuro en §I-C y §IV-C. (REC-003)
 - **Biomarcadores / sensores / wearables** — requieren validación clínica y años de estudio

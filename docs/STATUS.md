@@ -1,14 +1,7 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-08 · **Rama:** master · Último commit: b42b1df (feat(T1): registro y
-calendario de síntomas, RF-001/RF-002). **Todo el trabajo de T2 de esta sesión queda SIN
-COMMITEAR** (no se pidió commit en ninguna ronda) — ver lista exacta de archivos en
-"Siguiente acción concreta".
-**Queda vivo un Metro de esta sesión** en el puerto **8081** (PID visto en `netstat`: 12484),
-con el emulador conectado y el usuario probando T2 en vivo. **Revisa antes de levantar uno
-nuevo**: `netstat -ano | grep 808` y, si sigue vivo, reúsalo o mátalo con
-`taskkill //PID <pid> //F` antes de abrir otro — tener dos Metro conectados al mismo emulador
-causó un bug real en una sesión anterior (ver "Ya intentado, no repetir").
+**Fecha:** 2026-11-08 · **Rama:** master · Último commit: `df0582b` (feat(T3): historial y
+progreso del paciente, RF-005). Working tree limpio, pusheado a `origin/master`.
 
 ## ⚠️ Equipo y co-autoría Git (LEER ANTES DE CUALQUIER COMMIT)
 Proyecto en equipo de 3. **TODO commit debe atribuir a los tres.** El autor es Samuel
@@ -364,15 +357,161 @@ de la ronda 1; déjalas en `artifacts/t2/` sobrescribiendo las viejas):
 - Con el lector de pantalla activo (TalkBack), si el tiempo alcanza: que cada paso de
   Movimiento y cada figura anuncien su texto/ícono, no solo "botón".
 
-## Siguiente acción concreta
-**T2 cerrado y commiteado** (RF-003, RF-004 Verificados — confirmado por el usuario en
-emulador tras la ronda 4). **Arrancar T3** (historial/progreso, RF-005).
+## T3 — Progreso: COMPLETO y verificado por el usuario en emulador (2026-11-08)
+**RF-005 (historial/comparación de evolución) Verificado.** Código:
+- `src/features/progress/` (`types.ts`, `constants.ts`, `logic.ts` puro — rangos de período,
+  límites de bucket, agregación, insights de tendencia, headline; sin UI, testeable aislado).
+  `MIN_DISTINCT_DAYS_FOR_INSIGHTS = 10` como umbral para la tarjeta de "datos insuficientes".
+- `src/store/slices/progress-slice.ts`: estado `period`/`referenceISO`/`view` + thunk
+  `fetchProgressData` que trae `symptom_logs` y `activity_sessions` en el rango
+  [inicio del período anterior, fin del período actual), registrado en `store.ts`.
+- `src/app/(paciente)/progreso.tsx` reescrito (antes `TabScreenStub`): segmented control
+  Semana/Mes/3 meses, navegación anterior/siguiente, gráfico de barras y vista de tabla
+  intercambiables, hasta 3 insights con ícono+texto (nunca solo color, RNF-006), tarjeta de
+  "datos insuficientes" con barra de progreso hacia el umbral y CTA a registrar síntoma.
+- `src/features/activities/api.ts`: `logActivitySession` / `listActivitySessionsBetween`.
+  `src/features/symptoms/api.ts`: `listSymptomLogsBetween` (rango arbitrario, no mes calendario).
+- `src/store/slices/activities-slice.ts`: thunk `recordActivitySession`, disparado desde
+  `src/app/actividad/[area].tsx` cuando una sesión llega a fase `completada` (intento único,
+  si falla por offline se pierde esa entrada del historial sin bloquear nada, RNF-012).
+- `supabase/migrations/20261110000000_activity_sessions.sql`: tabla `activity_sessions` + RLS
+  (`auth.uid() = patient_id`). **Ya ejecutada por el usuario en el SQL Editor de Supabase.**
+- Gap de accesibilidad corregido antes de verificar: la tarjeta de resumen (ícono + headline)
+  ahora lleva `accessibilityLiveRegion="polite"` — al cambiar de período con el segmented
+  control, TalkBack anuncia el nuevo resumen en vez de quedarse en silencio (antes solo
+  `ScreenState` cubría carga inicial/error, no los refetches posteriores).
+- `typecheck` y `lint` limpios.
+- **Verificado por el usuario en emulador** con datos de prueba insertados directo en
+  Supabase (ver `supabase/seed/`, debajo) — confirmó que el flujo funciona y se ven las
+  estadísticas y los datos. Capturas en `artifacts/t3/`: `progreso-grafico.png`,
+  `progreso-tabla.png`, `progreso-insights.png`, `progreso-insuficiente.png`.
+- **Pendiente, dicho explícitamente por el usuario para después:** comparar visualmente la
+  pantalla contra `docs/diseno/stitch-export/` y ajustar fidelidad si hace falta. También
+  falta el recorrido con TalkBack (mismo pendiente transversal que T0-T2).
+- Commit `df0582b`, con `Co-Authored-By` de Amelyn y Mariana, pusheado a `origin/master`.
+  `docs/REQUISITOS.md` actualizado (RF-005 → Verificado).
 
-Pendiente suelto de T2 (no bloquea T3): el usuario debe ejecutar
-`supabase/migrations/20261109000000_activity_progress.sql` en el SQL Editor de Supabase si
-no lo ha hecho ya, para que `persistAreaLevel` deje de fallar silenciosamente. Y si se quiere
-evidencia fotográfica fiel al diseño final de Memoria/Atención/Movimiento, retomar las
-capturas de `artifacts/t2/` (las actuales son de la ronda 1, visualmente desactualizadas).
+### Scripts de datos de prueba para Progreso (`supabase/seed/`, no son migraciones)
+Se crearon para poder verificar la pantalla sin registrar 10+ días a mano:
+- `progreso_diagnostico.sql`: lista todas las filas de `symptom_logs`/`activity_sessions` de
+  la cuenta y cuenta días distintos dentro de las ventanas exactas de "semana" y "mes", para
+  diagnosticar por qué una vista sigue en "datos insuficientes".
+- `progreso_test_data.sql` (v1, con bug): calculaba fechas como "N días atrás desde `now()`";
+  al correrlo, el "mes pasado" (35-59 días atrás) cayó en septiembre en vez de octubre, y la
+  ventana de "Semana" (~14 días) no alcanzó casi ningún dato del seed. Se deja en el repo como
+  referencia de qué NO hacer, no se borró porque no rompe nada (solo agrega filas extra).
+- `progreso_test_data_v2.sql` (correcto): usa fechas FIJAS ancladas a 2026-10/2026-11 en vez
+  de relativas a `now()`, para que sí caigan dentro de ambas ventanas. Es el que se usó para
+  verificar.
+- Los 3 archivos tienen el placeholder `TU_CORREO@EJEMPLO.COM` sin reemplazar (nadie commiteó
+  un correo real) — hay que sustituirlo por el correo de la cuenta de paciente antes de correr.
+
+## T4 — Módulo del cuidador: RF-006, RF-008 y RF-012 PROBADOS por el usuario en emulador, COMMITEADOS
+El usuario pidió arrancar T4 y dejar la fidelidad visual de `progreso.tsx` contra Stitch para
+después (sigue pendiente, ver T3 arriba). Las 3 RF de T4, las 3 confirmadas funcionando por
+el usuario en emulador con dos cuentas (2026-11-08):
+- **RF-012 (vinculación con consentimiento): probada.** No hay captura en `artifacts/t4/`
+  todavía (el usuario pidió dejarlas para después) — queda como "Implementado sin probar" en
+  `REQUISITOS.md` por la regla de "Verificado solo con evidencia", con una nota de que ya está
+  confirmado funcionalmente. Subir a "Verificado" cuando se tomen las capturas.
+- **RF-006 (observaciones + acompañar) y RF-008 (recordatorios): código escrito en la misma
+  ronda que RF-012, probados después, mismo estado** — funcionan (observación nueva,
+  resumen semanal + mensaje de ánimo, recordatorio creado por el cuidador y marcado "hecho"
+  por el paciente con háptica), pero sin captura todavía; quedan como "Implementado sin
+  probar" con la misma nota.
+
+Código nuevo de las 3 RF, `typecheck`/`lint` limpios, **ya commiteado y pusheado**:
+- `supabase/migrations/20261111000000_caregiver_links.sql`: tabla `caregiver_links`
+  (`patient_id`, `caregiver_id` nullable hasta reclamar, `invite_code` de 6 caracteres,
+  `status` en `pendiente → solicitado → aceptado|rechazado|revocado`, 3 flags de permiso
+  `share_sintomas`/`share_progreso`/`share_recordatorios`). RLS clave: el paciente es el único
+  que puede mover un vínculo a `aceptado` (política `caregiver_links_update_as_patient`); un
+  cuidador solo puede "reclamar" un código (`pendiente` + sin dueño → `solicitado` con su
+  propio `auth.uid()`), nunca auto-aceptarse. **Falta ejecutarla a mano en el SQL Editor.**
+- `src/features/caregiver/{types.ts,api.ts}`: CRUD contra `caregiver_links` + mapeo de errores
+  Postgrest (mismo patrón que `features/symptoms/api.ts`), con una clase de error nueva
+  `codigo-invalido` para cuando el código no existe o ya fue usado (`PGRST116`).
+- `src/store/slices/caregiver-slice.ts`, registrado en `store.ts`: estado separado para el
+  lado paciente (`myInvite`, `incomingRequests`, `myCaregivers`) y el lado cuidador
+  (`myLinksAsCaregiver`, `claimStatus`).
+- `src/app/permisos.tsx` (paciente, ruta top-level, no es tab): código de invitación grande +
+  "Compartir"/"Generar otro", solicitudes entrantes con 3 `Switch` de permiso (no el toggle a
+  medida del export de Stitch — ver nota de fidelidad abajo) + Aceptar/Rechazar, lista de
+  cuidadores con acceso + "Quitar acceso" (con confirmación).
+- `src/app/vincularme.tsx` (cuidador, ruta top-level): input de código de 6 caracteres
+  (reutiliza `TextField`), estado de éxito "Solicitud enviada".
+- `src/app/(cuidador)/inicio.tsx` reescrito (antes `TabScreenStub`): 3 estados — sin vincular
+  (CTA a Vincularme), solicitud pendiente, vinculado (muestra qué compartió el paciente).
+- `src/app/(paciente)/inicio.tsx` reescrito mínimamente (seguía siendo `TabScreenStub` incluso
+  después de T1-T3): se le agregó un botón "persona" en el header que lleva a `/permisos`,
+  porque ese es el punto de entrada que supone el diseño de Stitch ("Perfil &gt; Invitar a
+  alguien") y no existía ninguna pantalla de perfil ni navegación hacia `permisos`/`vincularme`
+  antes de esta ronda. El resto de `inicio.tsx` del paciente sigue siendo un placeholder (no es
+  parte de ningún RF por sí solo); construir el dashboard real queda fuera de esta ronda.
+- **Nota de fidelidad (igual patrón que T2/T3):** el export de Stitch (`paciente_permisos_del_cuidador`,
+  `cuidador_vincularme*`) usa toggles con pastillas "Sí"/"No" a medida y tarjetas con fotos de
+  perfil; se implementó con `Switch` nativo de RNF por tiempo. Pendiente de comparar visualmente
+  si se quiere fidelidad completa.
+- **Decisión nueva, ver D-010 en `DECISIONES.md`:** por qué el código de invitación (no un
+  QR ni un enlace), por qué se guarda `caregiver_email`/`caregiver_name` directo en la fila en
+  vez de hacer join contra `auth.users`, y por qué se dejó fuera el toggle "Mis notas" que sí
+  trae el export de Stitch (no existe funcionalidad de notas del paciente en el MVP).
+
+### RF-006 / RF-008, código nuevo de esta ronda — SIN PROBAR, SIN COMMITEAR
+- `supabase/migrations/20261112000000_caregiver_observations_and_access.sql`: tabla
+  `caregiver_observations` (bitácora privada del cuidador, el paciente NUNCA tiene acceso —
+  política RLS deliberadamente sin `select` para el paciente), tabla `caregiver_cheers`
+  (mensajes de ánimo de una vía, cuidador → paciente, con `read_at` para que el paciente los
+  descarte), y dos políticas RLS NUEVAS que se SUMAN a las de `activity_progress` y
+  `activity_sessions` (no las reemplazan): el cuidador puede `select` esas tablas del paciente
+  solo si existe un `caregiver_links` con `status='aceptado'` y `share_progreso=true`.
+- `supabase/migrations/20261113000000_reminders.sql`: tabla `reminders` (`patient_id`,
+  `created_by`, categoría medicación/cita/bienestar, `scheduled_at`, estado pendiente/hecho).
+  El paciente tiene control total de los suyos; el cuidador puede crear y marcar como "hecho"
+  (no editar ni borrar) solo con vínculo `aceptado` + `share_recordatorios=true`.
+  **Ninguna de las dos migraciones se ha ejecutado en Supabase.**
+- `src/features/caregiver/api.ts` ampliado: `listMyObservations`, `createObservation`,
+  `sendCheer`, `fetchLatestUnreadCheer`, `markCheerRead`.
+- `src/features/reminders/{types.ts,api.ts,constants.ts}` nuevo (mismo patrón de error que
+  `features/symptoms`).
+- `src/store/slices/caregiver-slice.ts` ampliado con thunks para lo anterior, más
+  `fetchCaregiverPatientActivity(patientId)` — trae `activity_progress` +
+  `activity_sessions` de la última semana del paciente que se acompaña, para la pantalla
+  Acompañar. **Nota de lint:** la primera versión de `acompanar.tsx` traía ese fetch con
+  `useState` local + una función async llamada directo en un `useEffect`, y
+  `react-hooks/set-state-in-effect` lo rechazó (mismo tipo de error ya visto con el
+  resaltado de Memoria en T2, ver más abajo en "Ya intentado, no repetir"). Se resolvió
+  moviendo el fetch a un thunk de Redux (`fetchCaregiverPatientActivity`) y dejando que el
+  componente solo despache y lea del store — el patrón que ya usan todas las demás pantallas
+  con datos remotos en este repo (`dispatch(fetchX())` en el efecto, nunca una función local
+  que haga `setState` después de un `await` dentro del cuerpo del efecto).
+- `src/store/slices/reminders-slice.ts` nuevo, registrado en `store.ts`.
+- Pantallas nuevas: `src/app/(cuidador)/observaciones.tsx` (bitácora agrupada por día) +
+  `src/app/nueva-observacion.tsx` (categoría + texto); `src/app/(cuidador)/acompanar.tsx`
+  (resumen semanal + nivel por área + botón de mensaje de ánimo con 3 opciones);
+  `src/app/(cuidador)/recordatorios.tsx` (lista + formulario inline con chips de
+  categoría/hora, sin selector de fecha nativo — se evitó añadir una dependencia nueva a
+  mitad de sesión; "hora" son 4 combinaciones fijas: hoy mañana/tarde/noche, mañana por la
+  mañana). `src/app/(paciente)/inicio.tsx` ampliado: banner del mensaje de ánimo más
+  reciente (con botón de descartar) y lista de "Hoy" con los recordatorios del día y un botón
+  de marcar hecho con háptica (`expo-haptics`, ya instalado desde T2) + ícono de check — así
+  se cubre la "alternativa visual + háptica" de RNF-009/RF-008 sin depender de audio.
+- `typecheck` y `lint` limpios en todo `src/`. **Nada de esto se probó en el emulador.**
+
+## Siguiente acción concreta
+**T4 cerrado, probado por el usuario y commiteado/pusheado.** Queda pendiente, sin bloquear
+nada:
+1. **Tomar capturas en `artifacts/t4/`** de RF-006/RF-008/RF-012 (vinculación, observación
+   nueva, acompañar con mensaje de ánimo, recordatorio marcado hecho) y subir los 3 a
+   "Verificado" en `docs/REQUISITOS.md` — el usuario pidió dejar esto para después.
+2. Comparar `observaciones.tsx`/`acompanar.tsx`/`recordatorios.tsx`/`permisos.tsx`/
+   `vincularme.tsx` contra el export de Stitch (mismo patrón de fidelidad visual diferido
+   que T2/T3, junto con `progreso.tsx`).
+3. Revisar qué queda del MVP sin tocar: RF-007 (selección de perfil, probablemente ya
+   cubierto por el andamiaje de T0 pero sin marcar), RF-009 (apoyo/red de contención, screens
+   `apoyo.tsx` siguen siendo stub en ambos perfiles), RF-010 (subtítulos, no aplica si no hay
+   contenido audiovisual todavía), buena parte de los RNF (TalkBack real, RT-003/RT-004/RT-005
+   sin revisar explícitamente). Decidir con el usuario cuál sigue.
 
 Pendientes en paralelo (no bloquean lo anterior):
 - Confirmar la **fecha de entrega** con el profesor (Duda 3, única duda crítica abierta).
@@ -382,6 +521,14 @@ Pendientes en paralelo (no bloquean lo anterior):
   tablas de dominio.
 
 ## Ya intentado, no repetir
+- **No generes SQL de datos de prueba con fechas relativas a `now()` (p. ej. `now() - interval
+  'N days'`) cuando la pantalla a probar agrega por ventanas de calendario (semana/mes).**
+  Pasó con `progreso_test_data.sql` (T3): "35-59 días atrás" se calculó en el momento de
+  correr el script y cayó en el mes equivocado frente al momento en que el usuario abrió la
+  app, y la ventana de "Semana" (~14 días) quedó casi vacía. **Lo que sí funciona:** fechas
+  FIJAS en el `INSERT` (literales `'2026-10-26 12:00:00+00'`, no `now() - interval`), ancladas
+  a la fecha real de la sesión, y verificar con una consulta de diagnóstico (contar días
+  distintos dentro de la ventana exacta que usa la lógica) antes de asumir que el seed alcanzó.
 - **No uses `useEffect` para derivar/mostrar feedback transitorio de un toque (ej. "resaltar
   la última opción tocada y borrarla sola a los 900ms"): el lint de este repo
   (`react-hooks/set-state-in-effect`, en `eslint.config.js`) lo rechaza como error, no como
@@ -392,6 +539,15 @@ Pendientes en paralelo (no bloquean lo anterior):
   `useRef` solo para guardar el id del `setTimeout` y limpiarlo en el cleanup de un efecto
   vacío (`useEffect(() => () => clearTimeout(ref.current), [])`), que no cuenta como
   "setState en el cuerpo del efecto" porque no llama `setState` ahí.
+- **El mismo lint (`react-hooks/set-state-in-effect`) también rechaza el patrón "fetch de
+  datos remotos con `useState` local + una función async llamada directo en `useEffect`"**
+  (ej. `useEffect(() => { load(); }, [load])` donde `load` hace `await` y luego `setStatus(...)`)
+  — no solo el caso de feedback transitorio de arriba. Pasó en `(cuidador)/acompanar.tsx` (T4)
+  al traer `activity_progress`/`activity_sessions` del paciente acompañado. **Lo que sí pasa el
+  lint, y es el patrón que ya usan todas las pantallas con datos remotos de este repo:** mover
+  el fetch a un thunk de Redux (`createAsyncThunk`) y que el componente solo haga
+  `dispatch(fetchX(...))` en el efecto y lea el resultado del store — nunca `useState` local
+  para datos que vienen de una llamada async disparada en un efecto.
 - **No usar coordenadas "a ojo" leídas de una captura para `adb shell input tap`: fallan
   silenciosamente.** Varias veces un tap que se veía centrado en el botón (según el PNG) no
   disparaba nada — probablemente porque el PNG se escala (0.3x o el factor que use la captura)
@@ -462,7 +618,8 @@ haya algo funcionando. Obligatorio primero; recomendados al final.)_
   Verificado en emulador — ver sección "T1 — Síntomas" arriba.
 - [x] **T2. Actividades** — set reducido (1–2 cognitivas + 1 motriz), dificultad progresiva. (RF-003, RF-004)
   Verificado por el usuario en emulador tras 4 rondas de ajustes — ver sección "T2 — Actividades" arriba.
-- [ ] **T3. Progreso** — historial y comparación actual vs pasado. (RF-005)
+- [x] **T3. Progreso** — historial y comparación actual vs pasado. (RF-005)
+  Verificado por el usuario en emulador con datos de prueba — ver sección "T3 — Progreso" arriba.
 - [ ] **T4. Cuidador** — vinculación con consentimiento, observaciones, recordatorios
   (visual+háptica), acceso sincronizado a lo autorizado. (RF-006, RF-008, RF-012)
 - [ ] **T5. Apoyo/Info** — contenidos de apoyo; subtítulos si hay audiovisual. (RF-009, RF-010)
