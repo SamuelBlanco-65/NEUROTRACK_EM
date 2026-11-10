@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Cuidador · Nueva observación (Modo Oscuro)</title>
+<!-- Google Fonts: Atkinson Hyperlegible Next -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Atkinson Hyperlegible Next"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            darkBase: '#1B1E22',
+            surfaceModal: '#22272E',
+            surfaceElement: '#2A3038',
+            surfaceBorder: '#333A44',
+            surfaceBorderSubtle: '#3A434D',
+            brandTeal: '#236B78',
+            brandTealLight: '#6EC6D6',
+            brandTealSoft: '#223A40',
+            textLight: '#ECE6DA',
+            textHeading: '#F5F1EB',
+            textMuted: '#A2ACB7',
+            pillHandle: '#4A5568',
+            closeBtn: '#2D333B',
+            privacyBg: '#30261C',
+            privacyBorder: '#4A3B2A',
+            privacyIcon: '#E8B482',
+          }
+        }
+      }
+    };
+  </script>
+<!-- Custom Styles for Scroll and Layout -->
+<style data-purpose="layout-and-resets">
+    body {
+      font-family: 'Atkinson Hyperlegible Next', system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: none;
+    }
+    /* Hide scrollbars for clean native mobile look */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-[#121417] text-textLight flex justify-center items-start min-h-screen">
+<!-- Mobile Viewport Simulation Container -->
+<div class="relative w-full max-w-md min-h-screen bg-darkBase flex flex-col shadow-2xl overflow-hidden select-none">
+<!-- BEGIN: BackgroundScreenContent -->
+<!-- Dimmed background content showing the caregiver's previous screen -->
+<div aria-hidden="true" class="w-full flex-1 flex flex-col opacity-25 filter blur-[0.5px] pointer-events-none">
+<!-- Top App Bar in Background -->
+<header class="flex items-center justify-between px-5 pt-7 pb-4 bg-darkBase">
+<div class="flex items-center gap-4">
+<svg class="w-6 h-6 text-textHeading" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-xl font-bold text-textHeading tracking-tight">Nueva Observación</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surfaceElement border border-surfaceBorder flex items-center justify-center">
+<svg class="w-5 h-5 text-textMuted" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+</svg>
+</div>
+</header>
+<!-- Patient Header Info Card -->
+<section class="mx-5 my-2 p-4 rounded-2xl bg-surfaceElement/40 border border-surfaceBorder/40 flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-full bg-brandTeal/20 text-brandTealLight flex items-center justify-center font-bold text-lg">
+          M
+        </div>
+<div>
+<h2 class="text-base font-bold text-textHeading leading-tight">María González</h2>
+<p class="text-xs text-textMuted mt-0.5">Esclerosis Múltiple RR • Seguimiento diario</p>
+</div>
+</section>
+<!-- Log Header -->
+<div class="flex items-center justify-between px-5 mt-4 mb-2">
+<span class="text-xs font-semibold uppercase tracking-wider text-textMuted">Bitácora de observaciones</span>
+<span class="text-xs text-textMuted font-medium">3 registradas</span>
+</div>
+<!-- Past Entry 1 -->
+<div class="mx-5 mb-3 p-4 rounded-xl bg-surfaceElement/40 border border-surfaceBorder/40">
+<div class="flex items-center justify-between mb-2">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#1F3338] text-brandTealLight">Movilidad</span>
+<span class="text-xs text-textMuted">Ayer, 4:15 p. m.</span>
+</div>
+<p class="text-xs text-textLight/70">Poco equilibrio al levantarse del sillón. Usó el bastón de apoyo con calma.</p>
+</div>
+<!-- Past Entry 2 -->
+<div class="mx-5 p-4 rounded-xl bg-surfaceElement/40 border border-surfaceBorder/40">
+<div class="flex items-center justify-between mb-2">
+<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#372A20] text-privacyIcon">Fatiga</span>
+<span class="text-xs text-textMuted">Hace 2 días</span>
+</div>
+<p class="text-xs text-textLight/70">Siesta reparadora después del almuerzo; mejor semblante al anochecer.</p>
+</div>
+</div>
+<!-- END: BackgroundScreenContent -->
+<!-- BEGIN: ScrimOverlay -->
+<!-- Accessible dimmed overlay covering the background -->
+<div aria-hidden="true" class="absolute inset-0 bg-black/75 z-10"></div>
+<!-- END: ScrimOverlay -->
+<!-- BEGIN: BottomSheetModal -->
+<!-- Main Bottom Sheet in elevated surface #22272E -->
+<section aria-labelledby="modal-heading" aria-modal="true" class="absolute bottom-0 inset-x-0 bg-surfaceModal border-t border-surfaceBorder rounded-t-3xl pt-3 px-5 pb-6 z-20 shadow-2xl flex flex-col max-h-[92vh] overflow-y-auto no-scrollbar" data-purpose="observation-modal" role="dialog">
+<!-- Bottom Sheet Drag Handle -->
+<div class="flex justify-center mb-3">
+<div aria-hidden="true" class="w-12 h-1.5 bg-pillHandle rounded-full"></div>
+</div>
+<!-- Modal Header (Title, Subtitle and Close button) -->
+<div class="flex items-start justify-between mb-4">
+<div>
+<h1 class="text-2xl font-bold text-textHeading tracking-tight" id="modal-heading">Nueva observación</h1>
+<p class="text-sm text-textMuted mt-1">Registra detalles cotidianos que notes en María.</p>
+</div>
+<button aria-label="Cerrar modal" class="w-10 h-10 rounded-full bg-closeBtn hover:bg-surfaceElement active:scale-95 transition-transform flex items-center justify-center text-textLight" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- BEGIN: CategorySection -->
+<div class="mb-5">
+<label class="block text-xs font-semibold uppercase tracking-wider text-textMuted mb-2.5">
+          Categoría
+        </label>
+<!-- Category Chips Flow -->
+<div aria-label="Seleccionar categoría de observación" class="flex flex-wrap gap-2.5" role="radiogroup">
+<!-- Selected Chip: Ánimo -->
+<button aria-checked="true" class="inline-flex items-center gap-1.5 bg-brandTeal text-white text-sm font-medium px-4 py-2 rounded-full shadow-sm ring-1 ring-white/10" role="radio" type="button">
+<!-- Mood smile icon -->
+<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M8 14s1.5 2 4 2 4-2 4-2" stroke-linecap="round"></path>
+<line stroke-linecap="round" stroke-width="2.5" x1="9" x2="9.01" y1="9" y2="9"></line>
+<line stroke-linecap="round" stroke-width="2.5" x1="15" x2="15.01" y1="9" y2="9"></line>
+</svg>
+<span>Ánimo</span>
+<!-- Checkmark -->
+<svg class="w-4 h-4 ml-0.5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Chip: Movilidad -->
+<button aria-checked="false" class="inline-flex items-center gap-1.5 bg-surfaceElement border border-surfaceBorderSubtle text-textLight hover:border-textMuted text-sm font-medium px-4 py-2 rounded-full transition-colors" role="radio" type="button">
+<!-- Walking / Mobility Icon -->
+<svg class="w-4 h-4 text-textMuted" fill="currentColor" viewbox="0 0 24 24">
+<path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7z"></path>
+</svg>
+<span>Movilidad</span>
+</button>
+<!-- Chip: Fatiga -->
+<button aria-checked="false" class="inline-flex items-center gap-1.5 bg-surfaceElement border border-surfaceBorderSubtle text-textLight hover:border-textMuted text-sm font-medium px-4 py-2 rounded-full transition-colors" role="radio" type="button">
+<!-- Low Battery / Fatigue Icon -->
+<svg class="w-4 h-4 text-textMuted" fill="currentColor" viewbox="0 0 24 24">
+<path d="M17 5v14c0 .55-.45 1-1 1H8c-.55 0-1-.45-1-1V5c0-.55.45-1 1-1h2V2h4v2h2c.55 0 1 .45 1 1zm-2 1h-6v12h6V6zm-1 9H10v2h4v-2z"></path>
+</svg>
+<span>Fatiga</span>
+</button>
+<!-- Chip: Medicación -->
+<button aria-checked="false" class="inline-flex items-center gap-1.5 bg-surfaceElement border border-surfaceBorderSubtle text-textLight hover:border-textMuted text-sm font-medium px-4 py-2 rounded-full transition-colors" role="radio" type="button">
+<!-- Medical Cross / Pillbox Icon -->
+<svg class="w-4 h-4 text-textMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<rect height="14" rx="3" width="18" x="3" y="5"></rect>
+<path d="M12 9v6m-3-3h6" stroke-linecap="round"></path>
+</svg>
+<span>Medicación</span>
+</button>
+<!-- Chip: Otro -->
+<button aria-checked="false" class="inline-flex items-center gap-1.5 bg-surfaceElement border border-surfaceBorderSubtle text-textLight hover:border-textMuted text-sm font-medium px-4 py-2 rounded-full transition-colors" role="radio" type="button">
+<!-- Custom Edit / Other Icon -->
+<svg class="w-4 h-4 text-textMuted" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M4 6h16M4 12h10M4 18h6m9-4l3-3-2-2-3 3v2h2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Otro</span>
+</button>
+</div>
+</div>
+<!-- END: CategorySection -->
+<!-- BEGIN: ObservationInputSection -->
+<div class="mb-3.5">
+<label class="block text-xs font-semibold uppercase tracking-wider text-textMuted mb-2" for="observation-text">
+          ¿Qué notaste?
+        </label>
+<!-- Note Box with Textarea and Voice Button -->
+<div class="bg-darkBase border border-surfaceBorder rounded-2xl p-4 flex flex-col justify-between min-h-[148px] focus-within:ring-2 focus-within:ring-brandTealLight focus-within:border-transparent transition-all">
+<textarea class="w-full bg-transparent border-0 p-0 text-textLight text-base leading-relaxed placeholder-textMuted focus:ring-0 focus:outline-none resize-none font-normal" id="observation-text" placeholder="Describe qué cambios, conductas o necesidades has observado..." rows="3">Estuvo más callada en la tarde. Parecía con la energía más baja de lo habitual al sentarse a la mesa.</textarea>
+<!-- Dictar por voz Pill Button -->
+<div class="flex justify-end pt-2">
+<button class="inline-flex items-center gap-2 bg-brandTealSoft hover:bg-brandTealSoft/80 active:scale-95 text-brandTealLight text-sm font-medium px-4 py-2 rounded-full transition-transform" type="button">
+<!-- Microphone Icon -->
+<svg class="w-4 h-4 text-brandTealLight" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
+<path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path>
+</svg>
+<span>Dictar por voz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- END: ObservationInputSection -->
+<!-- BEGIN: TimeSelectorRow -->
+<div class="bg-[#252A30] border border-surfaceBorder rounded-xl px-4 py-3 flex items-center justify-between mb-3.5">
+<div class="flex items-center gap-2.5">
+<!-- Clock Icon -->
+<svg class="w-5 h-5 text-textLight shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+<span class="text-sm font-medium text-textLight">Hoy, 6:10 p. m.</span>
+</div>
+<!-- Cambiar Button -->
+<button class="inline-flex items-center gap-1.5 text-sm font-medium text-brandTealLight hover:underline focus:outline-none" type="button">
+<span>Cambiar</span>
+<!-- Calendar Edit Icon -->
+<svg class="w-4 h-4 text-brandTealLight" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<rect height="18" rx="2" ry="2" width="18" x="3" y="4"></rect>
+<line x1="16" x2="16" y1="2" y2="6"></line>
+<line x1="8" x2="8" y1="2" y2="6"></line>
+<line x1="3" x2="21" y1="10" y2="10"></line>
+<line stroke-linecap="round" stroke-width="2" x1="8" x2="8.01" y1="14" y2="14"></line>
+<line stroke-linecap="round" stroke-width="2" x1="12" x2="12.01" y1="14" y2="14"></line>
+</svg>
+</button>
+</div>
+<!-- END: TimeSelectorRow -->
+<!-- BEGIN: PrivacyNoteCard -->
+<aside aria-label="Nota de privacidad médica" class="bg-privacyBg border border-privacyBorder rounded-2xl p-3.5 flex items-center gap-3.5 mb-5">
+<div class="w-10 h-10 rounded-full bg-privacyIcon/10 border border-privacyIcon/20 flex items-center justify-center shrink-0">
+<!-- Padlock Icon -->
+<svg class="w-5 h-5 text-privacyIcon" fill="currentColor" viewbox="0 0 24 24">
+<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path>
+</svg>
+</div>
+<p class="text-xs text-textLight leading-snug">
+          Esta nota quedará en tu bitácora de cuidador para compartir en consulta médica.
+        </p>
+</aside>
+<!-- END: PrivacyNoteCard -->
+<!-- BEGIN: ActionButtonSection -->
+<footer class="w-full">
+<button class="w-full h-14 bg-brandTeal hover:bg-[#1E5C68] active:scale-[0.99] text-white font-semibold text-base rounded-full flex items-center justify-center gap-2.5 shadow-lg shadow-black/30 transition-all focus:ring-4 focus:ring-brandTealLight/30" type="button">
+<!-- Verified Checkmark Icon -->
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="9" stroke-width="2"></circle>
+<path d="M8.5 12.5l2.5 2.5 4.5-5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Guardar observación</span>
+</button>
+</footer>
+<!-- END: ActionButtonSection -->
+</section>
+<!-- END: BottomSheetModal -->
+</div>
+</body></html>

@@ -5,15 +5,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileOption } from '@/components/profile-option';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { SYMPTOM_TYPE_OPTIONS } from '@/features/symptoms/constants';
+import { SYMPTOM_TYPE_ICON, SYMPTOM_TYPE_OPTIONS } from '@/features/symptoms/constants';
 import { WizardActions } from '@/features/symptoms/wizard-actions';
 import { WizardHeader } from '@/features/symptoms/wizard-header';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { draftReset, draftSymptomTypeSet } from '@/store/slices/symptoms-slice';
-import { Spacing } from '@/theme';
+import { Spacing, useThemeColors } from '@/theme';
 
 export default function RegistrarSintomaPaso1Screen() {
   const dispatch = useAppDispatch();
+  const colors = useThemeColors();
   const symptomType = useAppSelector((state) => state.symptoms.draft.symptomType);
 
   return (
@@ -28,7 +29,7 @@ export default function RegistrarSintomaPaso1Screen() {
         />
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <View style={styles.heading}>
-            <ThemedText variant="headlineLg">¿Qué estás sintiendo?</ThemedText>
+            <ThemedText variant="headlineLg" accessibilityRole="header">¿Qué estás sintiendo?</ThemedText>
             <ThemedText variant="bodyMd" colorRole="secondary">
               Elige lo que más se acerque a lo que notas ahora.
             </ThemedText>
@@ -41,6 +42,9 @@ export default function RegistrarSintomaPaso1Screen() {
                 description={option.description}
                 selected={symptomType === option.id}
                 onPress={() => dispatch(draftSymptomTypeSet(option.id))}
+                icon={SYMPTOM_TYPE_ICON[option.id]}
+                iconBackgroundColor={colors.surfaceContainerLow}
+                iconColor={colors.tertiary}
                 testID={`sintoma-tipo-${option.id}`}
               />
             ))}

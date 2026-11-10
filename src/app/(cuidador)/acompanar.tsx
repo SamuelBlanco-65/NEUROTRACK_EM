@@ -45,10 +45,11 @@ export default function CuidadorAcompanarScreen() {
     if (!activeLink) return;
     await dispatch(sendCheerMessage({ linkId: activeLink.id, patientId: activeLink.patientId, message }));
     setSentMessage(message);
-    setTimeout(() => {
-      setSentMessage(null);
-      setCheerOpen(false);
-    }, 2400);
+  }
+
+  function cerrarConfirmacion() {
+    setSentMessage(null);
+    setCheerOpen(false);
   }
 
   if (!activeLink) {
@@ -97,7 +98,7 @@ export default function CuidadorAcompanarScreen() {
         ) : (
           <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
             <View style={[styles.weekCard, { backgroundColor: colors.secondaryContainer }]}>
-              <ThemedText variant="headlineSm" colorRole="onSecondaryFixed">
+              <ThemedText variant="headlineSm" colorRole="onSecondaryContainer">
                 {viewedWeekSessionCount === 0
                   ? 'Esta semana no ha practicado todavía.'
                   : `Esta semana hizo ${viewedWeekSessionCount} actividad${viewedWeekSessionCount === 1 ? '' : 'es'}.`}
@@ -122,7 +123,18 @@ export default function CuidadorAcompanarScreen() {
                       accessibilityLiveRegion="polite"
                       testID="acompanar-animo-confirmacion">
                       <MaterialIcons name="check-circle" size={18} color={colors.primary} />
-                      <ThemedText variant="labelSm">Mensaje enviado a su teléfono con ternura.</ThemedText>
+                      <ThemedText variant="labelSm" style={styles.cheerConfirmationText}>
+                        Mensaje enviado a su teléfono con ternura.
+                      </ThemedText>
+                      <Pressable
+                        onPress={cerrarConfirmacion}
+                        accessibilityRole="button"
+                        accessibilityLabel="Cerrar"
+                        hitSlop={8}
+                        style={styles.cheerConfirmationClose}
+                        testID="acompanar-animo-confirmacion-cerrar">
+                        <MaterialIcons name="close" size={18} color={colors.primary} />
+                      </Pressable>
                     </View>
                   ) : (
                     CHEER_MESSAGES.map((message) => (
@@ -142,7 +154,12 @@ export default function CuidadorAcompanarScreen() {
             </View>
 
             <View style={styles.section}>
-              <ThemedText variant="headlineSm">Áreas de práctica</ThemedText>
+              <View style={styles.sectionHeader}>
+                <ThemedText variant="headlineSm">Áreas de práctica</ThemedText>
+                <ThemedText variant="labelMd" colorRole="secondary">
+                  {AREAS.length} activas
+                </ThemedText>
+              </View>
               {AREAS.map((area) => {
                 const level = viewedProgress.find((p) => p.area === area)?.level ?? 1;
                 const lastPracticeISO = viewedLastPracticeByArea[area];
@@ -162,7 +179,9 @@ export default function CuidadorAcompanarScreen() {
                     </View>
                     <View
                       style={styles.progressBar}
-                      accessibilityLabel={`Progreso: nivel ${level} de ${MAX_LEVEL[area]}`}>
+                      accessibilityRole="progressbar"
+                      accessibilityLabel={`Progreso: nivel ${level} de ${MAX_LEVEL[area]}`}
+                      accessibilityValue={{ min: 1, max: MAX_LEVEL[area], now: level }}>
                       {Array.from({ length: MAX_LEVEL[area] }, (_, index) => (
                         <View
                           key={index}
@@ -242,8 +261,22 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
     borderRadius: Radius.full,
   },
+  cheerConfirmationText: {
+    flex: 1,
+  },
+  cheerConfirmationClose: {
+    minWidth: MinTouchSize - 16,
+    minHeight: MinTouchSize - 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   section: {
     gap: Spacing.sm,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   areaCard: {
     borderRadius: Radius.default,

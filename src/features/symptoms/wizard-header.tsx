@@ -36,8 +36,8 @@ export function WizardHeader({ step, onClose }: WizardHeaderProps) {
             styles.closeButton,
             { backgroundColor: colors.secondaryContainer, opacity: pressed ? 0.85 : 1 },
           ]}>
-          <MaterialIcons name="close" size={18} color={colors.onSecondaryFixedVariant} />
-          <ThemedText variant="labelMd" colorRole="onSecondaryFixedVariant">
+          <MaterialIcons name="close" size={18} color={colors.onSecondaryContainer} />
+          <ThemedText variant="labelMd" colorRole="onSecondaryContainer">
             Cerrar
           </ThemedText>
         </Pressable>

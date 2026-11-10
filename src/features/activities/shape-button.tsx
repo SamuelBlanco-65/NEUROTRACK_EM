@@ -28,6 +28,7 @@ export function ShapeButton({ shape, label, feedback, onPress, disabled, testID 
       testID={testID}
       accessibilityRole={onPress ? 'button' : 'image'}
       accessibilityLabel={`${label ?? meta.label}${feedbackLabel}`}
+      accessibilityState={{ disabled: disabled || !onPress }}
       hitSlop={4}
       style={({ pressed }) => [
         styles.button,

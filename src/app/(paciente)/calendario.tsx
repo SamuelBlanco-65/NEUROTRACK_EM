@@ -9,7 +9,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { buildMonthGrid, isoDateOfDate, leadingBlankCount, logsForIsoDate } from '@/features/symptoms/calendar';
 import { SYMPTOM_TYPE_ICON, severityLabel, symptomTypeLabel } from '@/features/symptoms/constants';
-import type { SymptomLog } from '@/features/symptoms/types';
+import type { Severity, SymptomLog } from '@/features/symptoms/types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { draftReset, fetchMonthLogs, monthKey } from '@/store/slices/symptoms-slice';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
@@ -20,6 +20,14 @@ const MONTH_NAMES = [
 ];
 const WEEKDAY_LABELS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 const EMPTY_LOGS: SymptomLog[] = [];
+const SEVERITY_BAR_COUNT: Record<Severity, number> = { leve: 1, moderado: 2, fuerte: 3 };
+const SEVERITY_ORDER: Severity[] = ['leve', 'moderado', 'fuerte'];
+
+function severityColor(colors: ReturnType<typeof useThemeColors>, severity: Severity): string {
+  if (severity === 'leve') return colors.outline;
+  if (severity === 'moderado') return colors.tertiary;
+  return colors.primary;
+}
 
 export default function PacienteCalendarioScreen() {
   const dispatch = useAppDispatch();
@@ -139,13 +147,23 @@ export default function PacienteCalendarioScreen() {
                         testID={`calendario-dia-${day.date}`}>
                         <ThemedText
                           variant="bodyMd"
-                          colorRole={isSelected ? 'onSecondaryFixed' : 'onSurface'}
+                          colorRole={isSelected ? 'onSecondaryContainer' : 'onSurface'}
                           style={styles.dayNumber}>
                           {day.date}
                         </ThemedText>
                         <View style={styles.dayBadge}>
                           {day.worstSeverity ? (
-                            <MaterialIcons name="circle" size={8} color={colors.tertiary} />
+                            <View style={styles.severityBars}>
+                              {Array.from({ length: SEVERITY_BAR_COUNT[day.worstSeverity] }, (_, index) => (
+                                <View
+                                  key={index}
+                                  style={[
+                                    styles.severityBar,
+                                    { backgroundColor: severityColor(colors, day.worstSeverity as Severity) },
+                                  ]}
+                                />
+                              ))}
+                            </View>
                           ) : null}
                         </View>
                       </Pressable>
@@ -155,10 +173,21 @@ export default function PacienteCalendarioScreen() {
               )}
 
               <View style={[styles.legend, { backgroundColor: colors.surfaceContainerLow }]}>
-                <MaterialIcons name="circle" size={8} color={colors.tertiary} />
-                <ThemedText variant="labelSm" colorRole="secondary">
-                  Día con síntomas registrados
-                </ThemedText>
+                {SEVERITY_ORDER.map((severity) => (
+                  <View key={severity} style={styles.legendItem}>
+                    <View style={styles.severityBars}>
+                      {Array.from({ length: SEVERITY_BAR_COUNT[severity] }, (_, index) => (
+                        <View
+                          key={index}
+                          style={[styles.severityBar, { backgroundColor: severityColor(colors, severity) }]}
+                        />
+                      ))}
+                    </View>
+                    <ThemedText variant="labelSm" colorRole="secondary">
+                      {severityLabel(severity)}
+                    </ThemedText>
+                  </View>
+                ))}
               </View>
             </View>
 
@@ -167,7 +196,7 @@ export default function PacienteCalendarioScreen() {
                 {selectedDate.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}
               </ThemedText>
               <View style={[styles.countChip, { backgroundColor: colors.secondaryContainer }]}>
-                <ThemedText variant="labelSm" colorRole="onSecondaryFixed">
+                <ThemedText variant="labelSm" colorRole="onSecondaryContainer">
                   {selectedDayLogs.length} registro{selectedDayLogs.length === 1 ? '' : 's'}
                 </ThemedText>
               </View>
@@ -201,8 +230,15 @@ export default function PacienteCalendarioScreen() {
                         </View>
                       </View>
                       <View style={[styles.severityBadge, { backgroundColor: colors.tertiaryFixed }]}>
-                        <MaterialIcons name="circle" size={8} color={colors.tertiary} />
-                        <ThemedText variant="labelSm">{severityLabel(log.severity)}</ThemedText>
+                        <View style={styles.severityBars}>
+                          {Array.from({ length: SEVERITY_BAR_COUNT[log.severity] }, (_, index) => (
+                            <View
+                              key={index}
+                              style={[styles.severityBar, { backgroundColor: colors.onTertiaryFixed }]}
+                            />
+                          ))}
+                        </View>
+                        <ThemedText variant="labelSm" colorRole="onTertiaryFixed">{severityLabel(log.severity)}</ThemedText>
                       </View>
                     </View>
                     {log.note ? (
@@ -295,12 +331,29 @@ const styles = StyleSheet.create({
     height: 10,
     justifyContent: 'center',
   },
+  severityBars: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 2,
+  },
+  severityBar: {
+    width: 3,
+    height: 8,
+    borderRadius: 1.5,
+  },
   legend: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
+    justifyContent: 'space-around',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
     borderRadius: Radius.default,
     padding: Spacing.sm,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
   },
   detailHeader: {
     flexDirection: 'row',

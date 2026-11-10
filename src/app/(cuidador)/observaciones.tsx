@@ -1,7 +1,7 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import { useEffect, useMemo } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ScreenState } from '@/components/screen-state';
@@ -68,6 +68,28 @@ export default function CuidadorObservacionesScreen() {
   }, [dispatch]);
 
   const groups = useMemo(() => groupByDay(myObservations), [myObservations]);
+  const weekCount = useMemo(() => {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return myObservations.filter((obs) => new Date(obs.occurredAt) >= weekAgo).length;
+  }, [myObservations]);
+
+  async function exportar() {
+    const lineas = [
+      'Notas de observación',
+      ...groups.flatMap((group) => [
+        `${group.label}:`,
+        ...group.items.map(
+          (obs) =>
+            `- ${CATEGORY_LABEL[obs.category]} (${new Date(obs.occurredAt).toLocaleTimeString('es-CO', {
+              hour: 'numeric',
+              minute: '2-digit',
+            })}): ${obs.note}`
+        ),
+      ]),
+    ];
+    await Share.share({ message: lineas.join('\n') });
+  }
 
   if (!activeLink) {
     return (
@@ -108,6 +130,28 @@ export default function CuidadorObservacionesScreen() {
               Lo que notas también ayuda en la consulta. Estas notas son privadas: solo tú las ves.
             </ThemedText>
 
+            {groups.length > 0 ? (
+              <Pressable
+                onPress={exportar}
+                accessibilityRole="button"
+                accessibilityLabel="Exportar notas"
+                style={[styles.exportCard, { backgroundColor: colors.surfaceContainerLowest }]}
+                testID="observaciones-exportar">
+                <View style={[styles.exportIcon, { backgroundColor: colors.surfaceContainerLow }]}>
+                  <MaterialIcons name="insights" size={20} color={colors.primary} />
+                </View>
+                <ThemedText variant="bodyMd" style={styles.exportText}>
+                  {weekCount} nota{weekCount === 1 ? '' : 's'} esta semana
+                </ThemedText>
+                <View style={styles.exportAction}>
+                  <ThemedText variant="labelLg" colorRole="primary">
+                    Exportar
+                  </ThemedText>
+                  <MaterialIcons name="north-east" size={16} color={colors.primary} />
+                </View>
+              </Pressable>
+            ) : null}
+
             {groups.length === 0 ? (
               <ScreenState
                 kind="vacio"
@@ -140,6 +184,15 @@ export default function CuidadorObservacionesScreen() {
                 </View>
               ))
             )}
+
+            {groups.length > 0 ? (
+              <View style={styles.footerNote}>
+                <MaterialIcons name="favorite-border" size={16} color={colors.onSurfaceVariant} />
+                <ThemedText variant="bodySm" colorRole="secondary" style={styles.footerNoteText}>
+                  Tu presencia atenta marca una diferencia genuina cada día.
+                </ThemedText>
+              </View>
+            ) : null}
           </ScrollView>
         )}
 
@@ -200,6 +253,37 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
     justifyContent: 'space-between',
+  },
+  exportCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    borderRadius: Radius.lg,
+    padding: Spacing.sm + 2,
+  },
+  exportIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  exportText: {
+    flex: 1,
+  },
+  exportAction: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  footerNote: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    justifyContent: 'center',
+  },
+  footerNoteText: {
+    flexShrink: 1,
   },
   fab: {
     position: 'absolute',

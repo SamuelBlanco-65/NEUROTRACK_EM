@@ -1,10 +1,11 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as Haptics from 'expo-haptics';
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ScreenState } from '@/components/screen-state';
+import { TextField } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { CATEGORY_META } from '@/features/reminders/constants';
@@ -126,13 +127,24 @@ export default function CuidadorRecordatoriosScreen() {
             ) : (
               items.map((reminder) => {
                 const done = reminder.status === 'hecho';
+                const overdue = !done && new Date(reminder.scheduledAt) < new Date();
                 return (
                   <View key={reminder.id} style={[styles.card, { backgroundColor: colors.surfaceContainerLowest }]}>
                     <View style={[styles.cardIcon, { backgroundColor: colors.secondaryContainer }]}>
                       <MaterialIcons name={CATEGORY_META[reminder.category].icon} size={22} color={colors.primaryContainer} />
                     </View>
                     <View style={styles.cardBody}>
-                      <ThemedText variant="labelLg">{reminder.title}</ThemedText>
+                      <View style={styles.cardTitleRow}>
+                        <ThemedText variant="labelLg">{reminder.title}</ThemedText>
+                        {overdue ? (
+                          <View style={[styles.overdueTag, { backgroundColor: colors.tertiaryFixed }]}>
+                            <MaterialIcons name="schedule" size={14} color={colors.onTertiaryFixed} />
+                            <ThemedText variant="labelSm" colorRole="onTertiaryFixed">
+                              Se pasó
+                            </ThemedText>
+                          </View>
+                        ) : null}
+                      </View>
                       <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
                         {new Date(reminder.scheduledAt).toLocaleString('es-CO', {
                           weekday: 'short',
@@ -155,6 +167,9 @@ export default function CuidadorRecordatoriosScreen() {
                         style={[styles.doneButton, { backgroundColor: colors.secondaryContainer }]}
                         testID={`recordatorios-marcar-hecho-${reminder.id}`}>
                         <MaterialIcons name="done" size={18} color={colors.primary} />
+                        <ThemedText variant="labelSm" colorRole="primary">
+                          Hecho
+                        </ThemedText>
                       </Pressable>
                     )}
                   </View>
@@ -164,13 +179,12 @@ export default function CuidadorRecordatoriosScreen() {
 
             {formOpen ? (
               <View style={[styles.form, { backgroundColor: colors.surfaceContainerLowest }]}>
-                <TextInput
+                <TextField
+                  label="Título del recordatorio"
+                  icon="notifications"
                   value={title}
                   onChangeText={setTitle}
                   placeholder="¿Qué hay que recordar?"
-                  placeholderTextColor={colors.outline}
-                  style={[styles.titleInput, { backgroundColor: colors.surfaceContainerLow, color: colors.onSurface }]}
-                  accessibilityLabel="Título del recordatorio"
                   testID="recordatorios-form-titulo"
                 />
                 <View style={styles.chipRow} accessibilityRole="radiogroup" accessibilityLabel="Categoría">
@@ -280,6 +294,20 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 2,
   },
+  cardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    flexWrap: 'wrap',
+  },
+  overdueTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.xs + 2,
+    paddingVertical: 2,
+  },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -289,22 +317,20 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   doneButton: {
-    width: MinTouchSize,
-    height: MinTouchSize,
+    minWidth: MinTouchSize,
+    minHeight: MinTouchSize,
     borderRadius: Radius.full,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
   },
   form: {
     borderRadius: Radius.lg,
     padding: Spacing.md,
     gap: Spacing.sm,
     marginTop: Spacing.sm,
-  },
-  titleInput: {
-    minHeight: MinTouchSize,
-    borderRadius: Radius.default,
-    paddingHorizontal: Spacing.sm,
   },
   chipRow: {
     flexDirection: 'row',

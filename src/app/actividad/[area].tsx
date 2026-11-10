@@ -27,7 +27,7 @@ import {
   sessionStarted,
   type SessionState,
 } from '@/store/slices/activities-slice';
-import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
+import { MinTouchSize, Radius, Spacing, useReduceMotion, useThemeColors } from '@/theme';
 
 const VALID_AREAS: ActivityArea[] = ['memoria', 'atencion', 'movimiento'];
 
@@ -65,7 +65,13 @@ export default function ActividadSesionScreen() {
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <ThemedText variant="headlineSm">Actividad no encontrada</ThemedText>
-          <Pressable onPress={() => router.back()} testID="actividad-area-invalida-volver">
+          <Pressable
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="Volver"
+            hitSlop={8}
+            style={styles.volverButton}
+            testID="actividad-area-invalida-volver">
             <ThemedText variant="labelLg" colorRole="primary">
               Volver
             </ThemedText>
@@ -151,7 +157,14 @@ export default function ActividadSesionScreen() {
                     key={option.id}
                     shape={option.shape}
                     label={`Opción ${index + 1}: ${SHAPE_META[option.shape].label}`}
-                    onPress={() => dispatch(atencionOptionTapped(option.id))}
+                    onPress={() => {
+                      Haptics.notificationAsync(
+                        option.isOdd
+                          ? Haptics.NotificationFeedbackType.Success
+                          : Haptics.NotificationFeedbackType.Error
+                      );
+                      dispatch(atencionOptionTapped(option.id));
+                    }}
                     testID={`actividad-atencion-${option.id}`}
                   />
                 ))}
@@ -163,8 +176,14 @@ export default function ActividadSesionScreen() {
             <MovimientoBlock
               round={session.movimientoRound}
               completedStepIndices={session.completedStepIndices}
-              onToggleStep={(index) => dispatch(movimientoStepToggled(index))}
-              onFinish={() => dispatch(movimientoSessionFinished())}
+              onToggleStep={(index) => {
+                Haptics.selectionAsync();
+                dispatch(movimientoStepToggled(index));
+              }}
+              onFinish={() => {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                dispatch(movimientoSessionFinished());
+              }}
             />
           ) : null}
 
@@ -298,12 +317,14 @@ function MemoriaResponderBlock({
   onReplay: () => void;
 }) {
   const colors = useThemeColors();
+  const reduceMotion = useReduceMotion();
   // Resaltado transitorio, separado del estado de la sesión: la figura recién tocada se
   // enmarca un momento y luego vuelve a su estado normal, para que no parezca "seleccionada
   // para siempre". En la fase "resultado" se deja fija (la ronda ya terminó, conviene que
   // se vea qué tocó). Gracias a que una figura fuera de orden termina la ronda de inmediato
   // (ver `memoriaShapeTapped`), este resaltado y el veredicto final de la ronda nunca se
-  // contradicen entre sí.
+  // contradicen entre sí. Con "Reducir animaciones" activado (Accesibilidad), el resaltado
+  // no se autolimpia: se queda fijo hasta el siguiente toque, que lo reemplaza igual.
   const [flash, setFlash] = useState<{ shape: ShapeId; correct: boolean } | null>(null);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -325,7 +346,7 @@ function MemoriaResponderBlock({
       correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error
     );
     onTapShape(shape);
-    if (!roundEnds) {
+    if (!roundEnds && !reduceMotion) {
       flashTimeoutRef.current = setTimeout(() => setFlash(null), 900);
     }
   }
@@ -598,6 +619,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.margin,
     paddingTop: Spacing.md,
     gap: Spacing.lg,
+  },
+  volverButton: {
+    minHeight: MinTouchSize,
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
   },
   scroll: {
     gap: Spacing.lg,

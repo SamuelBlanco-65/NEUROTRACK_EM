@@ -80,8 +80,8 @@ export function TextField({
           style={[styles.errorBanner, { backgroundColor: colors.tertiaryFixed }]}
           accessibilityRole="alert"
           accessibilityLiveRegion="assertive">
-          <MaterialIcons name="error" size={20} color={colors.tertiary} />
-          <ThemedText variant="labelMd" style={styles.errorText}>
+          <MaterialIcons name="error" size={20} color={colors.onTertiaryFixed} />
+          <ThemedText variant="labelMd" colorRole="onTertiaryFixed" style={styles.errorText}>
             {errorText}
           </ThemedText>
         </View>

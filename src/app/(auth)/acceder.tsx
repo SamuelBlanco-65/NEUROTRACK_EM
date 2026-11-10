@@ -9,6 +9,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { authErrorCleared, confirmationNoticeCleared, login, register } from '@/store/slices/auth-slice';
+import { profileCleared } from '@/store/slices/profile-slice';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
 
 type Mode = 'login' | 'registro';
@@ -90,7 +91,10 @@ export default function AccederScreen() {
             showsVerticalScrollIndicator={false}>
             <View style={styles.topBar}>
           <Pressable
-            onPress={() => router.back()}
+            onPress={() => {
+              dispatch(profileCleared());
+              router.replace('/');
+            }}
             accessibilityRole="button"
             accessibilityLabel="Volver a selección de perfil"
             hitSlop={8}
@@ -220,7 +224,7 @@ export default function AccederScreen() {
               accessibilityState={{ disabled: true }}
               disabled
               style={styles.forgotLink}>
-              <ThemedText variant="labelMd" colorRole="primaryContainer" style={styles.forgotText}>
+              <ThemedText variant="labelMd" colorRole="primary" style={styles.forgotText}>
                 ¿Olvidaste tu contraseña?
               </ThemedText>
             </Pressable>

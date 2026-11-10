@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Cuidador · Acompañar - Sin compartir (Dark Theme)</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Atkinson Hyperlegible Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Atkinson Hyperlegible"', 'sans-serif'],
+          },
+          colors: {
+            page: '#1B1E22',
+            surface: {
+              main: '#22272E',
+              subtle: '#272C34',
+              button: '#252B33',
+              bottomNav: '#181B1F',
+            },
+            border: {
+              main: '#2D333B',
+              inner: '#333A44',
+              btn: '#3A434D',
+            },
+            primary: {
+              light: '#6EC6D6',
+              dark: '#1D3136',
+              hover: '#223A40',
+            },
+            respect: {
+              bg: '#30261C',
+              border: '#4A3B2A',
+              iconBg: '#3D2D1E',
+              title: '#F3D2B3',
+              accent: '#E8B482',
+            },
+            content: {
+              title: '#F5F1EB',
+              body: '#ECE6DA',
+              muted: '#A2ACB7',
+              navMuted: '#8E98A4',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="accessibility-and-typography">
+    body {
+      font-family: 'Atkinson Hyperlegible', sans-serif;
+      background-color: #1B1E22;
+      color: #ECE6DA;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Touch target comfort */
+    button, a {
+      touch-action: manipulation;
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="h-full bg-page flex justify-center selection:bg-[#223A40] selection:text-[#6EC6D6]">
+<!-- Mobile iOS Frame Wrapper -->
+<div class="w-full max-w-[430px] min-h-screen bg-page flex flex-col relative pb-28">
+<!-- BEGIN: TopHeader -->
+<header class="pt-8 px-5 pb-3 flex items-center justify-between" data-purpose="top-navigation-bar">
+<div>
+<h1 class="text-3xl font-bold tracking-tight text-[#F5F1EB]">
+          Acompañar
+        </h1>
+</div>
+<!-- User Profile Avatar Button -->
+<button aria-label="Perfil del cuidador" class="w-11 h-11 rounded-full bg-[#252B33] border border-[#2D333B] flex items-center justify-center text-[#ECE6DA] hover:bg-[#2e353f] transition-colors focus:outline-none focus:ring-2 focus:ring-[#6EC6D6]" type="button">
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24">
+<path clip-rule="evenodd" d="M12 2a5 5 0 100 10 5 5 0 000-10zm0 12c-5.33 0-8 2.67-8 6a1 1 0 001 1h14a1 1 0 001-1c0-3.33-2.67-6-8-6z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</header>
+<!-- END: TopHeader -->
+<!-- BEGIN: SubtitleAndChip -->
+<section class="px-5 pt-1 pb-4 flex flex-col items-start gap-3" data-purpose="patient-context">
+<p class="text-lg text-[#A2ACB7]">
+        Acompañamiento y actividades.
+      </p>
+<!-- Patient Pill Chip -->
+<div class="inline-flex items-center gap-2.5 bg-[#22272E] border border-[#2D333B] pl-1.5 pr-4 py-1.5 rounded-full shadow-sm" data-purpose="patient-active-chip">
+<!-- Patient Photo Placeholder (María) -->
+<img alt="Foto de María" class="w-7 h-7 rounded-full object-cover ring-1 ring-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzNYzU1Mya_UdaToCTG3mh5NNld8sXFyAt_wQ_gtosFw9ZV1btA6-cVyztnTxjgiyouzm5bkjd8XHvHcuCp6TwA3-ifsui_fL7M3vWn6U3feffbjtWwAJcB8a34vpbn5j-BQRb2dPF61uZWpQXBYOs6AuHQLtznWTa7B-AVRAwyeJI2hl7kmQyYF1PHMCqeXX6sKIe2qnhdnS6MXFfOHSUxyg1cYtnrwm-0P0cGQ3f"/>
+<div class="flex items-center gap-2">
+<span class="text-sm font-medium text-[#ECE6DA]">
+            Acompañas a <span class="font-bold text-[#F5F1EB]">María</span>
+</span>
+<span aria-hidden="true" class="w-2 h-2 rounded-full bg-[#6EC6D6]"></span>
+</div>
+</div>
+</section>
+<!-- END: SubtitleAndChip -->
+<!-- BEGIN: MainContent -->
+<main class="px-5 space-y-4 flex-grow flex flex-col" data-purpose="main-content">
+<!-- Locked State Main Card -->
+<section class="bg-[#22272E] border border-[#2D333B] rounded-3xl p-6 flex flex-col items-center text-center shadow-lg" data-purpose="locked-status-card">
+<!-- Padlock & Shield Graphic -->
+<div aria-hidden="true" class="relative mb-5 flex items-center justify-center">
+<!-- Outer circle -->
+<div class="w-20 h-20 rounded-full bg-[#1D3136] flex items-center justify-center p-2">
+<!-- Inner circle -->
+<div class="w-full h-full rounded-full bg-[#223A40] flex items-center justify-center">
+<svg class="w-7 h-7 text-[#6EC6D6]" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<rect height="10" rx="2" stroke-linecap="round" stroke-linejoin="round" width="14" x="5" y="11"></rect>
+<path d="M8 11V7a4 4 0 118 0v4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+<!-- Shield Badge -->
+<div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#382A1E] border-2 border-[#22272E] flex items-center justify-center shadow">
+<svg class="w-3.5 h-3.5 text-[#E8B482]" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z"></path>
+</svg>
+</div>
+</div>
+<!-- Heading -->
+<h2 class="text-xl font-bold text-[#F5F1EB] leading-snug mb-3">
+          María no ha compartido sus actividades contigo.
+        </h2>
+<!-- Description Paragraph -->
+<p class="text-base text-[#ECE6DA] leading-relaxed mb-6 font-normal">
+          En Neurotrack EM, la persona acompañada decide qué información y actividades compartir en cada momento para cuidar su autonomía y tranquilidad.
+        </p>
+<!-- Informational Checkpoints Box -->
+<div class="w-full bg-[#272C34] border border-[#333A44] rounded-2xl p-4 text-left space-y-3.5 mb-6" data-purpose="privacy-features">
+<!-- Item 1: Verification -->
+<div class="flex items-start gap-3">
+<div class="mt-0.5 w-6 h-6 rounded-full bg-[#163328] flex-shrink-0 flex items-center justify-center">
+<svg class="w-3.5 h-3.5 text-[#7FE3B5]" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<p class="text-sm text-[#ECE6DA] leading-snug">
+              Puedes ver sus registros cuando ella active el permiso en su perfil.
+            </p>
+</div>
+<!-- Item 2: Protection / Heart -->
+<div class="flex items-start gap-3">
+<div class="mt-0.5 w-6 h-6 rounded-full bg-[#1D3136] flex-shrink-0 flex items-center justify-center">
+<svg class="w-3.5 h-3.5 text-[#6EC6D6]" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<p class="text-sm text-[#ECE6DA] leading-snug">
+              Su ritmo de práctica y privacidad están siempre protegidos.
+            </p>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full py-3.5 px-4 rounded-full bg-[#252B33] border border-[#3A434D] hover:bg-[#2C333D] active:scale-[0.99] transition-all flex items-center justify-center gap-2.5 text-center shadow-sm focus:outline-none focus:ring-2 focus:ring-[#6EC6D6]" data-purpose="action-check-permissions" type="button">
+<svg class="w-5 h-5 text-[#6EC6D6] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M12 16v-4m0-4h.01" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-base font-bold text-[#ECE6DA]">
+            Consultar permisos de acompañamiento
+          </span>
+</button>
+</section>
+<!-- Bottom Respect Card (Espacio de respeto) -->
+<section class="bg-[#30261C] border border-[#4A3B2A] rounded-2xl p-4 flex items-start gap-3.5 shadow-sm" data-purpose="respect-banner">
+<!-- Lotus / Plant Sprout Icon -->
+<div class="w-10 h-10 rounded-full bg-[#3D2D1E] flex-shrink-0 flex items-center justify-center mt-0.5">
+<svg class="w-5 h-5 text-[#E8B482]" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M12 3v18m0-18C8.5 7.5 4 9 4 15c0 3 2.5 5 8 6m0-21c3.5 4.5 8 6 8 12 0 3-2.5 5-8 6" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Text Content -->
+<div class="space-y-1">
+<h3 class="text-base font-bold text-[#F3D2B3]">
+            Espacio de respeto
+          </h3>
+<p class="text-sm text-[#ECE6DA] leading-relaxed">
+            El respeto a sus tiempos también es una forma de cuidar. Cuando María esté lista, podrás ver sus avances aquí.
+          </p>
+</div>
+</section>
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: BottomNavigation -->
+<nav aria-label="Navegación principal" class="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-[#181B1F] border-t border-[#2D333B] py-2 px-3 flex items-center justify-around z-50 backdrop-blur-md bg-opacity-95" data-purpose="bottom-tab-bar">
+<!-- Tab 1: Inicio -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[56px] py-1 text-[#8E98A4] hover:text-[#ECE6DA] transition-colors focus:outline-none" href="#inicio">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M3 12l2-2m0 0l7-7 7 7m-9-5v12m4 0v-6a1 1 0 011-1h2a1 1 0 011 1v6m2-7l2 2m-2-2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-xs font-medium">Inicio</span>
+</a>
+<!-- Tab 2: Observaciones -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[56px] py-1 text-[#8E98A4] hover:text-[#ECE6DA] transition-colors focus:outline-none" href="#observaciones">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7.943-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-xs font-medium">Observaciones</span>
+</a>
+<!-- Tab 3: Acompañar (ACTIVE) -->
+<a aria-current="page" class="flex flex-col items-center justify-center gap-1 min-w-[64px] py-1 px-2 rounded-xl bg-[#223A40] text-[#6EC6D6] transition-colors focus:outline-none" href="#acompanar">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-xs font-bold">Acompañar</span>
+</a>
+<!-- Tab 4: Recordatorios -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[56px] py-1 text-[#8E98A4] hover:text-[#ECE6DA] transition-colors focus:outline-none" href="#recordatorios">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-xs font-medium">Recordatorios</span>
+</a>
+<!-- Tab 5: Apoyo -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[56px] py-1 text-[#8E98A4] hover:text-[#ECE6DA] transition-colors focus:outline-none" href="#apoyo">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-xs font-medium">Apoyo</span>
+</a>
+</nav>
+<!-- END: BottomNavigation -->
+</div>
+</body></html>

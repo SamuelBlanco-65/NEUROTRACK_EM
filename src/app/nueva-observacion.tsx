@@ -101,7 +101,7 @@ export default function NuevaObservacionScreen() {
           />
 
           <View style={[styles.privacyBanner, { backgroundColor: colors.tertiaryFixed }]}>
-            <MaterialIcons name="lock" size={20} color={colors.tertiary} />
+            <MaterialIcons name="lock" size={20} color={colors.onTertiaryFixedVariant} />
             <ThemedText variant="bodySm" colorRole="onTertiaryFixedVariant" style={styles.privacyText}>
               Esta nota queda en tu bitácora privada de cuidador.
             </ThemedText>

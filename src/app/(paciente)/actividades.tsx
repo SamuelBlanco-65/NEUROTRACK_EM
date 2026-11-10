@@ -83,9 +83,12 @@ export default function PacienteActividadesScreen() {
             </View>
           </Pressable>
 
-          <ThemedText variant="headlineSm" style={styles.sectionTitle}>
-            Áreas
-          </ThemedText>
+          <View style={styles.sectionHeader}>
+            <ThemedText variant="headlineSm">Áreas</ThemedText>
+            <ThemedText variant="labelMd" colorRole="secondary">
+              {AREAS.length} disponibles
+            </ThemedText>
+          </View>
           <View style={styles.grid}>
             {AREAS.map((area) => (
               <AreaTile
@@ -148,8 +151,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.xs,
   },
-  sectionTitle: {
+  sectionHeader: {
     marginTop: Spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   grid: {
     flexDirection: 'row',

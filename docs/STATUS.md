@@ -1,7 +1,15 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-08 · **Rama:** master · Último commit: `2f6f58f` (feat(T4): módulo del
-cuidador, RF-006/RF-008/RF-012). Working tree limpio tras ese commit.
+**Fecha:** 2026-11-09 · **Rama:** master · Último commit pusheado: `6034850` (docs: hash de
+STATUS tras T4). Working tree **sin commitear tras esta sesión** (T5 + T6 en curso): ver diff
+de `git status` para el detalle completo; además de lo de T5, esta sesión tocó
+`src/app/(auth)/acceder.tsx` (botón de volver + banner de error), `src/components/text-field.tsx`,
+`src/app/(paciente)/calendario.tsx`, `src/app/nueva-observacion.tsx`,
+`src/app/registrar-sintoma/paso-3.tsx` (bug real de contraste en oscuro, ver T6), y nuevo
+`artifacts/t6/` con 6 capturas de modo oscuro (sin trackear en git todavía, las trajo el usuario
+por WhatsApp — nombres `WhatsApp Image...jpeg`, conviene renombrarlas antes de commitear).
+Script temporal `scripts/reset-test-passwords.mjs` se usó y se borró en esta sesión (no debe
+quedar en el repo: usa la `service_role` key, nunca se commitea).
 
 ## ⚠️ Equipo y co-autoría Git (LEER ANTES DE CUALQUIER COMMIT)
 Proyecto en equipo de 3. **TODO commit debe atribuir a los tres.** El autor es Samuel
@@ -406,19 +414,20 @@ Se crearon para poder verificar la pantalla sin registrar 10+ días a mano:
 - Los 3 archivos tienen el placeholder `TU_CORREO@EJEMPLO.COM` sin reemplazar (nadie commiteó
   un correo real) — hay que sustituirlo por el correo de la cuenta de paciente antes de correr.
 
-## T4 — Módulo del cuidador: RF-006, RF-008 y RF-012 PROBADOS por el usuario en emulador, COMMITEADOS
+## T4 — Módulo del cuidador: RF-006, RF-008 y RF-012 VERIFICADOS (capturas en `artifacts/t4/`)
 El usuario pidió arrancar T4 y dejar la fidelidad visual de `progreso.tsx` contra Stitch para
-después (sigue pendiente, ver T3 arriba). Las 3 RF de T4, las 3 confirmadas funcionando por
-el usuario en emulador con dos cuentas (2026-11-08):
-- **RF-012 (vinculación con consentimiento): probada.** No hay captura en `artifacts/t4/`
-  todavía (el usuario pidió dejarlas para después) — queda como "Implementado sin probar" en
-  `REQUISITOS.md` por la regla de "Verificado solo con evidencia", con una nota de que ya está
-  confirmado funcionalmente. Subir a "Verificado" cuando se tomen las capturas.
-- **RF-006 (observaciones + acompañar) y RF-008 (recordatorios): código escrito en la misma
-  ronda que RF-012, probados después, mismo estado** — funcionan (observación nueva,
-  resumen semanal + mensaje de ánimo, recordatorio creado por el cuidador y marcado "hecho"
-  por el paciente con háptica), pero sin captura todavía; quedan como "Implementado sin
-  probar" con la misma nota.
+después (sigue pendiente, ver T3 arriba). Las 3 RF de T4, confirmadas funcionando por el
+usuario en emulador con dos cuentas, **y con capturas ya tomadas** en `artifacts/t4/`
+(`Inicio_cuidador.png`, `t4-observaciones.png`, `t4-nueva-observacion.png`, `t4-acompar.png`,
+`t4-recordatorios.png`, `t4-nuevo-recordatorio.png`) — subidas a "Verificado" en
+`REQUISITOS.md`:
+- **RF-012 (vinculación con consentimiento):** `Inicio_cuidador.png` muestra "Estás
+  acompañando a la persona que acompañas" con el acceso ya sincronizado.
+- **RF-006 (observaciones + acompañar):** `t4-observaciones.png` (nota de movilidad
+  guardada), `t4-nueva-observacion.png`, `t4-acompar.png` (resumen semanal por área +
+  botón de mensaje de ánimo).
+- **RF-008 (recordatorios):** `t4-recordatorios.png` + `t4-nuevo-recordatorio.png` (muestra
+  un recordatorio marcado "Hecho" con check visible, no depende de audio).
 
 Código nuevo de las 3 RF, `typecheck`/`lint` limpios, **ya commiteado y pusheado**:
 - `supabase/migrations/20261111000000_caregiver_links.sql`: tabla `caregiver_links`
@@ -427,7 +436,7 @@ Código nuevo de las 3 RF, `typecheck`/`lint` limpios, **ya commiteado y pushead
   `share_sintomas`/`share_progreso`/`share_recordatorios`). RLS clave: el paciente es el único
   que puede mover un vínculo a `aceptado` (política `caregiver_links_update_as_patient`); un
   cuidador solo puede "reclamar" un código (`pendiente` + sin dueño → `solicitado` con su
-  propio `auth.uid()`), nunca auto-aceptarse. **Falta ejecutarla a mano en el SQL Editor.**
+  propio `auth.uid()`), nunca auto-aceptarse. **Ya ejecutada por el usuario en el SQL Editor.**
 - `src/features/caregiver/{types.ts,api.ts}`: CRUD contra `caregiver_links` + mapeo de errores
   Postgrest (mismo patrón que `features/symptoms/api.ts`), con una clase de error nueva
   `codigo-invalido` para cuando el código no existe o ya fue usado (`PGRST116`).
@@ -457,7 +466,7 @@ Código nuevo de las 3 RF, `typecheck`/`lint` limpios, **ya commiteado y pushead
   vez de hacer join contra `auth.users`, y por qué se dejó fuera el toggle "Mis notas" que sí
   trae el export de Stitch (no existe funcionalidad de notas del paciente en el MVP).
 
-### RF-006 / RF-008, código nuevo de esta ronda — SIN PROBAR, SIN COMMITEAR
+### RF-006 / RF-008, código nuevo de esta ronda — probado por el usuario, commiteado
 - `supabase/migrations/20261112000000_caregiver_observations_and_access.sql`: tabla
   `caregiver_observations` (bitácora privada del cuidador, el paciente NUNCA tiene acceso —
   política RLS deliberadamente sin `select` para el paciente), tabla `caregiver_cheers`
@@ -469,7 +478,7 @@ Código nuevo de las 3 RF, `typecheck`/`lint` limpios, **ya commiteado y pushead
   `created_by`, categoría medicación/cita/bienestar, `scheduled_at`, estado pendiente/hecho).
   El paciente tiene control total de los suyos; el cuidador puede crear y marcar como "hecho"
   (no editar ni borrar) solo con vínculo `aceptado` + `share_recordatorios=true`.
-  **Ninguna de las dos migraciones se ha ejecutado en Supabase.**
+  **Ambas migraciones ya ejecutadas por el usuario en el SQL Editor de Supabase.**
 - `src/features/caregiver/api.ts` ampliado: `listMyObservations`, `createObservation`,
   `sendCheer`, `fetchLatestUnreadCheer`, `markCheerRead`.
 - `src/features/reminders/{types.ts,api.ts,constants.ts}` nuevo (mismo patrón de error que
@@ -496,22 +505,167 @@ Código nuevo de las 3 RF, `typecheck`/`lint` limpios, **ya commiteado y pushead
   reciente (con botón de descartar) y lista de "Hoy" con los recordatorios del día y un botón
   de marcar hecho con háptica (`expo-haptics`, ya instalado desde T2) + ícono de check — así
   se cubre la "alternativa visual + háptica" de RNF-009/RF-008 sin depender de audio.
-- `typecheck` y `lint` limpios en todo `src/`. **Nada de esto se probó en el emulador.**
+- `typecheck` y `lint` limpios en todo `src/`. **Probado por el usuario en el emulador**: observación
+  nueva guardada, resumen semanal + mensaje de ánimo visto por el paciente, recordatorio creado
+  por el cuidador y marcado "hecho" por el paciente con vibración. Commits `2f6f58f` y `6034850`
+  (el segundo solo corrige el hash citado en este mismo archivo), con `Co-Authored-By` de Amelyn
+  y Mariana, pusheados a `origin/master`.
+
+## T5 — Apoyo/Info: COMPLETO y verificado en emulador (2026-11-08)
+- Cubre RF-009 (espacio de apoyo/red de contención) y RF-010 (subtítulos/transcripción).
+- **Decisión de alcance** (consistente con T2/T3/T4: fidelidad visual exacta vs Stitch
+  queda para después): el diseño de Stitch (`docs/diseno/stitch-export/paciente_apoyo/`,
+  `cuidador_apoyo/`) asume guías "Escuchar"/"Ver" con audio/video remoto, estado de carga
+  con skeleton, y modo "sin conexión" con candado en contenido que "requiere conexión".
+  Se simplificó: **todo el contenido es estático** (bundleado en la app, sin fetch a
+  Supabase ni a ningún backend), por lo que no hay skeleton de carga ni distinción
+  online/offline — no hace falta, nada depende de la red. Para RF-010, no hay audio/video
+  grabado real: las guías tipo "Escuchar"/"Ver" se entregan **desde el inicio como
+  transcripción/subtítulos completos en texto** (no como pista aparte que se activa
+  después), lo que cumple el requisito sin necesidad de media real.
+- `src/features/support/`: `types.ts` (`SupportGuide`, `CrisisContact`), `constants.ts`
+  (datos estáticos: `CRISIS_CONTACTS` con Línea 106 y Emergencias 123, `PATIENT_GUIDES` y
+  `CAREGIVER_GUIDES` con 4 guías cada una, `findGuide(id)`), `crisis-section.tsx`
+  (tarjetas de ayuda inmediata con botón "Llamar al X" vía `Linking.openURL('tel:...')`),
+  `guide-list.tsx` (filtro Todo/Leer/Escuchar/Ver + lista, navega a la guía).
+- Pantallas: `src/app/(paciente)/apoyo.tsx` y `src/app/(cuidador)/apoyo.tsx` reescritas
+  (antes eran stubs de `TabScreenStub`, que se eliminó por quedar sin uso); cada una con
+  su propio texto de cabecera y guías, compartiendo `CrisisSection`/`GuideList`. Pantalla
+  de detalle compartida en `src/app/apoyo/[id].tsx` (+ `_layout.tsx`), con banner que
+  explica la transcripción cuando el tipo es `escuchar`/`ver`.
+- `typecheck` y `lint` limpios. **Probado en emulador para los dos perfiles** (paciente y
+  cuidador): tarjetas de crisis, filtro por tipo, navegación a detalle y vuelta atrás,
+  transcripción visible en la guía de audio. Capturas en `artifacts/t5/`
+  (`paciente-apoyo.png`, `paciente-apoyo-detalle-audio.png`, `cuidador-apoyo.png`).
+- Nota de sesión: el daemon de `agent-device` no registraba (mismo síntoma ya documentado
+  en `docs/ENTORNO.md`: arrancó en una terminal sin `adb` en el PATH). Se resolvió
+  matando el proceso `node.exe` del daemon (`daemon.js`) y dejándolo reiniciar solo.
+
+## T6 — Accesibilidad + pruebas: EN CURSO (2026-11-09)
+- **Pruebas jest-expo instaladas y corriendo** (ver Decisión D-004): `jest`, `jest-expo`,
+  `@types/jest` en `devDependencies`; `"test": "jest"` + `"jest": {"preset": "jest-expo"}` en
+  `package.json`. 3 archivos de pruebas de lógica pura, sin UI, 31 tests, todos en verde
+  (`npx jest`):
+  - `src/features/activities/__tests__/logic-test.ts` — generación de rondas de Memoria/
+    Atención/Movimiento, verificación de respuestas, subida de nivel.
+  - `src/features/progress/__tests__/logic-test.ts` — rangos de período, buckets, agregación,
+    insights, headline.
+  - `src/features/symptoms/__tests__/calendar-test.ts` — grid del calendario, severidad peor
+    del día, columnas vacías, filtrado por fecha ISO.
+  Los demás módulos (`caregiver`, `reminders`, `support`, `auth`) solo tienen `api.ts` (llamadas
+  a Supabase) y `types`/`constants`, sin lógica pura que valga testear sin mocks — no necesitan
+  pruebas adicionales bajo el criterio de D-004.
+- **Auditoría de accesibilidad de código completa** (agente `accessibility-reviewer`, sobre
+  todo `src/app/`, `src/components/`, componentes de features, `src/theme/`): grep sistemático
+  de `accessibilityLabel/Role/State/Hint`, `hitSlop`, `accessibilityLiveRegion`, y **cálculo
+  real de contraste WCAG** sobre ~29 pares color de texto/ícono-sobre-fondo en uso. El usuario
+  ya había hecho una primera pasada manual con TalkBack en el emulador (sin detalle de qué
+  cubrió); esta auditoría es el respaldo de código.
+  - **2 bugs reales encontrados y corregidos en esta sesión** (no solo falta de prueba):
+    1. **`lineHeight` fijo no escalaba con la fuente del sistema** (RNF-002): `fontSize` sí
+       escala automáticamente en RN, pero `lineHeight` numérico fijo no — riesgo real de
+       recorte/superposición de texto con fuente grande, en **toda** la app vía `ThemedText`.
+       Corregido en `src/components/themed-text.tsx`: se escala `lineHeight` a mano con
+       `PixelRatio.getFontScale()`.
+    2. **4 sitios usaban roles `onSecondaryFixed(Variant)` como texto sobre `secondaryContainer`**
+       (RNF-003/007): los roles `Fixed` de Material 3 solo están pensados para pintarse sobre su
+       propio contenedor `Fixed`, no sobre `secondaryContainer` (que sí cambia de valor entre
+       esquema claro/oscuro) — en oscuro el contraste caía a 1.00–1.82:1 (prácticamente
+       invisible). Corregido reemplazando por `onSecondaryContainer` (el rol que sí adapta) en:
+       `src/app/(paciente)/calendario.tsx` (número de día seleccionado, chip de conteo),
+       `src/app/(cuidador)/acompanar.tsx` (resumen semanal), `src/features/symptoms/
+       wizard-header.tsx` (botón "Cerrar"), `src/app/(paciente)/inicio.tsx` (banner de mensaje
+       de ánimo). También se corrigió `src/app/(auth)/acceder.tsx` (link "¿Olvidaste tu
+       contraseña?": `primaryContainer` como color de texto sobre `surface` daba 1.83:1 en
+       oscuro → cambiado a `primary`).
+  - **2 hallazgos menores corregidos**: botón "Cuidadores" en `(paciente)/inicio.tsx` medía
+    40dp sin `hitSlop` (por debajo de `MinTouchSize`=48) → se añadió `hitSlop={8}`; el botón de
+    llamada de crisis en `src/features/support/crisis-section.tsx` usaba `minHeight: 48` literal
+    en vez del token `MinTouchSize` → reemplazado (consistencia de mantenimiento, no era un bug
+    de accesibilidad en sí, pero ya quedó resuelto).
+  - **Confirmado en código, sin cambios necesarios**: RNF-004 (semántica TalkBack), RNF-006
+    (ningún estado solo por color — ya se dudaba si aplicaba, se confirmó que sí), RNF-008
+    (instrucciones cortas / un elemento principal por pantalla), RNF-010 (baja fatiga),
+    RNF-011 (español/Latam).
+  - `docs/REQUISITOS.md` actualizado: RNF-001 a RNF-011 pasaron de "Pendiente" a "Implementado
+    sin probar" con el detalle de qué confirmó/corrigió la auditoría y qué falta exactamente
+    para subir a Verificado en cada uno (mayormente: capturas reales en emulador y el recorrido
+    documentado con TalkBack).
+- **Háptica extendida a Atención y Movimiento** (RNF-009): el `accessibility-reviewer` encontró
+  que `expo-haptics` solo se usaba en Memoria y en marcar "hecho" un recordatorio, pero no en
+  las otras 2 áreas de actividades. Corregido en `src/app/actividad/[area].tsx`: en Atención,
+  notificación de éxito/error al tocar una opción (igual patrón que Memoria, usando el flag
+  `isOdd` de la opción); en Movimiento, vibración de selección al marcar cada paso y de éxito
+  al terminar la sesión (`onFinish`).
+- `typecheck`, `lint` (sobre los archivos tocados) y los 31 tests de jest siguen en verde tras
+  todas las correcciones de esta sesión.
+- **Segundo bug real de contraste en oscuro, encontrado por el usuario probando en emulador
+  (no por la auditoría de código) y corregido en esta sesión:** los banners de error/aviso con
+  fondo `tertiaryFixed` (fijo, mismo valor claro `#f3dfcd` en los dos esquemas) pintaban el
+  ícono/texto con roles que sí cambian por esquema (`colors.tertiary` o el `onSurface` por
+  defecto de `ThemedText`) — en oscuro esos roles se vuelven claros y quedan casi invisibles
+  sobre el fondo claro fijo. El error de "correo no confirmado" al iniciar sesión en oscuro era
+  literalmente ilegible por esto. Corregido reemplazando por el rol fijo pareja
+  (`onTertiaryFixed`/`onTertiaryFixedVariant`, que no cambia por esquema y sí contrasta) en:
+  `src/components/text-field.tsx` (banner de error de cualquier campo — cubre el error de login),
+  `src/app/(paciente)/calendario.tsx` (badge de severidad), `src/app/nueva-observacion.tsx`
+  (ícono de candado del aviso de privacidad), `src/app/registrar-sintoma/paso-3.tsx` (banner de
+  error al guardar). `src/app/actividad/[area].tsx` y `src/features/support/crisis-section.tsx`
+  ya usaban el rol fijo correcto, no se tocaron.
+- **El usuario ya tomó las 6 capturas de modo oscuro** (`artifacts/t6/`, sin renombrar/commitear
+  todavía) y confirmó que el bug de arriba quedó resuelto — **pero no le gusta la paleta oscura
+  en sí**: la tarjeta de "¿Necesitas hablar con alguien?" (`crisis-section.tsx`, fondo
+  `tertiaryFixed`) se ve como un recorte claro flotando sobre un fondo casi negro, porque los
+  roles `Fixed` de Material 3 no se aclaran/oscurecen por esquema (son para acentos pequeños,
+  no para tarjetas grandes) — rompe el patrón de "superficie que se aclara con la elevación"
+  que sí usan los temas oscuros bien hechos (ver investigación de esta sesión, fuentes:
+  m2.material.io/design/color/dark-theme, smashingmagazine.com/2025/04/inclusive-dark-mode).
+  **Decisión del usuario: no tocar la paleta por código.** Va a iterar el modo oscuro en Stitch
+  (se le dio un prompt en inglés, mismo formato que `docs/diseno/prompts-stitch-v2.md`, para
+  generar la variante oscura de cualquier pantalla a partir de su captura en claro) y traerá los
+  resultados a la siguiente sesión.
+- **Pendiente para cerrar T6 del todo (ya no requiere más cambios de código conocidos, solo
+  verificación en emulador):**
+  1. Recorrido con TalkBack documentado pantalla por pantalla (el usuario ya hizo una pasada,
+     falta dejar constancia de qué cubrió — capturas o notas en `artifacts/t6/talkback-notas.md`
+     — para subir RNF-004/009 a Verificado). **No hecho.**
+  2. ~~Capturas en modo oscuro~~ **Hecho** (6 capturas en `artifacts/t6/`, bug de contraste
+     confirmado resuelto por el usuario) — pendiente solo renombrarlas con el patrón
+     `t6-oscuro-*.png` y trackearlas en git; la paleta en sí queda para después (ver arriba).
+  3. Captura con fuente del sistema ampliada para RNF-002 (confirmar visualmente el fix de
+     `lineHeight`). **No hecho.**
+  4. Confirmar en emulador que la háptica nueva de Atención/Movimiento se siente, igual que ya
+     se confirmó en Memoria y recordatorios. **No hecho** (no confirmado por texto en esta
+     sesión).
 
 ## Siguiente acción concreta
-**T4 cerrado, probado por el usuario y commiteado/pusheado.** Queda pendiente, sin bloquear
-nada:
-1. **Tomar capturas en `artifacts/t4/`** de RF-006/RF-008/RF-012 (vinculación, observación
-   nueva, acompañar con mensaje de ánimo, recordatorio marcado hecho) y subir los 3 a
-   "Verificado" en `docs/REQUISITOS.md` — el usuario pidió dejar esto para después.
-2. Comparar `observaciones.tsx`/`acompanar.tsx`/`recordatorios.tsx`/`permisos.tsx`/
-   `vincularme.tsx` contra el export de Stitch (mismo patrón de fidelidad visual diferido
-   que T2/T3, junto con `progreso.tsx`).
-3. Revisar qué queda del MVP sin tocar: RF-007 (selección de perfil, probablemente ya
-   cubierto por el andamiaje de T0 pero sin marcar), RF-009 (apoyo/red de contención, screens
-   `apoyo.tsx` siguen siendo stub en ambos perfiles), RF-010 (subtítulos, no aplica si no hay
-   contenido audiovisual todavía), buena parte de los RNF (TalkBack real, RT-003/RT-004/RT-005
-   sin revisar explícitamente). Decidir con el usuario cuál sigue.
+**Plan explícito del usuario para la próxima sesión (2026-11-09, decidido al cierre de esta
+sesión) — dos partes, en este orden:**
+
+1. **Terminar T6** (ver pendientes 1, 3 y 4 de la sección "T6" arriba — el pendiente 2, modo
+   oscuro, ya está hecho salvo la paleta, que se deja para la parte 2):
+   - Recorrido con TalkBack documentado (`artifacts/t6/talkback-notas.md`).
+   - Captura con fuente del sistema ampliada (`adb shell settings put system font_scale 1.3`)
+     en `(paciente)/apoyo.tsx` y en el wizard de síntomas paso 2.
+   - Confirmación verbal del usuario de que la háptica nueva de Atención/Movimiento se siente.
+   - Con eso, subir RNF-001, 002, 003, 004, 007 y 009 a Verificado en `REQUISITOS.md`.
+
+2. **Esperar las pantallas de modo oscuro que el usuario va a generar en Stitch** (se le dio un
+   prompt para iterar ahí, no implementado todavía — ver nota de "paleta oscura" en la sección
+   T6) **y, con esas imágenes ya en mano, hacer un pase de fidelidad visual completo**: comparar
+   **todas** las pantallas de `artifacts/` (no solo las nuevas de oscuro) contra las imágenes
+   equivalentes de `docs/diseno/stitch-export/` (56 pantallas, `code.html` + PNG) y ajustar la
+   implementación para que se vea igual a Stitch con alta fidelidad — colores, tipografía,
+   espaciado, forma de tarjetas/botones. Esto es el mismo pendiente de fidelidad visual que ya
+   se venía difiriendo desde T2/T3/T4 (`observaciones.tsx`, `acompanar.tsx`, `recordatorios.tsx`,
+   `permisos.tsx`, `vincularme.tsx`, `apoyo.tsx` ambos perfiles, `progreso.tsx`), ahora
+   **extendido explícitamente a incluir el modo oscuro** una vez el usuario traiga el resultado
+   de Stitch. No arrancar esta parte sin que el usuario haya pegado las capturas de Stitch —
+   es el insumo que falta, no hay nada que comparar todavía.
+
+Pendiente menor, no bloquea lo anterior:
+- RF-007 (selección de perfil) sigue sin marcar explícitamente en `REQUISITOS.md` aunque el
+  andamiaje de T0 ya lo cubre — falta solo revisarlo y subirlo a Verificado con una captura.
 
 Pendientes en paralelo (no bloquean lo anterior):
 - Confirmar la **fecha de entrega** con el profesor (Duda 3, única duda crítica abierta).
@@ -519,6 +673,10 @@ Pendientes en paralelo (no bloquean lo anterior):
 - Borrar el repo de prueba temporal `coauthor-test` (requiere scope `delete_repo` o hacerlo por web).
 - Más adelante: `docs/ENTREGA-FINAL.md` (ENT-002), `README.md` (ENT-003), RLS cuando existan
   tablas de dominio.
+- Antes de commitear: renombrar las 6 capturas de `artifacts/t6/` (vienen como
+  `WhatsApp Image...jpeg`) a `t6-oscuro-<pantalla>.png`-style, y confirmar que
+  `scripts/reset-test-passwords.mjs` no quedó en el working tree (usa la `service_role` key,
+  nunca debe commitearse).
 
 ## Ya intentado, no repetir
 - **No generes SQL de datos de prueba con fechas relativas a `now()` (p. ej. `now() - interval
@@ -620,9 +778,12 @@ haya algo funcionando. Obligatorio primero; recomendados al final.)_
   Verificado por el usuario en emulador tras 4 rondas de ajustes — ver sección "T2 — Actividades" arriba.
 - [x] **T3. Progreso** — historial y comparación actual vs pasado. (RF-005)
   Verificado por el usuario en emulador con datos de prueba — ver sección "T3 — Progreso" arriba.
-- [ ] **T4. Cuidador** — vinculación con consentimiento, observaciones, recordatorios
+- [x] **T4. Cuidador** — vinculación con consentimiento, observaciones, recordatorios
   (visual+háptica), acceso sincronizado a lo autorizado. (RF-006, RF-008, RF-012)
-- [ ] **T5. Apoyo/Info** — contenidos de apoyo; subtítulos si hay audiovisual. (RF-009, RF-010)
+  Probado por el usuario en emulador con dos cuentas, commiteado y pusheado — ver sección
+  "T4 — Módulo del cuidador" arriba. Falta solo tomar capturas para subir a Verificado.
+- [x] **T5. Apoyo/Info** — contenidos de apoyo; subtítulos si hay audiovisual. (RF-009, RF-010)
+  Verificado en emulador para ambos perfiles — ver sección "T5 — Apoyo/Info" arriba.
 - [ ] **T6. Accesibilidad + pruebas** — pase de accesibilidad y pruebas jest-expo de la lógica. (RNF-*, pruebas)
 - [ ] **T7. Extensiones (si sobra tiempo)** — voz/dictado, versión auditiva, perfil médico. (REC-001..003)
 - [ ] **T8. Documento Final** — `docs/ENTREGA-FINAL.md`: 5 secciones, matriz competitiva (Fase 1),

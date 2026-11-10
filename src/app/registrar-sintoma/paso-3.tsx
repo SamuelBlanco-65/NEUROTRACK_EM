@@ -1,4 +1,6 @@
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Redirect, router } from 'expo-router';
+import { useMemo } from 'react';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -20,6 +22,11 @@ export default function RegistrarSintomaPaso3Screen() {
   const note = useAppSelector((state) => state.symptoms.draft.note);
   const submitStatus = useAppSelector((state) => state.symptoms.submitStatus);
   const submitError = useAppSelector((state) => state.symptoms.submitError);
+
+  const horaActual = useMemo(
+    () => new Date().toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit' }),
+    []
+  );
 
   if (!symptomType || !severity) return <Redirect href="/registrar-sintoma/paso-1" />;
 
@@ -43,7 +50,7 @@ export default function RegistrarSintomaPaso3Screen() {
         />
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <View style={styles.heading}>
-            <ThemedText variant="headlineLg">¿Quieres agregar algo?</ThemedText>
+            <ThemedText variant="headlineLg" accessibilityRole="header">¿Quieres agregar algo?</ThemedText>
             <ThemedText variant="bodyMd" colorRole="secondary">
               Es totalmente opcional. Puedes guardar sin escribir nada.
             </ThemedText>
@@ -70,12 +77,29 @@ export default function RegistrarSintomaPaso3Screen() {
             />
           </View>
 
+          <View style={[styles.momentCard, { backgroundColor: colors.surfaceContainerLowest }]}>
+            <ThemedText variant="labelSm" colorRole="secondary">
+              Momento del registro
+            </ThemedText>
+            <View style={styles.momentRow}>
+              <View style={[styles.momentIcon, { backgroundColor: colors.surfaceContainerLow }]}>
+                <MaterialIcons name="schedule" size={20} color={colors.primary} />
+              </View>
+              <View>
+                <ThemedText variant="headlineSm">Hoy, {horaActual}</ThemedText>
+                <ThemedText variant="bodySm" colorRole="secondary">
+                  Zona horaria local
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+
           {submitError ? (
             <View
               style={[styles.errorBanner, { backgroundColor: colors.tertiaryFixed }]}
               accessibilityRole="alert"
               accessibilityLiveRegion="assertive">
-              <ThemedText variant="labelMd">{submitError.message}</ThemedText>
+              <ThemedText variant="labelMd" colorRole="onTertiaryFixed">{submitError.message}</ThemedText>
             </View>
           ) : null}
         </ScrollView>
@@ -125,6 +149,23 @@ const styles = StyleSheet.create({
     borderRadius: Radius.default,
     padding: Spacing.md,
     textAlignVertical: 'top',
+  },
+  momentCard: {
+    borderRadius: Radius.default,
+    padding: Spacing.md,
+    gap: Spacing.sm,
+  },
+  momentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  momentIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   errorBanner: {
     borderRadius: Radius.default / 2,

@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import { saveSettings } from '@/features/settings/persistence';
 import activitiesReducer from './slices/activities-slice';
 import authReducer from './slices/auth-slice';
 import caregiverReducer from './slices/caregiver-slice';
@@ -20,6 +21,17 @@ export const store = configureStore({
     caregiver: caregiverReducer,
     reminders: remindersReducer,
   },
+});
+
+// Persiste las preferencias de accesibilidad/apariencia en este dispositivo cada vez que cambian
+// (hidratadas al abrir la app en src/app/_layout.tsx vía `hydrateSettings`).
+let lastPersistedSettings = store.getState().settings;
+store.subscribe(() => {
+  const settings = store.getState().settings;
+  if (settings !== lastPersistedSettings) {
+    lastPersistedSettings = settings;
+    saveSettings(settings);
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

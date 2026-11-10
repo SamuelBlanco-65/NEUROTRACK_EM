@@ -10,6 +10,7 @@ import { Provider as StoreProvider } from 'react-redux';
 
 import { supabase } from '@/lib/supabase';
 import { bootstrapSession, sessionEnded } from '@/store/slices/auth-slice';
+import { hydrateSettings } from '@/store/slices/settings-slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { store } from '@/store/store';
 
@@ -18,14 +19,16 @@ SplashScreen.preventAutoHideAsync();
 function AppShell() {
   const dispatch = useAppDispatch();
   const authStatus = useAppSelector((state) => state.auth.status);
+  const settingsStatus = useAppSelector((state) => state.settings._hydrated);
   const [fontsLoaded] = useFonts({
     AtkinsonHyperlegibleNext_400Regular,
     AtkinsonHyperlegibleNext_700Bold,
   });
-  const ready = fontsLoaded && authStatus !== 'bootstrapping';
+  const ready = fontsLoaded && authStatus !== 'bootstrapping' && settingsStatus;
 
   useEffect(() => {
     dispatch(bootstrapSession());
+    dispatch(hydrateSettings());
 
     const { data: subscription } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Cuidador · Observaciones (Modo Oscuro)</title>
+<!-- Google Fonts: Atkinson Hyperlegible Next & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,600;0,6..72,700;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Custom Configuration -->
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            app: {
+              bg: '#1B1E22',
+              surface: '#22272E',
+              'surface-border': '#2D333B',
+              'surface-elevated': '#252A30',
+              'surface-chip': '#272C34',
+              bottombar: '#181B1F',
+              teal: {
+                primary: '#236B78',
+                accent: '#6EC6D6',
+                bg: '#1D3136',
+                pill: '#223A40'
+              },
+              amber: {
+                card: '#30261C',
+                border: '#4A3B2A',
+                accent: '#E8B482',
+                bg: '#382A1E'
+              },
+              text: {
+                title: '#F5F1EB',
+                main: '#ECE6DA',
+                muted: '#A2ACB7',
+                subtle: '#8E98A4'
+              }
+            }
+          },
+          fontFamily: {
+            sans: ['"Atkinson Hyperlegible Next"', 'system-ui', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+<!-- Layout & Icon Specific Styles -->
+<style data-purpose="base-typography">
+    body {
+      font-family: 'Atkinson Hyperlegible Next', system-ui, -apple-system, sans-serif;
+      background-color: #1B1E22;
+      color: #ECE6DA;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 450,
+        'GRAD' 0,
+        'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-app-bg text-app-text-main flex justify-center selection:bg-app-teal-primary selection:text-white pb-32">
+<!-- Main Mobile Shell Container (Max Width 430px representing iOS screen) -->
+<div class="w-full max-w-[430px] min-h-screen flex flex-col relative px-4 pt-4 pb-20">
+<!-- BEGIN: TopBar -->
+<header class="flex items-center justify-between pt-2 pb-2">
+<div>
+<h1 class="font-serif text-[28px] font-bold text-app-text-title tracking-tight">Observaciones</h1>
+<p class="text-[14px] text-app-text-muted mt-0.5 leading-snug">Lo que notas también ayuda en la consulta.</p>
+</div>
+<!-- User profile button -->
+<button aria-label="Perfil de usuario" class="w-11 h-11 rounded-full bg-app-surface-elevated border border-app-surface-border flex items-center justify-center text-app-text-muted active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[26px]">account_circle</span>
+</button>
+</header>
+<!-- END: TopBar -->
+<!-- BEGIN: ContextPill -->
+<section class="mt-3">
+<div class="inline-flex items-center gap-2.5 bg-app-surface-elevated border border-app-surface-border px-3.5 py-1.5 rounded-full shadow-sm text-xs font-medium w-full sm:w-auto">
+<!-- Patient avatar -->
+<img alt="Avatar de María" class="w-6 h-6 rounded-full object-cover border border-app-surface-border flex-shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcR686SEHyhRXjrq5HOK58iqujt2WHylaFTLBuurhmvddEFjqR-xGwe_JVRDdy9z-PVrDovruDepH_Sa_PV0lU4JDk0VbtpZiR5Teow3JabjShp5BESBKekwZj3OTLWTBUGXaRfxianzBkBo9J9qkFxSPg_5eFsRxhcGrXNTH3Ndr3T9wkM9gPq9AnRMR2QgQDUuGPfJxNkWuJHg22-nR0VByNW6PZYDRYi6NQQa3O"/>
+<span class="text-app-text-main font-semibold">Acompañas a María</span>
+<span class="w-1 h-1 rounded-full bg-app-text-subtle"></span>
+<span class="text-app-text-muted truncate">Notas privadas para el neurólogo</span>
+</div>
+</section>
+<!-- END: ContextPill -->
+<!-- BEGIN: WeeklySummaryCard -->
+<section class="mt-4">
+<div class="bg-app-surface border border-app-surface-border rounded-2xl p-3.5 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3">
+<!-- Sparkline / Trend Icon Badge -->
+<div class="w-11 h-11 rounded-full bg-app-teal-bg flex items-center justify-center text-app-teal-accent flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">show_chart</span>
+</div>
+<div>
+<h2 class="text-sm font-bold text-app-text-title">4 notas esta semana</h2>
+<p class="text-xs text-app-text-muted">Listas para el resumen de consulta</p>
+</div>
+</div>
+<!-- Export Action Link -->
+<button class="flex items-center gap-0.5 text-app-teal-accent text-xs font-semibold px-2 py-1 rounded hover:bg-app-surface-elevated transition-colors" type="button">
+<span>Exportar</span>
+<span class="material-symbols-outlined text-[15px]">arrow_outward</span>
+</button>
+</div>
+</section>
+<!-- END: WeeklySummaryCard -->
+<!-- BEGIN: TodayObservationsSection -->
+<section class="mt-6">
+<!-- Section date header with teal bullet -->
+<div class="flex items-center gap-2 mb-3">
+<span class="w-2.5 h-2.5 rounded-full bg-app-teal-accent inline-block"></span>
+<h3 class="font-serif text-base font-bold text-app-text-title">Hoy · 24 de octubre</h3>
+</div>
+<div class="space-y-3">
+<!-- Item 1: Ánimo -->
+<article class="bg-app-surface border border-app-surface-border rounded-2xl p-4 transition-colors hover:border-app-teal-accent/40">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full bg-app-teal-bg text-app-teal-accent flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">sentiment_neutral</span>
+</div>
+<div>
+<h4 class="font-serif text-[17px] font-bold text-app-text-title">Ánimo</h4>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-app-text-subtle text-xs">
+<span>5:15 p. m.</span>
+<span class="material-symbols-outlined text-[16px] text-app-text-subtle">chevron_right</span>
+</div>
+</div>
+<div class="mt-3 pl-14">
+<p class="text-sm text-app-text-main leading-relaxed">
+              Estuvo más callada en la tarde. Prefirió no salir a caminar...
+            </p>
+<div class="flex items-center gap-1.5 text-app-text-subtle text-xs mt-2.5">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>Visible solo para ti y el médico</span>
+</div>
+</div>
+</article>
+<!-- Item 2: Movilidad -->
+<article class="bg-app-surface border border-app-surface-border rounded-2xl p-4 transition-colors hover:border-app-amber-accent/40">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full bg-app-amber-bg text-app-amber-accent flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">directions_walk</span>
+</div>
+<div>
+<h4 class="font-serif text-[17px] font-bold text-app-text-title">Movilidad</h4>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-app-text-subtle text-xs">
+<span>11:30 a. m.</span>
+<span class="material-symbols-outlined text-[16px] text-app-text-subtle">chevron_right</span>
+</div>
+</div>
+<div class="mt-3 pl-14">
+<p class="text-sm text-app-text-main leading-relaxed">
+              Se apoyó en la pared al subir la escalera hacia el segundo piso.
+            </p>
+<div class="mt-2.5">
+<span class="inline-block bg-app-surface-elevated text-app-text-main text-[11px] font-medium px-2.5 py-0.5 rounded border border-app-surface-border">
+                Peldaños
+              </span>
+</div>
+</div>
+</article>
+</div>
+</section>
+<!-- END: TodayObservationsSection -->
+<!-- BEGIN: YesterdayObservationsSection -->
+<section class="mt-6">
+<div class="flex items-center gap-2 mb-3">
+<span class="w-2.5 h-2.5 rounded-full bg-app-text-subtle/50 inline-block"></span>
+<h3 class="font-serif text-base font-bold text-app-text-title">Ayer · 23 de octubre</h3>
+</div>
+<!-- Item 3: Fatiga -->
+<article class="bg-app-surface border border-app-surface-border rounded-2xl p-4 transition-colors">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full bg-app-amber-bg text-app-amber-accent flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">battery_3_bar</span>
+</div>
+<div>
+<h4 class="font-serif text-[17px] font-bold text-app-text-title">Fatiga</h4>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-app-text-subtle text-xs">
+<span>3:40 p. m.</span>
+<span class="material-symbols-outlined text-[16px] text-app-text-subtle">chevron_right</span>
+</div>
+</div>
+<div class="mt-3 pl-14">
+<p class="text-sm text-app-text-main leading-relaxed">
+            Comentó pesadez en las piernas tras 20 minutos de lectura en ...
+          </p>
+</div>
+</article>
+</section>
+<!-- END: YesterdayObservationsSection -->
+<!-- BEGIN: Oct22ObservationsSection -->
+<section class="mt-6">
+<div class="flex items-center gap-2 mb-3">
+<span class="w-2.5 h-2.5 rounded-full bg-app-text-subtle/50 inline-block"></span>
+<h3 class="font-serif text-base font-bold text-app-text-title">22 de octubre</h3>
+</div>
+<!-- Item 4: Medicación -->
+<article class="bg-app-surface border border-app-surface-border rounded-2xl p-4 transition-colors">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-full bg-app-teal-bg text-app-teal-accent flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">medication</span>
+</div>
+<div>
+<h4 class="font-serif text-[17px] font-bold text-app-text-title">Medicación</h4>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-app-text-subtle text-xs">
+<span>8:30 a. m.</span>
+<span class="material-symbols-outlined text-[16px] text-app-text-subtle">chevron_right</span>
+</div>
+</div>
+<div class="mt-3 pl-14">
+<p class="text-sm text-app-text-main leading-relaxed">
+            Tomó la dosis matutina con el desayuno sin molestias...
+          </p>
+</div>
+</article>
+</section>
+<!-- END: Oct22ObservationsSection -->
+<!-- BEGIN: ClinicalNoteCallout -->
+<section class="mt-6">
+<div class="bg-app-surface border border-app-surface-border rounded-2xl p-4 flex gap-3.5 items-start">
+<div class="w-11 h-11 rounded-full bg-app-teal-bg text-app-teal-accent flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">medical_services</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-app-text-title leading-tight">Acompañamiento clínico</h4>
+<p class="text-xs text-app-text-muted mt-1 leading-relaxed">
+            Estas notas son un registro complementario tuyo para enriquecer la próxima cita médica de María.
+          </p>
+</div>
+</div>
+</section>
+<!-- END: ClinicalNoteCallout -->
+<!-- BEGIN: CaregiverQuoteCard -->
+<section class="mt-4 mb-4">
+<div class="bg-app-amber-card border border-app-amber-border rounded-2xl p-4 flex items-center gap-3.5">
+<span class="material-symbols-outlined text-app-amber-accent text-[22px] flex-shrink-0">favorite</span>
+<p class="text-xs font-normal text-app-text-main leading-relaxed">
+          Tu presencia atenta marca una diferencia genuina cada día.
+        </p>
+</div>
+</section>
+<!-- END: CaregiverQuoteCard -->
+<!-- BEGIN: FloatingActionButton -->
+<div class="fixed bottom-20 left-0 right-0 max-w-[430px] mx-auto px-6 z-20 flex justify-center pointer-events-none">
+<button class="pointer-events-auto w-full max-w-[280px] h-14 bg-app-teal-primary hover:bg-[#2c7a88] active:scale-[0.98] text-white font-medium rounded-full shadow-lg flex items-center justify-center gap-2 transition-all" style="box-shadow: 0 8px 24px -4px rgba(35, 107, 120, 0.45);" type="button">
+<span class="material-symbols-outlined text-[22px]">add</span>
+<span class="text-sm tracking-wide">Nueva observación</span>
+</button>
+</div>
+<!-- END: FloatingActionButton -->
+<!-- BEGIN: BottomNavigation -->
+<nav class="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-app-bottombar border-t border-app-surface-chip px-2 py-1.5 z-30 flex items-center justify-around">
+<!-- Tab 1: Inicio -->
+<a class="flex flex-col items-center justify-center flex-1 py-1 text-app-text-subtle hover:text-app-text-main transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">home</span>
+<span class="text-[11px] font-medium mt-1">Inicio</span>
+</a>
+<!-- Tab 2: Observaciones (Active) -->
+<a class="flex flex-col items-center justify-center flex-1 py-1 text-app-teal-accent relative" href="#">
+<div class="px-4 py-0.5 rounded-full bg-app-teal-pill flex items-center justify-center mb-0.5">
+<span class="material-symbols-outlined text-[22px] fill-1">visibility</span>
+</div>
+<span class="text-[11px] font-semibold text-app-teal-accent">Observaciones</span>
+</a>
+<!-- Tab 3: Acompañar -->
+<a class="flex flex-col items-center justify-center flex-1 py-1 text-app-text-subtle hover:text-app-text-main transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">handshake</span>
+<span class="text-[11px] font-medium mt-1">Acompañar</span>
+</a>
+<!-- Tab 4: Recordatorios -->
+<a class="flex flex-col items-center justify-center flex-1 py-1 text-app-text-subtle hover:text-app-text-main transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="text-[11px] font-medium mt-1">Recordatorios</span>
+</a>
+<!-- Tab 5: Apoyo -->
+<a class="flex flex-col items-center justify-center flex-1 py-1 text-app-text-subtle hover:text-app-text-main transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">volunteer_activism</span>
+<span class="text-[11px] font-medium mt-1">Apoyo</span>
+</a>
+</nav>
+<!-- END: BottomNavigation -->
+</div>
+</body></html>

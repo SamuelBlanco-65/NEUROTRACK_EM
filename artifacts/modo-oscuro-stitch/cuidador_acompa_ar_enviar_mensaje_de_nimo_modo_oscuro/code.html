@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Cuidador · Acompañar - Enviar mensaje de ánimo</title>
+<!-- Tailwind CSS v3 CDN with Forms & Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Atkinson Hyperlegible Next (or Atkinson Hyperlegible fallback) -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration for Theme Customization -->
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Atkinson Hyperlegible"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            bgDark: '#1B1E22',
+            cardBg: '#22272E',
+            cardBorder: '#2D333B',
+            textLight: '#F5F1EB',
+            textSoft: '#ECE6DA',
+            textMuted: '#A2ACB7',
+            tealPrimary: '#236B78',
+            tealAccent: '#6EC6D6',
+            tealBgSelected: '#1D3136',
+            tealBorderSelected: '#2C4F57',
+            amberAccent: '#E8B482',
+            amberBg: '#382A1E',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="base-styling">
+    body {
+      font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .touch-target {
+      min-height: 48px;
+      min-width: 48px;
+    }
+  </style>
+</head>
+<body class="bg-[#101316] min-h-screen flex flex-col justify-end md:justify-center md:items-center text-textLight antialiased selection:bg-tealPrimary selection:text-white p-0 md:p-4">
+<!-- BEGIN: ModalContainer -->
+<!-- Main bottom sheet dialog card with rounded top edges on mobile -->
+<main class="w-full max-w-[430px] bg-bgDark rounded-t-[32px] md:rounded-[32px] shadow-2xl border-t md:border border-cardBorder/60 px-5 pt-4 pb-8 flex flex-col mx-auto transition-all" data-purpose="bottom-sheet-dialog">
+<!-- BEGIN: HeaderSection -->
+<header class="flex items-center justify-between py-3 mb-2" data-purpose="modal-header">
+<!-- Close modal button -->
+<button aria-label="Cerrar ventana" class="w-10 h-10 flex items-center justify-center rounded-full text-textSoft hover:bg-cardBg focus:outline-none focus:ring-2 focus:ring-tealAccent transition-colors" type="button">
+<svg class="w-6 h-6 stroke-[2.2]" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Modal Title -->
+<h1 class="text-xl font-bold text-textLight tracking-tight text-center">
+        Mensaje Rápido
+      </h1>
+<!-- User Profile / Avatar button -->
+<button aria-label="Perfil de usuario" class="w-10 h-10 rounded-full bg-[#252B33] border border-cardBorder flex items-center justify-center text-tealAccent hover:border-tealAccent transition-colors focus:outline-none focus:ring-2 focus:ring-tealAccent" type="button">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"></path>
+</svg>
+</button>
+</header>
+<!-- END: HeaderSection -->
+<!-- BEGIN: QuickMessageOptions -->
+<!-- List of radio options and custom message trigger -->
+<section class="flex flex-col gap-3 my-2" data-purpose="options-selector">
+<!-- Option 1: Selected / Active -->
+<div aria-pressed="true" class="w-full bg-[#1D3136] border border-[#2C4F57] rounded-2xl p-4 flex items-center justify-between gap-3 cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-tealAccent transition-all hover:bg-opacity-90" data-purpose="quick-option-selected" role="button" tabindex="0">
+<div class="flex items-center gap-3.5 flex-1 min-w-0">
+<!-- Icon badge: Teal heart -->
+<div class="w-12 h-12 rounded-full bg-[#223A40] flex items-center justify-center shrink-0">
+<svg class="w-6 h-6 text-[#6EC6D6] fill-none stroke-current stroke-2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Option textual content -->
+<div class="flex flex-col text-left">
+<h2 class="text-base font-bold text-textLight leading-tight">¡Vas muy bien!</h2>
+<p class="text-sm text-textMuted mt-0.5 leading-snug">Mensaje cariñoso y breve.</p>
+</div>
+</div>
+<!-- Right side: Selected indicator -->
+<div class="w-6 h-6 rounded-full bg-tealPrimary flex items-center justify-center shrink-0 text-white shadow">
+<svg class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+<!-- Option 2: Inactive (Estoy orgulloso de ti) -->
+<div aria-pressed="false" class="w-full bg-cardBg border border-cardBorder rounded-2xl p-4 flex items-center justify-between gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-tealAccent transition-all hover:border-gray-600" data-purpose="quick-option" role="button" tabindex="0">
+<div class="flex items-center gap-3.5 flex-1 min-w-0">
+<!-- Icon badge: Amber medal/trophy -->
+<div class="w-12 h-12 rounded-full bg-[#382A1E] flex items-center justify-center shrink-0">
+<svg class="w-6 h-6 text-[#E8B482] fill-none stroke-current stroke-2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path class="hidden" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+<!-- Award Medal SVG -->
+<circle cx="12" cy="8" r="6"></circle>
+<path d="M8.21 13.89L7 22l5-3 5 3-1.21-8.11" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Option textual content -->
+<div class="flex flex-col text-left">
+<h2 class="text-base font-bold text-textLight leading-tight">Estoy orgulloso de ti</h2>
+<p class="text-sm text-textMuted mt-0.5 leading-snug">Reconoce su constancia y esfuerzo de hoy.</p>
+</div>
+</div>
+<!-- Right side: Inactive radio circle -->
+<div class="w-6 h-6 rounded-full bg-[#333A44] shrink-0 border border-cardBorder/40"></div>
+</div>
+<!-- Option 3: Inactive (¿Practicamos juntos hoy?) -->
+<div aria-pressed="false" class="w-full bg-cardBg border border-cardBorder rounded-2xl p-4 flex items-center justify-between gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-tealAccent transition-all hover:border-gray-600" data-purpose="quick-option" role="button" tabindex="0">
+<div class="flex items-center gap-3.5 flex-1 min-w-0">
+<!-- Icon badge: Teal group/community -->
+<div class="w-12 h-12 rounded-full bg-[#1D3136] flex items-center justify-center shrink-0">
+<svg class="w-6 h-6 text-[#6EC6D6] fill-none stroke-current stroke-2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Option textual content -->
+<div class="flex flex-col text-left">
+<h2 class="text-base font-bold text-textLight leading-tight">¿Practicamos juntos hoy?</h2>
+<p class="text-sm text-textMuted mt-0.5 leading-snug">Invitación para hacer la sesión de la tarde en compañía.</p>
+</div>
+</div>
+<!-- Right side: Inactive radio circle -->
+<div class="w-6 h-6 rounded-full bg-[#333A44] shrink-0 border border-cardBorder/40"></div>
+</div>
+<!-- Custom message option button -->
+<div class="w-full bg-cardBg border border-cardBorder rounded-2xl p-4 flex items-center justify-between gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-tealAccent transition-all hover:bg-[#272D35]" data-purpose="custom-message-option" role="button" tabindex="0">
+<div class="flex items-center gap-3.5 flex-1 min-w-0">
+<!-- Icon badge: Edit / Note -->
+<div class="w-12 h-12 rounded-full bg-[#252B33] flex items-center justify-center shrink-0">
+<svg class="w-5 h-5 text-textSoft fill-none stroke-current stroke-2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Truncated/compact prompt label -->
+<span class="text-base font-bold text-textSoft truncate">Escribir otro mensaje perso...</span>
+</div>
+<!-- Forward Arrow Icon -->
+<div class="shrink-0 text-textMuted">
+<svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+</section>
+<!-- END: QuickMessageOptions -->
+<!-- BEGIN: ActionAndFooterSection -->
+<footer class="mt-4 flex flex-col items-center gap-3.5" data-purpose="modal-actions-footer">
+<!-- Primary Action Button: 56dp height pill button -->
+<button class="w-full h-14 bg-tealPrimary hover:bg-[#2b7f8e] active:scale-[0.99] text-white font-bold text-base rounded-full flex items-center justify-center gap-2.5 shadow-lg shadow-tealPrimary/25 transition-all focus:outline-none focus:ring-4 focus:ring-tealAccent/30" data-purpose="send-button" type="button">
+<!-- Paper Plane / Send Icon -->
+<svg class="w-5 h-5 fill-none stroke-current stroke-[2.2] transform rotate-45 -translate-y-0.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Enviar a María</span>
+</button>
+<!-- Informative caption footer -->
+<div class="flex items-center justify-center gap-2 text-center px-4" data-purpose="notification-caption">
+<!-- Notification Bell Icon in Teal Accent -->
+<svg class="w-4 h-4 text-tealAccent shrink-0 stroke-[2] fill-none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<p class="text-xs sm:text-sm text-textMuted font-normal leading-tight">
+          María recibirá una notificación cariñosa en su teléfono.
+        </p>
+</div>
+</footer>
+<!-- END: ActionAndFooterSection -->
+</main>
+<!-- END: ModalContainer -->
+</body></html>

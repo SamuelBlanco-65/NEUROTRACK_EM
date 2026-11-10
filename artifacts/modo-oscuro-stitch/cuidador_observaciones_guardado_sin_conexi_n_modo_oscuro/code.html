@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Cuidador · Observaciones - Guardado sin conexión (Modo Oscuro)</title>
+<!-- Google Fonts: Atkinson Hyperlegible Next & Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Forms & Container Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Atkinson Hyperlegible Next"', 'system-ui', 'sans-serif'],
+            serif: ['Georgia', 'Cambria', 'serif']
+          },
+          colors: {
+            bgDark: '#1B1E22',
+            surfaceDark: '#22272E',
+            borderDark: '#2D333B',
+            textLight: '#F5F1EB',
+            textMuted: '#A2ACB7',
+            textBody: '#ECE6DA',
+            tealAccent: '#6EC6D6',
+            tealButton: '#236B78',
+            tealBadgeBg: '#1D3136',
+            navBg: '#181B1F',
+            navBorder: '#272C34'
+          }
+        }
+      }
+    };
+  </script>
+<!-- Typography & Base Reset Styles -->
+<style data-purpose="base-styling">
+    body {
+      font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #1B1E22;
+      color: #ECE6DA;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+<!-- Layout Component Styles -->
+<style data-purpose="component-styles">
+    .safe-top {
+      padding-top: max(env(safe-area-inset-top), 12px);
+    }
+    .safe-bottom {
+      padding-bottom: max(env(safe-area-inset-bottom), 12px);
+    }
+    .text-title-serif {
+      font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
+    }
+  </style>
+</head>
+<body class="bg-bgDark min-h-screen text-textBody antialiased flex justify-center selection:bg-tealAccent/30 selection:text-white">
+<!-- Mobile Device Shell Simulation Container -->
+<div class="w-full max-w-md min-h-screen flex flex-col relative pb-32">
+<!-- BEGIN: TopHeader -->
+<header class="safe-top px-5 pt-3 pb-3 flex items-center justify-between sticky top-0 z-30 bg-[#1B1E22]/95 backdrop-blur-md">
+<h1 class="text-2xl font-bold tracking-tight text-[#F5F1EB] text-title-serif">Observaciones</h1>
+<!-- User profile circular button -->
+<button aria-label="Perfil del cuidador" class="w-10 h-10 rounded-full bg-[#252A30] border border-[#2D333B] flex items-center justify-center text-[#F5F1EB] hover:bg-[#2e343d] transition-colors focus:outline-none focus:ring-2 focus:ring-tealAccent" type="button">
+<span class="material-symbols-outlined text-[22px]">person</span>
+</button>
+</header>
+<!-- END: TopHeader -->
+<!-- Main Content Area -->
+<main class="flex-1 px-4 pt-1 space-y-4">
+<!-- BEGIN: OfflineBanner -->
+<!-- Top persistent indicator for offline status -->
+<div class="bg-[#30261C] border border-[#4A3B2A] rounded-2xl p-3 flex items-center justify-between shadow-sm" data-purpose="offline-status-banner">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#423324] flex items-center justify-center flex-shrink-0 text-[#E8B482]">
+<span class="material-symbols-outlined text-[20px]">wifi_off</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-[#F3D2B3] leading-snug">Modo sin conexión</span>
+<span class="text-xs text-[#E8B482]/80 truncate max-w-[170px]">Los cambios se guardan loc...</span>
+</div>
+</div>
+<div class="bg-[#382A1E] border border-[#54402F] px-2.5 py-1 rounded-full text-xs font-medium text-[#E8B482] whitespace-nowrap">
+          2 pendientes
+        </div>
+</div>
+<!-- END: OfflineBanner -->
+<!-- Subtitle Helper Description -->
+<p class="text-sm text-textMuted px-1 font-normal leading-relaxed">
+        Lo que notas también ayuda en la consulta médica.
+      </p>
+<!-- BEGIN: InfoCalloutCard -->
+<!-- Contextual highlight notice regarding neurological notes -->
+<div class="bg-surfaceDark border border-borderDark rounded-2xl p-4 flex gap-3.5 shadow-sm" data-purpose="clinical-guidance-card">
+<div class="w-10 h-10 rounded-full bg-tealBadgeBg border border-tealAccent/20 flex items-center justify-center flex-shrink-0 text-tealAccent mt-0.5">
+<span class="material-symbols-outlined text-[22px]">favorite</span>
+</div>
+<div class="space-y-1">
+<h2 class="text-sm font-bold text-textLight leading-tight">Tu mirada como acompañante importa</h2>
+<p class="text-xs text-textBody leading-relaxed">
+            Registrar variaciones sutiles facilita preparar el resumen conjunto con la neuróloga.
+          </p>
+</div>
+</div>
+<!-- END: InfoCalloutCard -->
+<!-- BEGIN: GroupToday -->
+<section aria-labelledby="heading-today" class="pt-2 space-y-3">
+<!-- Date Header -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span aria-hidden="true" class="w-2.5 h-2.5 rounded-full bg-tealAccent inline-block"></span>
+<h3 class="text-base font-bold text-textLight font-serif tracking-tight" id="heading-today">Hoy · 24 de octubre</h3>
+</div>
+<span class="text-xs text-textMuted font-medium">2 registros</span>
+</div>
+<!-- Observation Card 1 (Ánimo) -->
+<article class="bg-surfaceDark border border-borderDark rounded-2xl p-4 space-y-3.5 shadow-sm">
+<!-- Card Header / Metadata -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 bg-[#252A30] border border-borderDark text-textBody px-2.5 py-1 rounded-full font-medium">
+<span class="material-symbols-outlined text-[15px] text-textBody">sentiment_neutral</span>
+<span>Ánimo</span>
+</span>
+<span class="text-textMuted font-normal">· 6:10 p. m.</span>
+</div>
+<!-- Sync Status Badge -->
+<span class="inline-flex items-center gap-1 bg-tealBadgeBg border border-tealAccent/30 text-tealAccent px-2.5 py-0.5 rounded-full font-medium text-[11px]">
+<span class="material-symbols-outlined text-[13px]">cloud_done</span>
+              Local
+            </span>
+</div>
+<!-- Card Note Content -->
+<p class="text-sm text-textBody leading-normal font-normal">
+            Estuvo más callada en la tarde. Parecía con la energía más baja de lo habitual al sentarse a la mesa.
+          </p>
+<!-- Card Footer Action bar -->
+<div class="flex items-center justify-between pt-1 border-t border-borderDark/60 text-xs text-textMuted">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">schedule</span>
+<span>Anotado hace 12 min</span>
+</div>
+<button class="inline-flex items-center gap-1 font-semibold text-tealAccent hover:text-tealAccent/80 transition-colors focus:outline-none" type="button">
+<span>Editar</span>
+<span class="material-symbols-outlined text-[14px]">edit</span>
+</button>
+</div>
+</article>
+<!-- Observation Card 2 (Movilidad) -->
+<article class="bg-surfaceDark border border-borderDark rounded-2xl p-4 space-y-3.5 shadow-sm">
+<!-- Card Header / Metadata -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 bg-[#252A30] border border-borderDark text-textBody px-2.5 py-1 rounded-full font-medium">
+<span class="material-symbols-outlined text-[15px] text-textBody">directions_walk</span>
+<span>Movilidad</span>
+</span>
+<span class="text-textMuted font-normal">· 11:30 a. m.</span>
+</div>
+<!-- Action dots menu -->
+<button aria-label="Más opciones" class="text-[#8E98A4] hover:text-textLight p-1" type="button">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+<!-- Card Note Content -->
+<p class="text-sm text-textBody leading-normal font-normal">
+            Se apoyó en la pared al subir la escalera.
+          </p>
+<!-- Card Footer Action bar -->
+<div class="flex items-center justify-between pt-1 border-t border-borderDark/60 text-xs text-textMuted">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">schedule</span>
+<span>Anotado en la mañana</span>
+</div>
+<button class="inline-flex items-center gap-1 font-semibold text-tealAccent hover:text-tealAccent/80 transition-colors focus:outline-none" type="button">
+<span>Editar</span>
+<span class="material-symbols-outlined text-[14px]">edit</span>
+</button>
+</div>
+</article>
+</section>
+<!-- END: GroupToday -->
+<!-- BEGIN: GroupYesterday -->
+<section aria-labelledby="heading-yesterday" class="pt-2 space-y-3 pb-24">
+<!-- Date Header -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span aria-hidden="true" class="w-2.5 h-2.5 rounded-full bg-borderDark inline-block"></span>
+<h3 class="text-base font-bold text-textLight font-serif tracking-tight" id="heading-yesterday">Ayer · 23 de octubre</h3>
+</div>
+<span class="text-xs text-textMuted font-medium">1 registro</span>
+</div>
+<!-- Observation Card 3 (Descanso) -->
+<article class="bg-surfaceDark border border-borderDark rounded-2xl p-4 space-y-3 shadow-sm">
+<!-- Card Header / Metadata -->
+<div class="flex items-center text-xs gap-2">
+<span class="inline-flex items-center gap-1.5 bg-[#252A30] border border-borderDark text-textBody px-2.5 py-1 rounded-full font-medium">
+<span class="material-symbols-outlined text-[15px] text-textBody">bedtime</span>
+<span>Descanso</span>
+</span>
+<span class="text-textMuted font-normal">· 8:15 a. m.</span>
+</div>
+<!-- Card Note Content -->
+<p class="text-sm text-textBody leading-normal font-normal">
+            Durmió 9 horas continuas sin interrupciones por rigidez en las piernas.
+          </p>
+</article>
+</section>
+<!-- END: GroupYesterday -->
+</main>
+<!-- BEGIN: FloatingActionsAndSnackbars -->
+<!-- Floating Action and Persistent Offline Notification Container -->
+<div class="fixed bottom-20 inset-x-0 mx-auto max-w-md px-4 flex flex-col items-end gap-3 z-30 pointer-events-none">
+<!-- Primary FAB: Nueva observación -->
+<button class="pointer-events-auto shadow-xl inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-tealButton hover:bg-tealButton/90 active:scale-95 text-white font-medium text-sm transition transform shadow-black/40" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>Nueva observación</span>
+</button>
+<!-- Bottom Floating Snackbar: Offline storage status -->
+<div class="pointer-events-auto w-full bg-[#1D3B42] border border-[#2A5761] rounded-3xl p-3.5 shadow-2xl flex items-center justify-between gap-3 text-white" data-purpose="offline-sync-snackbar">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#162D32] border border-[#7FE3B5]/30 flex items-center justify-center flex-shrink-0 text-[#7FE3B5]">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-white tracking-tight">Guardado en este teléfono</span>
+<span class="text-[11px] text-white/80 leading-snug">Se enviará cuando haya conexión a internet.</span>
+</div>
+</div>
+<button class="bg-tealButton hover:bg-[#2e7d8c] text-white text-xs font-semibold px-4 py-2 rounded-full flex-shrink-0 transition active:scale-95" type="button">
+          Entendido
+        </button>
+</div>
+</div>
+<!-- END: FloatingActionsAndSnackbars -->
+<!-- BEGIN: BottomNavigation -->
+<nav aria-label="Navegación principal" class="fixed bottom-0 inset-x-0 mx-auto max-w-md bg-navBg border-t border-navBorder safe-bottom z-40">
+<div class="flex justify-around items-center h-16 px-1">
+<!-- Tab: Inicio -->
+<button class="flex flex-col items-center justify-center w-full h-full text-[#8E98A4] hover:text-textLight transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">home</span>
+<span class="text-[10px] font-medium mt-1">Inicio</span>
+</button>
+<!-- Tab: Observaciones (Active) -->
+<button aria-current="page" class="flex flex-col items-center justify-center w-full h-full text-tealAccent" type="button">
+<div class="w-14 h-8 bg-[#223A40] rounded-full flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[22px]">visibility</span>
+</div>
+<span class="text-[10px] font-semibold mt-0.5 text-tealAccent">Observaciones</span>
+</button>
+<!-- Tab: Acompañar -->
+<button class="flex flex-col items-center justify-center w-full h-full text-[#8E98A4] hover:text-textLight transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">handshake</span>
+<span class="text-[10px] font-medium mt-1">Acompañar</span>
+</button>
+<!-- Tab: Recordatorios -->
+<button class="flex flex-col items-center justify-center w-full h-full text-[#8E98A4] hover:text-textLight transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="text-[10px] font-medium mt-1">Recordatorios</span>
+</button>
+<!-- Tab: Apoyo -->
+<button class="flex flex-col items-center justify-center w-full h-full text-[#8E98A4] hover:text-textLight transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">volunteer_activism</span>
+<span class="text-[10px] font-medium mt-1">Apoyo</span>
+</button>
+</div>
+</nav>
+<!-- END: BottomNavigation -->
+</div>
+</body></html>

@@ -1,7 +1,7 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import { useEffect, useMemo } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ScreenState } from '@/components/screen-state';
@@ -58,6 +58,21 @@ export default function PacienteProgresoScreen() {
   function registrar() {
     dispatch(draftReset());
     router.push('/registrar-sintoma/paso-1');
+  }
+
+  async function prepararResumen() {
+    const lineas = [
+      `Resumen de progreso — ${currentRange.label}`,
+      headline,
+      '',
+      ...buckets.map((bucket) => `${bucket.label}: ${bucket.symptomDays} día(s) con síntomas, ${bucket.activities} actividad(es)`),
+      '',
+      'Lo que notamos:',
+      ...insights.map((insight) => `- ${insight.title}: ${insight.description}`),
+      '',
+      'Esto es un resumen de registros, no un diagnóstico.',
+    ];
+    await Share.share({ message: lineas.join('\n') });
   }
 
   return (
@@ -183,7 +198,11 @@ export default function PacienteProgresoScreen() {
                         key={insight.id}
                         style={[styles.insightCard, { backgroundColor: colors.surfaceContainerLow }]}
                         testID={`progreso-insight-${insight.id}`}>
-                        <View style={[styles.insightIcon, { backgroundColor: colors.surfaceContainerLowest }]}>
+                        <View
+                          style={[
+                            styles.insightIcon,
+                            { backgroundColor: insightIconBackground(insight.icon, colors) },
+                          ]}>
                           <MaterialIcons name={insight.icon} size={20} color={colors.primary} />
                         </View>
                         <View style={styles.insightTextGroup}>
@@ -203,6 +222,16 @@ export default function PacienteProgresoScreen() {
                     Esto es un resumen de tus registros, no un diagnóstico.
                   </ThemedText>
                 </View>
+
+                <Pressable
+                  onPress={prepararResumen}
+                  accessibilityRole="button"
+                  accessibilityLabel="Preparar resumen para mi consulta"
+                  style={[styles.summaryButton, { backgroundColor: colors.surfaceContainerLow }]}
+                  testID="progreso-preparar-resumen">
+                  <MaterialIcons name="description" size={20} color={colors.onSurfaceVariant} />
+                  <ThemedText variant="labelLg">Preparar resumen para mi consulta</ThemedText>
+                </Pressable>
               </>
             )}
           </ScrollView>
@@ -210,6 +239,13 @@ export default function PacienteProgresoScreen() {
       </SafeAreaView>
     </ThemedView>
   );
+}
+
+function insightIconBackground(icon: string, colors: ThemeColors): string {
+  if (icon === 'arrow-downward') return colors.secondaryContainer;
+  if (icon === 'arrow-upward') return colors.tertiaryFixed;
+  if (icon === 'check') return colors.tertiaryFixed;
+  return colors.surfaceContainerLowest;
 }
 
 function ProgressChart({
@@ -336,6 +372,9 @@ function InsufficientDataCard({
       <View style={[styles.progressTrack, { backgroundColor: colors.surfaceContainerLow }]}>
         <View style={[styles.progressFill, { width: `${progressRatio * 100}%`, backgroundColor: colors.primary }]} />
       </View>
+      <ThemedText variant="bodySm" colorRole="secondary">
+        Paso a paso, cada día cuenta.
+      </ThemedText>
       <Pressable
         onPress={onRegistrar}
         accessibilityRole="button"
@@ -507,6 +546,14 @@ const styles = StyleSheet.create({
   },
   disclaimerText: {
     flex: 1,
+  },
+  summaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    minHeight: MinTouchSize,
+    borderRadius: Radius.full,
   },
   insufficientIcon: {
     width: 56,

@@ -1,24 +1,28 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import { useEffect, useMemo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ScreenState } from '@/components/screen-state';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { fetchMyLinksAsCaregiver } from '@/store/slices/caregiver-slice';
+import { CATEGORY_META } from '@/features/reminders/constants';
+import { fetchCaregiverPatientActivity, fetchMyLinksAsCaregiver } from '@/store/slices/caregiver-slice';
+import { fetchReminders } from '@/store/slices/reminders-slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
+
+function sameDay(a: Date, b: Date): boolean {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
 
 export default function CuidadorInicioScreen() {
   const dispatch = useAppDispatch();
   const colors = useThemeColors();
-  const { myLinksAsCaregiver, caregiverStatus, caregiverError } = useAppSelector((state) => state.caregiver);
-
-  useEffect(() => {
-    dispatch(fetchMyLinksAsCaregiver());
-  }, [dispatch]);
+  const { myLinksAsCaregiver, caregiverStatus, caregiverError, viewedWeekSessionCount, viewStatus } =
+    useAppSelector((state) => state.caregiver);
+  const { items: reminders } = useAppSelector((state) => state.reminders);
 
   const activeLink = useMemo(
     () =>
@@ -27,6 +31,16 @@ export default function CuidadorInicioScreen() {
       null,
     [myLinksAsCaregiver]
   );
+
+  useEffect(() => {
+    dispatch(fetchMyLinksAsCaregiver());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!activeLink || activeLink.status !== 'aceptado') return;
+    if (activeLink.shareProgreso) dispatch(fetchCaregiverPatientActivity(activeLink.patientId));
+    if (activeLink.shareRecordatorios) dispatch(fetchReminders(activeLink.patientId));
+  }, [dispatch, activeLink]);
 
   if (caregiverStatus === 'error') {
     return (
@@ -103,26 +117,134 @@ export default function CuidadorInicioScreen() {
     );
   }
 
-  const nombre = activeLink.patientId ? 'la persona que acompañas' : 'tu paciente';
+  const today = new Date();
+  const todayReminders = reminders
+    .filter((reminder) => sameDay(new Date(reminder.scheduledAt), today))
+    .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime());
 
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
         <View style={styles.header}>
-          <ThemedText variant="headlineMd" accessibilityRole="header">
-            Inicio
-          </ThemedText>
-        </View>
-        <View style={styles.scroll}>
-          <View style={[styles.card, { backgroundColor: colors.surfaceContainerLowest }]} testID="cuidador-inicio-vinculado">
-            <ThemedText variant="labelLg">Estás acompañando a {nombre}</ThemedText>
-            <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
-              Puedes ver: {[activeLink.shareSintomas && 'síntomas', activeLink.shareProgreso && 'progreso', activeLink.shareRecordatorios && 'recordatorios']
-                .filter(Boolean)
-                .join(', ') || 'nada por ahora'}
+          <View style={styles.headerTitle}>
+            <MaterialIcons name="spa" size={20} color={colors.primary} />
+            <ThemedText variant="headlineSm" accessibilityRole="header">
+              Inicio
             </ThemedText>
           </View>
+          <View style={[styles.avatarBadge, { backgroundColor: colors.primary }]}>
+            <MaterialIcons name="person" size={18} color={colors.onPrimary} />
+          </View>
         </View>
+
+        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+          <ThemedText variant="headlineLg" accessibilityRole="header">
+            Hola
+          </ThemedText>
+
+          <View style={[styles.linkChip, { backgroundColor: colors.surfaceContainer }]} testID="cuidador-inicio-vinculado">
+            <MaterialIcons name="favorite" size={16} color={colors.primary} />
+            <ThemedText variant="labelMd" style={styles.linkChipText}>
+              Acompañas a la persona que acompañas
+            </ThemedText>
+          </View>
+
+          <View style={[styles.summaryCard, { backgroundColor: colors.surfaceContainerLowest }]}>
+            <View>
+              <ThemedText variant="headlineSm">Su semana</ThemedText>
+              <ThemedText variant="bodySm" colorRole="secondary" style={{ marginTop: 2 }}>
+                Información sincronizada con su consentimiento.
+              </ThemedText>
+            </View>
+
+            {activeLink.shareProgreso ? (
+              <View style={[styles.summaryRow, { backgroundColor: colors.surfaceContainer }]}>
+                <View style={[styles.summaryIcon, { backgroundColor: colors.secondaryContainer }]}>
+                  <MaterialIcons name="trending-up" size={20} color={colors.primary} />
+                </View>
+                <View style={styles.summaryBody}>
+                  <ThemedText variant="labelMd">Actividades</ThemedText>
+                  <ThemedText variant="bodySm" colorRole="secondary">
+                    {viewStatus === 'cargando'
+                      ? 'Cargando…'
+                      : viewedWeekSessionCount === 0
+                        ? 'Sin práctica esta semana'
+                        : `${viewedWeekSessionCount} sesión${viewedWeekSessionCount === 1 ? '' : 'es'} esta semana`}
+                  </ThemedText>
+                </View>
+              </View>
+            ) : null}
+
+            {activeLink.shareRecordatorios && todayReminders.length > 0 ? (
+              <View style={styles.remindersList}>
+                {todayReminders.slice(0, 2).map((reminder) => (
+                  <View key={reminder.id} style={[styles.summaryRow, { backgroundColor: colors.surfaceContainer }]}>
+                    <View style={[styles.summaryIcon, { backgroundColor: colors.secondaryContainer }]}>
+                      <MaterialIcons name={CATEGORY_META[reminder.category].icon} size={20} color={colors.primary} />
+                    </View>
+                    <View style={styles.summaryBody}>
+                      <ThemedText variant="labelMd">{reminder.title}</ThemedText>
+                      <ThemedText variant="bodySm" colorRole="secondary">
+                        {new Date(reminder.scheduledAt).toLocaleTimeString('es-CO', {
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        })}
+                      </ThemedText>
+                    </View>
+                    {reminder.status === 'hecho' ? (
+                      <MaterialIcons name="check-circle" size={22} color={colors.primaryContainer} />
+                    ) : null}
+                  </View>
+                ))}
+              </View>
+            ) : null}
+
+            {!activeLink.shareProgreso && !activeLink.shareRecordatorios ? (
+              <View style={styles.summaryRow}>
+                <MaterialIcons name="visibility-off" size={20} color={colors.secondary} />
+                <ThemedText variant="bodySm" colorRole="secondary" style={styles.summaryBody}>
+                  Ves lo que decida compartir de forma autónoma.
+                </ThemedText>
+              </View>
+            ) : null}
+
+            <Pressable
+              onPress={() => router.push('/nueva-observacion')}
+              accessibilityRole="button"
+              accessibilityLabel="Anotar una observación"
+              style={[styles.observationButton, { backgroundColor: colors.primaryContainer }]}
+              testID="cuidador-inicio-anotar-observacion">
+              <MaterialIcons name="edit-note" size={22} color={colors.onPrimary} />
+              <ThemedText variant="labelLg" colorRole="onPrimary">
+                Anotar una observación
+              </ThemedText>
+            </Pressable>
+          </View>
+
+          <View style={[styles.selfCareCard, { backgroundColor: colors.tertiaryFixed }]}>
+            <View style={styles.selfCareHeader}>
+              <MaterialIcons name="spa" size={20} color={colors.onTertiaryFixed} />
+              <ThemedText variant="headlineSm" style={{ color: colors.onTertiaryFixed }}>
+                ¿Y tú cómo estás?
+              </ThemedText>
+            </View>
+            <ThemedText variant="bodyMd" style={{ color: colors.tertiary }}>
+              Cuidar con dedicación también agota. Tómate un minuto para respirar y revisar cómo te
+              sientes tú hoy.
+            </ThemedText>
+            <Pressable
+              onPress={() => router.push('/(cuidador)/apoyo')}
+              accessibilityRole="link"
+              accessibilityLabel="Ver apoyo y recursos para ti"
+              hitSlop={8}
+              style={styles.selfCareLink}>
+              <ThemedText variant="labelMd" style={{ color: colors.onTertiaryFixedVariant }}>
+                Ver apoyo y recursos para ti
+              </ThemedText>
+              <MaterialIcons name="arrow-forward" size={18} color={colors.onTertiaryFixedVariant} />
+            </Pressable>
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </ThemedView>
   );
@@ -136,18 +258,92 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: Spacing.margin,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xs,
   },
+  headerTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  avatarBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   scroll: {
     paddingHorizontal: Spacing.margin,
+    paddingBottom: Spacing.xl,
     gap: Spacing.md,
   },
-  card: {
+  linkChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    alignSelf: 'flex-start',
+    paddingHorizontal: Spacing.sm + 4,
+    paddingVertical: Spacing.xs + 2,
+    borderRadius: Radius.full,
+  },
+  linkChipText: {
+    flexShrink: 1,
+  },
+  summaryCard: {
     borderRadius: Radius.lg,
+    padding: Spacing.md + 4,
+    gap: Spacing.sm + 2,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    borderRadius: Radius.default,
+    padding: Spacing.sm + 2,
+  },
+  summaryIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  summaryBody: {
+    flex: 1,
+    gap: 2,
+  },
+  remindersList: {
+    gap: Spacing.sm,
+  },
+  observationButton: {
+    minHeight: 56,
+    borderRadius: Radius.full,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+  },
+  selfCareCard: {
+    borderRadius: Radius.default,
     padding: Spacing.md,
     gap: Spacing.xs,
+  },
+  selfCareHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  selfCareLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    minHeight: MinTouchSize,
+    alignSelf: 'flex-start',
   },
   centerContainer: {
     flex: 1,

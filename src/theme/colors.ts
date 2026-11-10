@@ -59,42 +59,63 @@ export const LightColors = {
   onTertiaryFixedVariant: '#514437',
 } as const;
 
-// Derivado de los roles inverse-* del esquema claro + ajuste de luminosidad por rol.
-// Sin blanco puro ni negro puro (RNF-007). Validar con accessibility-reviewer antes de dar por bueno.
+/**
+ * Paleta oscura real, tomada del export de Stitch en `artifacts/modo-oscuro-stitch/`
+ * (el usuario la generó pidiéndole a Stitch una variante oscura de cada pantalla; la
+ * fuente más completa y coherente de las ~35 exportadas es `cuidador_inicio_modo_oscuro`,
+ * que trae los 41 roles M3). Reemplaza la primera versión (derivada a mano de los roles
+ * `inverse-*`), que el usuario probó en emulador y rechazó: ver nota de "paleta oscura"
+ * en `docs/STATUS.md` T6 — las superficies no se aclaraban con la elevación y las tarjetas
+ * grandes con rol `tertiaryFixed` se veían como un recorte claro flotando sobre negro.
+ *
+ * Excepción deliberada a la convención M3 de roles "Fixed" (deberían ser constantes entre
+ * esquemas): `tertiaryFixed`/`onTertiaryFixed`/`tertiaryFixedDim`/`onTertiaryFixedVariant`
+ * SÍ cambian aquí. Es justo el problema de arriba — en light-mode-only estos roles están
+ * pensados para acentos pequeños (ver comentario de T6), pero esta app los usa también para
+ * tarjetas grandes (tip de "Un paso a la vez", "¿Necesitas hablar con alguien?", banner de
+ * tranquilidad del wizard). El propio export oscuro de Stitch para esas pantallas (overrides
+ * en `paciente_inicio_modo_oscuro/code.html`, `paciente_registrar_c_mo_me_siento_paso_2_modo_oscuro/
+ * code.html`) confirma el arreglo: en vez de reusar el durazno claro constante, esas tarjetas
+ * pasan a un marrón oscuro cálido con texto crema — se adoptan esos valores aquí tal cual.
+ */
 export const DarkColors = {
-  primary: '#98cfdd',
+  primary: '#6ec6d6',
   onPrimary: '#00363f',
-  primaryContainer: '#0b4e5a',
-  onPrimaryContainer: '#b3ecfa',
-  secondary: '#b9cacb',
-  onSecondary: '#243536',
-  secondaryContainer: '#3a494b',
+  primaryContainer: '#223a40',
+  onPrimaryContainer: '#6ec6d6',
+  secondary: '#9eaab2',
+  onSecondary: '#1c1c19',
+  secondaryContainer: '#29343b',
   onSecondaryContainer: '#d5e6e7',
   tertiary: '#d6c3b2',
-  onTertiary: '#3b2e22',
-  tertiaryContainer: '#514437',
+  onTertiary: '#241a0f',
+  tertiaryContainer: '#5e5043',
   onTertiaryContainer: '#f3dfcd',
   error: '#ffb4ab',
   onError: '#690005',
   errorContainer: '#93000a',
   onErrorContainer: '#ffdad6',
-  background: '#1c1c19',
-  onBackground: '#e5e2dd',
-  surface: '#1c1c19',
-  onSurface: '#e5e2dd',
-  surfaceVariant: '#40484a',
-  onSurfaceVariant: '#bfc8ca',
-  outline: '#8a9294',
-  outlineVariant: '#40484a',
-  surfaceDim: '#1c1c19',
-  surfaceBright: '#423f3b',
-  surfaceContainerLowest: '#131311',
-  surfaceContainerLow: '#24231f',
-  surfaceContainer: '#282724',
-  surfaceContainerHigh: '#33322e',
-  surfaceContainerHighest: '#3e3d39',
-  inverseSurface: '#e5e2dd',
-  inverseOnSurface: '#31302d',
+  background: '#181b1f',
+  onBackground: '#e5e9ee',
+  surface: '#181b1f',
+  onSurface: '#e5e9ee',
+  surfaceVariant: '#2b3037',
+  onSurfaceVariant: '#8e98a4',
+  outline: '#6e7882',
+  outlineVariant: '#3b444c',
+  // La escala de elevación que trae el export (surfaceContainer/Low/Lowest todos a ~1-2
+  // valores de luminosidad del fondo) deja las tarjetas invisibles sobre negro — se nota
+  // en "Tu plan de hoy" de inicio.tsx, que usa `surfaceContainer` para el fondo de cada
+  // tarjeta. Separada a mano para que cada nivel se note, conservando el tono frío de base.
+  surfaceDim: '#101215',
+  surfaceBright: '#383f48',
+  surfaceContainerLowest: '#121417',
+  surfaceContainerLow: '#1c2024',
+  surfaceContainer: '#20262c',
+  surfaceContainerHigh: '#272e35',
+  surfaceContainerHighest: '#313941',
+  inverseSurface: '#fcf9f4',
+  inverseOnSurface: '#1c1c19',
   inversePrimary: '#00424d',
   primaryFixed: '#b3ecfa',
   onPrimaryFixed: '#001f25',
@@ -104,11 +125,53 @@ export const DarkColors = {
   onSecondaryFixed: '#0f1e1f',
   secondaryFixedDim: '#b9cacb',
   onSecondaryFixedVariant: '#3a494b',
-  tertiaryFixed: '#f3dfcd',
-  onTertiaryFixed: '#241a0f',
-  tertiaryFixedDim: '#d6c3b2',
-  onTertiaryFixedVariant: '#514437',
+  // Deliberadamente NO constante entre esquemas — ver comentario de arriba.
+  tertiaryFixed: '#30261c',
+  onTertiaryFixed: '#f5f1eb',
+  tertiaryFixedDim: '#4a3b2a',
+  onTertiaryFixedVariant: '#d5c2af',
 } as const;
 
 export type ColorRoles = typeof LightColors;
 export type ColorRoleName = keyof ColorRoles;
+/** Versión "ancha" de `ColorRoles`: mismas claves, valores `string` en vez de literales
+ * exactos. Hace falta porque el modo alto contraste combina colores de las dos paletas
+ * (claro y oscuro no comparten los mismos literales por rol). */
+export type ResolvedColorRoles = Record<ColorRoleName, string>;
+
+/**
+ * Modo alto contraste (opt-in desde Accesibilidad, RNF-003/007): sube el contraste de
+ * texto/bordes por encima del mínimo AA ya validado, hasta casi AAA (7:1). A diferencia del
+ * tema oscuro por defecto, aquí SÍ se usa blanco/negro puro — es una excepción deliberada
+ * porque el usuario lo pide explícitamente, no el comportamiento de base de la app.
+ */
+export function applyHighContrast(colors: ResolvedColorRoles, scheme: 'light' | 'dark'): ResolvedColorRoles {
+  if (scheme === 'light') {
+    return {
+      ...colors,
+      onSurface: '#000000',
+      onBackground: '#000000',
+      onSurfaceVariant: '#000000',
+      secondary: '#1c2b2c',
+      onSecondaryContainer: '#0f1e1f',
+      outline: '#000000',
+      outlineVariant: '#3a3a38',
+      surface: '#ffffff',
+      background: '#ffffff',
+      surfaceContainerLowest: '#ffffff',
+    };
+  }
+  return {
+    ...colors,
+    onSurface: '#ffffff',
+    onBackground: '#ffffff',
+    onSurfaceVariant: '#ffffff',
+    secondary: '#e5e2dd',
+    onSecondaryContainer: '#f3f0eb',
+    outline: '#ffffff',
+    outlineVariant: '#c7c7c5',
+    surface: '#000000',
+    background: '#000000',
+    surfaceContainerLowest: '#000000',
+  };
+}

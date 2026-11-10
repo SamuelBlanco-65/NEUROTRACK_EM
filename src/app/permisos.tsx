@@ -150,24 +150,50 @@ export default function PermisosScreen() {
                       <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
                         Elige qué puede ver. Puedes cambiarlo después.
                       </ThemedText>
+
+                      <View style={styles.permissionsEyebrowRow}>
+                        <ThemedText variant="labelSm" colorRole="secondary" style={styles.permissionsEyebrow}>
+                          PERMISOS ESPECÍFICOS
+                        </ThemedText>
+                        <View style={[styles.activeCountPill, { backgroundColor: colors.secondaryContainer }]}>
+                          <ThemedText variant="labelSm" colorRole="onSecondaryContainer">
+                            {Object.values(permissions).filter(Boolean).length} de 3 activos
+                          </ThemedText>
+                        </View>
+                      </View>
+
                       <PermissionRow
+                        icon="monitor-heart"
                         label="Mis síntomas"
+                        description="Verá qué registras y cuándo."
                         value={permissions.shareSintomas}
                         onChange={() => toggle(link.id, 'shareSintomas')}
                         testID={`permisos-toggle-sintomas-${link.id}`}
                       />
                       <PermissionRow
+                        icon="show-chart"
                         label="Mi progreso"
+                        description="Verá el resumen de tus tendencias."
                         value={permissions.shareProgreso}
                         onChange={() => toggle(link.id, 'shareProgreso')}
                         testID={`permisos-toggle-progreso-${link.id}`}
                       />
                       <PermissionRow
+                        icon="notifications"
                         label="Mis recordatorios"
+                        description="Sabrá si se te pasó uno."
                         value={permissions.shareRecordatorios}
                         onChange={() => toggle(link.id, 'shareRecordatorios')}
                         testID={`permisos-toggle-recordatorios-${link.id}`}
                       />
+
+                      <View style={[styles.trustNote, { backgroundColor: colors.surfaceContainerLow }]}>
+                        <MaterialIcons name="shield" size={18} color={colors.primaryContainer} />
+                        <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.trustNoteText}>
+                          Los cuidadores solo tienen acceso de lectura; nunca podrán modificar tus registros.
+                        </ThemedText>
+                      </View>
+
                       <View style={styles.requestActions}>
                         <Pressable
                           onPress={() => dispatch(respondToIncomingRequest({ linkId: link.id, accept: true, permissions }))}
@@ -237,12 +263,16 @@ export default function PermisosScreen() {
 }
 
 function PermissionRow({
+  icon,
   label,
+  description,
   value,
   onChange,
   testID,
 }: {
+  icon: keyof typeof MaterialIcons.glyphMap;
   label: string;
+  description: string;
   value: boolean;
   onChange: () => void;
   testID: string;
@@ -250,15 +280,28 @@ function PermissionRow({
   const colors = useThemeColors();
   return (
     <View style={styles.permissionRow}>
-      <ThemedText variant="bodyMd">{label}</ThemedText>
-      <Switch
-        value={value}
-        onValueChange={onChange}
-        trackColor={{ false: colors.surfaceContainerHigh, true: colors.primaryContainer }}
-        thumbColor={colors.surfaceContainerLowest}
-        accessibilityLabel={label}
-        testID={testID}
-      />
+      <View style={[styles.permissionIcon, { backgroundColor: colors.surfaceContainerLow }]}>
+        <MaterialIcons name={icon} size={20} color={colors.primary} />
+      </View>
+      <View style={styles.permissionTextGroup}>
+        <ThemedText variant="bodyMd">{label}</ThemedText>
+        <ThemedText variant="bodySm" colorRole="secondary">
+          {description}
+        </ThemedText>
+      </View>
+      <View style={styles.permissionSwitchGroup}>
+        <ThemedText variant="labelSm" colorRole={value ? 'primary' : 'secondary'}>
+          {value ? 'Sí' : 'No'}
+        </ThemedText>
+        <Switch
+          value={value}
+          onValueChange={onChange}
+          trackColor={{ false: colors.surfaceContainerHigh, true: colors.primaryContainer }}
+          thumbColor={colors.surfaceContainerLowest}
+          accessibilityLabel={label}
+          testID={testID}
+        />
+      </View>
     </View>
   );
 }
@@ -312,11 +355,50 @@ const styles = StyleSheet.create({
   section: {
     gap: Spacing.sm,
   },
-  permissionRow: {
+  permissionsEyebrowRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: Spacing.xs,
+  },
+  permissionsEyebrow: {
+    letterSpacing: 1,
+  },
+  activeCountPill: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: Radius.full,
+  },
+  permissionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
     minHeight: MinTouchSize,
+  },
+  permissionIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  permissionTextGroup: {
+    flex: 1,
+    gap: 1,
+  },
+  permissionSwitchGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  trustNote: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    borderRadius: Radius.default,
+    padding: Spacing.sm,
+  },
+  trustNoteText: {
+    flex: 1,
   },
   requestActions: {
     gap: Spacing.xs,
