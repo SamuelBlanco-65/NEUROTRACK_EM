@@ -6,6 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenState } from '@/components/screen-state';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { guideScript } from '@/features/audio/screen-scripts';
+import { SpeakButton } from '@/features/audio/speak-button';
 import { findGuide } from '@/features/support/constants';
 import type { GuideType } from '@/features/support/types';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
@@ -61,6 +63,13 @@ export default function GuiaDeApoyoScreen() {
             </View>
 
             <ThemedText variant="bodyLg">{guide.summary}</ThemedText>
+            <SpeakButton
+              text={guideScript({ title: guide.title, summary: guide.summary, body: guide.body })}
+              label="Escuchar la guía"
+              accessibilityLabel="Escuchar la guía completa"
+              style={{ alignSelf: 'flex-start' }}
+              testID="apoyo-guia-escuchar"
+            />
 
             {(guide.type === 'escuchar' || guide.type === 'ver') && (
               <View style={[styles.transcriptBanner, { backgroundColor: colors.surfaceContainer }]}>

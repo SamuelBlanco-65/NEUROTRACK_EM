@@ -669,6 +669,33 @@ resuelta) y la amplió. Commit `da06c9e`, pusheado con `Co-Authored-By` de Amely
      se confirmó en Memoria y recordatorios. **No hecho** (no confirmado por texto en esta
      sesión).
 
+## T7 (parcial) — Voz: REC-001 y REC-002 implementados sin probar (2026-11-10)
+El equipo ya venía trabajando esto; se terminó y se documentó. El perfil del médico (REC-003)
+queda como idea, **decidido no hacerlo por ahora**. Detalle y razones: **D-013**.
+- **REC-001 (dictado):** botón «Dictar con voz» en `registrar-sintoma/paso-3.tsx`
+  (`features/audio/dictation-button.tsx`) enfoca la nota y guía a usar el micrófono del
+  teclado del sistema. No hay reconocedor propio.
+- **REC-002 (versión auditiva):** `expo-speech` (`features/audio/`: `speech.ts`, `voice.ts`,
+  `scripts.ts`, `screen-scripts.ts`, `speak-button.tsx`, `use-activity-narration.ts`).
+  Interruptor «Lectura en voz alta» en `/accesibilidad` (`audioGuidance` en `settings-slice`,
+  apagado por defecto) que **manda sobre todo**: `SpeakButton` no se pinta si está apagado.
+  Encendido: botón «Escuchar» en actividades, `registrar-sintoma/paso-1..3`, inicio del
+  paciente, calendario (detalle del día), progreso y `apoyo/[id]`; auto-lectura solo en
+  actividades. Corregido el 2026-11-10 tras probar: antes el botón sí sonaba con el interruptor
+  apagado (confuso).
+- Se arregló el typecheck de `paso-3.tsx` (tipo del ref del `TextInput`), se escribieron
+  `audio/__tests__/scripts-test.ts` y `voice-test.ts`. `tsc` 0 errores, `eslint` limpio sobre
+  los archivos tocados, **63 tests jest en verde** (antes 31).
+- **Sin probar en emulador/celular** (el usuario es quien lo corre): (a) en `/accesibilidad`
+  activar «Lectura en voz alta» y entrar a Memoria/Atención/Movimiento, que hable al cambiar de
+  momento sin repetirse con cada toque; (b) con el interruptor apagado no debe verse ningún
+  «Escuchar» en ninguna pantalla, y al apagarlo hablando debe callar; una guía larga de Apoyo
+  debe leerse completa;
+  (c) que el emulador tenga voz en español instalada (si no, `speak` calla); (d) en el paso 3
+  del síntoma, «Dictar con voz» abre el teclado y muestra la ayuda.
+- `supabase/seed/demo_data_completo.sql` (sin commitear): datos de demostración para simular
+  actividad y consultar en la demo. Revisar que no tenga un correo real antes de commitear.
+
 ## Siguiente acción concreta
 **Verificar en emulador TODO lo de la 2ª sesión del 2026-11-09 (ver sección "T6 (continuación)"
 arriba) — nada de eso se ha visto correr todavía, solo se revisó por código y contra capturas
@@ -792,7 +819,7 @@ Pendientes en paralelo (no bloquean lo anterior):
   confirmado el 2026-11-10; la hora exacta sigue sin saberse). El enunciado de Fase 3 es
   tajante ("un minuto tarde = no se acepta"). **Con este margen, priorizar lo que la rúbrica
   puntúa y aún está en Pendiente: ENT-002 (documento), ENT-003 (README), ENT-004 (demo),
-  RT-007, ENT-005 (defensa).** No arrancar T7 (extensiones).
+  RT-007, ENT-005 (defensa).** No ampliar extensiones más allá de la voz ya hecha (T7).
 - ~~**Node v20.20.2 por debajo del mínimo de Expo SDK 58**~~ **RESUELTO (2026-11-10).** El
   equipo usa `nvm` (nvm4w, `C:\nvm4w\nodejs`); STATUS estaba desactualizado (ya estaba en
   22.15.0). Se actualizó a **Node 24.22.2** (LTS 24.x más reciente) con `nvm install 24.22.2`
@@ -831,7 +858,7 @@ haya algo funcionando. Obligatorio primero; recomendados al final.)_
 - [x] **T5. Apoyo/Info** — contenidos de apoyo; subtítulos si hay audiovisual. (RF-009, RF-010)
   Verificado en emulador para ambos perfiles — ver sección "T5 — Apoyo/Info" arriba.
 - [ ] **T6. Accesibilidad + pruebas** — pase de accesibilidad y pruebas jest-expo de la lógica. (RNF-*, pruebas)
-- [ ] **T7. Extensiones (si sobra tiempo)** — voz/dictado, versión auditiva, perfil médico. (REC-001..003)
+- [~] **T7. Extensiones** — voz/dictado y versión auditiva implementados sin probar (REC-001, REC-002, D-013); perfil médico (REC-003) aplazado por decisión del equipo.
 - [ ] **T8. Documento Final** — `docs/ENTREGA-FINAL.md`: 5 secciones, matriz competitiva (Fase 1),
   diagrama de arquitectura E2E, **matriz trazable de accesibilidad** (mejora → archivo → prueba),
   pruebas y conclusiones; refs IEEE/APA. (ENT-002, EVA-001)

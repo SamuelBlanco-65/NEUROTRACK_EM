@@ -11,6 +11,8 @@ export type SettingsState = {
   highContrast: boolean;
   reduceMotion: boolean;
   textScale: TextScalePreference;
+  /** Lectura automática en voz alta de las instrucciones de las actividades (REC-002). */
+  audioGuidance: boolean;
 };
 
 type SettingsSliceState = SettingsState & { _hydrated: boolean };
@@ -20,6 +22,7 @@ export const DEFAULT_SETTINGS: SettingsState = {
   highContrast: false,
   reduceMotion: false,
   textScale: 'normal',
+  audioGuidance: false,
 };
 
 export const TEXT_SCALE_MULTIPLIER: Record<TextScalePreference, number> = {
@@ -51,6 +54,9 @@ const settingsSlice = createSlice({
     textScaleChanged(state, action: PayloadAction<TextScalePreference>) {
       state.textScale = action.payload;
     },
+    audioGuidanceToggled(state) {
+      state.audioGuidance = !state.audioGuidance;
+    },
     settingsReset(state) {
       Object.assign(state, DEFAULT_SETTINGS);
     },
@@ -67,6 +73,12 @@ const settingsSlice = createSlice({
   },
 });
 
-export const { colorSchemeChanged, highContrastToggled, reduceMotionToggled, textScaleChanged, settingsReset } =
-  settingsSlice.actions;
+export const {
+  colorSchemeChanged,
+  highContrastToggled,
+  reduceMotionToggled,
+  textScaleChanged,
+  audioGuidanceToggled,
+  settingsReset,
+} = settingsSlice.actions;
 export default settingsSlice.reducer;

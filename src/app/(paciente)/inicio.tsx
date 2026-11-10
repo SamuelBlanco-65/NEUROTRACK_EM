@@ -7,6 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { homeScript } from '@/features/audio/screen-scripts';
+import { SpeakButton } from '@/features/audio/speak-button';
 import { CATEGORY_META } from '@/features/reminders/constants';
 import { SYMPTOM_TYPE_ICON, SYMPTOM_TYPE_OPTIONS } from '@/features/symptoms/constants';
 import { dismissCheer, fetchMyLatestCheer } from '@/store/slices/caregiver-slice';
@@ -152,6 +154,24 @@ export default function PacienteInicioScreen() {
             <ThemedText variant="bodyMd" colorRole="secondary">
               {dateLabel}
             </ThemedText>
+            <SpeakButton
+              text={homeScript({
+                greeting: greetingName ? `Hola, ${greetingName}` : 'Hola',
+                dateLabel,
+                cheer: latestCheer?.message ?? null,
+                reminders: todayReminders.map((reminder) => ({
+                  time: new Date(reminder.scheduledAt).toLocaleTimeString('es-CO', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  }),
+                  title: reminder.title,
+                })),
+              })}
+              label="Escuchar"
+              accessibilityLabel="Escuchar el resumen de hoy"
+              style={{ alignSelf: 'flex-start', marginTop: Spacing.xs }}
+              testID="paciente-inicio-escuchar"
+            />
           </View>
 
           <View style={[styles.checkinCard, { backgroundColor: colors.tertiaryFixed }]}>

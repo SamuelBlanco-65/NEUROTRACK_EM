@@ -7,6 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenState } from '@/components/screen-state';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { progressScript } from '@/features/audio/screen-scripts';
+import { SpeakButton } from '@/features/audio/speak-button';
 import { MIN_DISTINCT_DAYS_FOR_INSIGHTS, PERIOD_OPTIONS } from '@/features/progress/constants';
 import {
   aggregateBuckets,
@@ -156,6 +158,13 @@ export default function PacienteProgresoScreen() {
                       {headline}
                     </ThemedText>
                   </View>
+                  <SpeakButton
+                    text={progressScript(headline, insights)}
+                    label="Escuchar"
+                    accessibilityLabel="Escuchar el resumen de progreso"
+                    style={{ alignSelf: 'flex-start' }}
+                    testID="progreso-escuchar"
+                  />
 
                   {view === 'grafico' ? (
                     <ProgressChart buckets={buckets} maxValue={maxValue} colors={colors} />

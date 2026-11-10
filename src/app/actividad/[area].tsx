@@ -12,6 +12,15 @@ import { FeedbackBadge } from '@/features/activities/feedback-badge';
 import { SessionHeader } from '@/features/activities/session-header';
 import { ShapeButton, ShapeSequenceItem } from '@/features/activities/shape-button';
 import type { ActivityArea, MovimientoRound, RoundResult, ShapeId } from '@/features/activities/types';
+import {
+  MEMORIA_RESPONDER_SCRIPT,
+  atencionScript,
+  completedScript,
+  movimientoIntroScript,
+  sequenceScript,
+} from '@/features/audio/scripts';
+import { SpeakButton } from '@/features/audio/speak-button';
+import { useActivityNarration } from '@/features/audio/use-activity-narration';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   atencionOptionTapped,
@@ -46,6 +55,8 @@ export default function ActividadSesionScreen() {
       dispatch(sessionStarted(area));
     }
   }, [area, session, dispatch]);
+
+  useActivityNarration(session && session.area === area ? session : null);
 
   const loggedSessionRef = useRef<SessionState | null>(null);
   useEffect(() => {
@@ -109,6 +120,7 @@ export default function ActividadSesionScreen() {
                 headline="Memoriza esta secuencia"
                 hint="Tómate el tiempo que necesites. No hay cronómetro."
                 hintIcon="spa"
+                speakText={sequenceScript(session.memoriaRound.sequence)}
               />
               <View style={styles.sequenceRow}>
                 {session.memoriaRound.sequence.map((shape, index) => (
@@ -150,6 +162,7 @@ export default function ActividadSesionScreen() {
                 headline="Encuentra la figura distinta"
                 hint="Tómate tu tiempo. Sin límites ni prisas."
                 hintIcon="spa"
+                speakText={atencionScript(session.atencionRound.options.length)}
               />
               <View style={styles.grid}>
                 {session.atencionRound.options.map((option, index) => (
@@ -273,11 +286,14 @@ function InstructionCard({
   headline,
   hint,
   hintIcon,
+  speakText,
 }: {
   icon: MaterialIconName;
   headline: string;
   hint: string;
   hintIcon: MaterialIconName;
+  /** Si se da, muestra un botón "Escuchar" que lee este texto en voz alta (REC-002). */
+  speakText?: string;
 }) {
   const colors = useThemeColors();
 
@@ -295,6 +311,9 @@ function InstructionCard({
           {hint}
         </ThemedText>
       </View>
+      {speakText ? (
+        <SpeakButton text={speakText} label="Escuchar" accessibilityLabel="Escuchar las instrucciones" testID="actividad-escuchar" />
+      ) : null}
     </View>
   );
 }
@@ -358,6 +377,7 @@ function MemoriaResponderBlock({
         headline="Toca las figuras en el mismo orden en que aparecieron."
         hint="Tómate tu tiempo. Sin límites ni prisas."
         hintIcon="spa"
+        speakText={MEMORIA_RESPONDER_SCRIPT}
       />
       <View style={styles.grid}>
         {ALL_SHAPES.map((shape) => (
@@ -457,6 +477,7 @@ function MovimientoBlock({
         headline="Sigue estos pasos"
         hint="Márcalos como hechos a tu propio ritmo."
         hintIcon="spa"
+        speakText={movimientoIntroScript(round.steps)}
       />
       <View style={styles.stepsList}>
         {round.steps.map((step, index) => {
@@ -539,6 +560,12 @@ function SesionCompletada({
             ? `Hiciste ${aciertos} de ${aciertosTotal} pasos. Cada práctica cuenta.`
             : `Acertaste ${aciertos} de ${aciertosTotal} rondas. Cada práctica cuenta.`}
         </ThemedText>
+        <SpeakButton
+          text={completedScript(area, aciertos, aciertosTotal, newLevel)}
+          label="Escuchar"
+          accessibilityLabel="Escuchar el resumen de la sesión"
+          testID="actividad-escuchar-resumen"
+        />
       </View>
 
       <View style={styles.statsRow}>

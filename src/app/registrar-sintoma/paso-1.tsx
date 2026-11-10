@@ -6,6 +6,8 @@ import { ProfileOption } from '@/components/profile-option';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { SYMPTOM_TYPE_ICON, SYMPTOM_TYPE_OPTIONS } from '@/features/symptoms/constants';
+import { screenIntroScript } from '@/features/audio/screen-scripts';
+import { SpeakButton } from '@/features/audio/speak-button';
 import { WizardActions } from '@/features/symptoms/wizard-actions';
 import { WizardHeader } from '@/features/symptoms/wizard-header';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -33,6 +35,17 @@ export default function RegistrarSintomaPaso1Screen() {
             <ThemedText variant="bodyMd" colorRole="secondary">
               Elige lo que más se acerque a lo que notas ahora.
             </ThemedText>
+            <SpeakButton
+              text={screenIntroScript(
+                '¿Qué estás sintiendo?',
+                'Elige lo que más se acerque a lo que notas ahora.',
+                SYMPTOM_TYPE_OPTIONS
+              )}
+              label="Escuchar"
+              accessibilityLabel="Escuchar las opciones"
+              style={styles.speak}
+              testID="sintoma-paso1-escuchar"
+            />
           </View>
           <View accessibilityRole="radiogroup" accessibilityLabel="Tipo de síntoma" style={styles.options}>
             {SYMPTOM_TYPE_OPTIONS.map((option) => (
@@ -79,6 +92,10 @@ const styles = StyleSheet.create({
   },
   heading: {
     gap: 2,
+  },
+  speak: {
+    alignSelf: 'flex-start',
+    marginTop: Spacing.xs,
   },
   options: {
     gap: Spacing.md,

@@ -1,11 +1,14 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Redirect, router } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { DictationButton } from '@/features/audio/dictation-button';
+import { screenIntroScript } from '@/features/audio/screen-scripts';
+import { SpeakButton } from '@/features/audio/speak-button';
 import { WizardActions } from '@/features/symptoms/wizard-actions';
 import { WizardHeader } from '@/features/symptoms/wizard-header';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -22,6 +25,8 @@ export default function RegistrarSintomaPaso3Screen() {
   const note = useAppSelector((state) => state.symptoms.draft.note);
   const submitStatus = useAppSelector((state) => state.symptoms.submitStatus);
   const submitError = useAppSelector((state) => state.symptoms.submitError);
+
+  const noteInputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
 
   const horaActual = useMemo(
     () => new Date().toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit' }),
@@ -54,6 +59,16 @@ export default function RegistrarSintomaPaso3Screen() {
             <ThemedText variant="bodyMd" colorRole="secondary">
               Es totalmente opcional. Puedes guardar sin escribir nada.
             </ThemedText>
+            <SpeakButton
+              text={screenIntroScript(
+                '¿Quieres agregar algo?',
+                'Es totalmente opcional. Puedes guardar sin escribir nada.'
+              )}
+              label="Escuchar"
+              accessibilityLabel="Escuchar las instrucciones"
+              style={styles.speak}
+              testID="sintoma-paso3-escuchar"
+            />
           </View>
 
           <View style={[styles.noteCard, { backgroundColor: colors.surfaceContainerLowest }]}>
@@ -64,6 +79,7 @@ export default function RegistrarSintomaPaso3Screen() {
               </ThemedText>
             </View>
             <TextInput
+              ref={noteInputRef}
               value={note}
               onChangeText={(text) => dispatch(draftNoteSet(text.slice(0, NOTE_MAX_LENGTH)))}
               placeholder="Escribe alguna sensación, cómo dormiste o lo que quieras recordar…"
@@ -75,6 +91,7 @@ export default function RegistrarSintomaPaso3Screen() {
               accessibilityLabel="Nota opcional sobre el registro"
               testID="sintoma-nota"
             />
+            <DictationButton onStart={() => noteInputRef.current?.focus()} testID="sintoma-dictar" />
           </View>
 
           <View style={[styles.momentCard, { backgroundColor: colors.surfaceContainerLowest }]}>
@@ -133,6 +150,10 @@ const styles = StyleSheet.create({
   },
   heading: {
     gap: 2,
+  },
+  speak: {
+    alignSelf: 'flex-start',
+    marginTop: Spacing.xs,
   },
   noteCard: {
     borderRadius: Radius.default,

@@ -6,6 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProfileOption } from '@/components/profile-option';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { screenIntroScript } from '@/features/audio/screen-scripts';
+import { SpeakButton } from '@/features/audio/speak-button';
 import type { Severity } from '@/features/symptoms/types';
 import { symptomTypeLabel, SEVERITY_OPTIONS } from '@/features/symptoms/constants';
 import { WizardActions } from '@/features/symptoms/wizard-actions';
@@ -42,6 +44,17 @@ export default function RegistrarSintomaPaso2Screen() {
             <ThemedText variant="bodyMd" colorRole="secondary">
               Selecciona cómo lo sientes ahora.
             </ThemedText>
+            <SpeakButton
+              text={screenIntroScript(
+                `¿Qué tan fuerte es ${symptomTypeLabel(symptomType).toLowerCase()}?`,
+                'Selecciona cómo lo sientes ahora.',
+                SEVERITY_OPTIONS
+              )}
+              label="Escuchar"
+              accessibilityLabel="Escuchar las opciones"
+              style={styles.speak}
+              testID="sintoma-paso2-escuchar"
+            />
           </View>
           <View accessibilityRole="radiogroup" accessibilityLabel="Nivel de severidad" style={styles.options}>
             {SEVERITY_OPTIONS.map((option) => (
@@ -100,6 +113,10 @@ const styles = StyleSheet.create({
   },
   heading: {
     gap: 2,
+  },
+  speak: {
+    alignSelf: 'flex-start',
+    marginTop: Spacing.xs,
   },
   options: {
     gap: Spacing.md,

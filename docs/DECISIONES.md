@@ -273,9 +273,44 @@ y se marca la anterior como **Reemplazada por D-00X**.
 
 ---
 
+## D-013 · Voz (REC-001/REC-002): dictado con el teclado del sistema y texto a voz con `expo-speech`
+
+- **Fecha:** 2026-11-10
+- **Estado:** Vigente (implementado sin probar en emulador)
+- **Contexto:** las extensiones de voz del artículo base (§V-D5/D6) quedaban como opcionales.
+  Expo SDK 58 no trae reconocimiento de voz y las librerías de terceros para eso exigen una
+  build de desarrollo que Expo Go no admite; en cambio `expo-speech` (texto a voz) sí está en
+  Expo Go y funciona sin conexión.
+- **Decisión:**
+  1. **REC-001 (dictado):** no se construye un reconocedor propio. El botón «Dictar con voz» de
+     la nota del síntoma enfoca el campo y explica que se toque el micrófono del teclado del
+     sistema (Gboard u otro). El audio lo procesa el teclado del teléfono, no esta app, lo que
+     además evita enviar voz de salud a un servicio propio (RNF-012). El texto dictado se puede
+     corregir antes de guardar.
+  2. **REC-002 (versión auditiva):** `expo-speech` con la voz del sistema. Elige la mejor voz
+     en español instalada (es-CO, luego es-419, es-US, es-MX, cualquier español) a velocidad
+     0.9 para bajar la fatiga cognitiva. Si no hay voz, calla sin bloquear la actividad.
+  3. **El interruptor «Lectura en voz alta» manda sobre todo** (corregido el mismo día tras
+     probarlo: al principio el botón «Escuchar» funcionaba aunque estuviera apagado y era
+     confuso). Apagado (valor por defecto: quien ya usa TalkBack no la necesita y se pisarían)
+     no se pinta ningún botón «Escuchar» ni se lee nada. Encendido: botón «Escuchar» en las
+     pantallas principales (actividades, los 3 pasos de registrar síntoma, inicio del paciente,
+     detalle del día del calendario, resumen de Progreso y guías de Apoyo) y, solo en las
+     actividades, lectura automática al cambiar de momento. Las demás preferencias de
+     Accesibilidad (texto, contraste, apariencia) ya eran globales. TalkBack sigue cubriendo
+     toda la interfaz (V-D5). Nunca es el único canal: todo sigue en texto, ícono y háptica
+     (RNF-006/009). Los textos largos se parten por frases (límite del motor de voz).
+  4. Los guiones (`features/audio/scripts.ts`) y qué se narra en cada momento
+     (`narrationFor`) son funciones puras, para poder probarlos con jest sin voz ni UI.
+- **Consecuencia sobre D-011:** la pantalla de Accesibilidad pasa de 4 a 5 controles; el nuevo
+  también tiene efecto real y se restablece con «Restablecer configuración».
+- **Requisitos relacionados:** REC-001, REC-002, RNF-005, RNF-006, RNF-009, RNF-012.
+
+---
+
 ## Cosas que el material pedía y quedan fuera (con su razón)
 - **Perfil del médico** — marcado como opcional/futuro en §I-C y §IV-C. (REC-003)
 - **Biomarcadores / sensores / wearables** — requieren validación clínica y años de estudio
   fuera del alcance del semestre (§IV-C). (RT-003)
 - **Versión auditiva completa de las actividades y voz/dictado** — el propio artículo los deja
-  como extensión si el tiempo lo permite (§V-D6). (REC-001, REC-002)
+  como extensión (§V-D6). **Ya implementadas en versión acotada, ver D-013.** (REC-001, REC-002)

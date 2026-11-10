@@ -7,6 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenState } from '@/components/screen-state';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { dayDetailScript } from '@/features/audio/screen-scripts';
+import { SpeakButton } from '@/features/audio/speak-button';
 import { buildMonthGrid, isoDateOfDate, leadingBlankCount, logsForIsoDate } from '@/features/symptoms/calendar';
 import { SYMPTOM_TYPE_ICON, severityLabel, symptomTypeLabel } from '@/features/symptoms/constants';
 import type { Severity, SymptomLog } from '@/features/symptoms/types';
@@ -201,6 +203,21 @@ export default function PacienteCalendarioScreen() {
                 </ThemedText>
               </View>
             </View>
+            <SpeakButton
+              text={dayDetailScript(
+                selectedDate.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' }),
+                selectedDayLogs.map((log) => ({
+                  type: symptomTypeLabel(log.symptomType),
+                  severity: severityLabel(log.severity),
+                  time: new Date(log.occurredAt).toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit' }),
+                  note: log.note,
+                }))
+              )}
+              label="Escuchar"
+              accessibilityLabel="Escuchar el detalle de este día"
+              style={{ alignSelf: 'flex-start' }}
+              testID="paciente-calendario-escuchar"
+            />
 
             {selectedDayLogs.length === 0 ? (
               <ScreenState

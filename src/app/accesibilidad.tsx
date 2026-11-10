@@ -3,9 +3,11 @@ import { router } from 'expo-router';
 import { Alert, Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { stopSpeaking } from '@/features/audio/speech';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import {
+  audioGuidanceToggled,
   colorSchemeChanged,
   highContrastToggled,
   reduceMotionToggled,
@@ -37,10 +39,17 @@ export default function AccesibilidadScreen() {
   function confirmarRestablecer() {
     Alert.alert(
       'Restablecer configuración',
-      'Esto vuelve la apariencia, el contraste, el tamaño de texto y las animaciones a sus valores originales.',
+      'Esto vuelve la apariencia, el contraste, el tamaño de texto, las animaciones y la lectura en voz alta a sus valores originales.',
       [
         { text: 'Cancelar', style: 'cancel' },
-        { text: 'Restablecer', style: 'destructive', onPress: () => dispatch(settingsReset()) },
+        {
+          text: 'Restablecer',
+          style: 'destructive',
+          onPress: () => {
+            stopSpeaking();
+            dispatch(settingsReset());
+          },
+        },
       ]
     );
   }
@@ -159,6 +168,20 @@ export default function AccesibilidadScreen() {
               value={settings.reduceMotion}
               onChange={() => dispatch(reduceMotionToggled())}
               testID="accesibilidad-reducir-animaciones"
+            />
+          </View>
+
+          <View style={styles.section}>
+            <ToggleRow
+              icon="volume-up"
+              title="Lectura en voz alta"
+              description="Muestra el botón «Escuchar» en las pantallas principales y, en las actividades, lee solas las instrucciones, la secuencia y los resultados. Si ya usas TalkBack no la necesitas."
+              value={settings.audioGuidance}
+              onChange={() => {
+                if (settings.audioGuidance) stopSpeaking();
+                dispatch(audioGuidanceToggled());
+              }}
+              testID="accesibilidad-lectura-voz"
             />
           </View>
 
