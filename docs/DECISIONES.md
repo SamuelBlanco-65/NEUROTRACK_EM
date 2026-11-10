@@ -197,6 +197,82 @@ y se marca la anterior como **Reemplazada por D-00X**.
 
 ---
 
+## D-011 · Pantalla de Accesibilidad (T6): 4 controles reales, no un "overlay widget"
+
+- **Fecha:** 2026-11-09
+- **Estado:** Vigente (implementado sin probar en emulador)
+- **Contexto:** el usuario propuso una pantalla de accesibilidad en el perfil del paciente,
+  con un mock de Stitch (`artifacts/pngs-referencia/Accesibilidad-Vista.jpeg`) que mostraba
+  "perfiles recomendados" por diagnóstico (Motora/Dislexia/TDAH/Daltonismo/Epilepsia...) y 15
+  botones de "herramientas de lectura" (puntero grande, resaltar enlaces, estructura, etc.).
+- **Decisión:** se construyó `src/app/accesibilidad.tsx` con solo 4 controles, todos con
+  efecto real verificable en la app, y se descartó el resto del mock:
+  1. **Apariencia** (claro/oscuro/automático) — el estado ya existía en `settings-slice` pero
+     no tenía pantalla; ahora sí.
+  2. **Tamaño de texto** (normal/grande/extra grande) — multiplicador aplicado en
+     `ThemedText`, se suma al del sistema operativo, no lo reemplaza.
+  3. **Alto contraste** — paleta nueva (`applyHighContrast` en `theme/colors.ts`) con negro/
+     blanco puro deliberado (excepción al RNF-007, que aplica al tema por defecto, no a un
+     modo de alto contraste que el usuario activa a propósito).
+  4. **Reducir animaciones** — apaga el autoborrado a los 900ms del resaltado de acierto/error
+     en Memoria (`actividad/[area].tsx`).
+  - **Se descartaron los "perfiles por diagnóstico"**: autoclasificarse por etiqueta clínica
+    (Dislexia/TDAH/Epilepsia...) es el patrón de "accessibility overlay widget" que la
+    comunidad de accesibilidad critica activamente — es mejor exponer los controles directos.
+  - **Se descartó un toggle de "tipografía para dislexia"**: la app ya usa Atkinson
+    Hyperlegible Next en todo momento (elegida justo por ser legible para baja visión/dislexia);
+    un botón que "activa" una fuente que ya está activa no cambiaría nada — exactamente el tipo
+    de control decorativo que se quería evitar.
+  - **Se descartaron los botones sin equivalente nativo** (puntero grande, resaltar enlaces,
+    "leer página", estructura, guía de uso): no tienen una implementación real en React Native,
+    y un toggle que no hace nada es peor que no tenerlo.
+- **Persistencia nueva:** antes ninguna preferencia de `settings` sobrevivía a cerrar la app.
+  Se agregó `src/features/settings/persistence.ts` (`AsyncStorage`, sin cifrar — son
+  preferencias de apariencia, no datos de salud) + hidratación en `_layout.tsx` + guardado
+  automático vía `store.subscribe` en `store.ts`.
+- **Consecuencias:** el texto "tus preferencias son privadas, se guardan en este dispositivo"
+  de la pantalla es literalmente cierto, no decorativo.
+- **Requisitos relacionados:** RNF-001, RNF-002, RNF-003, RNF-007.
+
+---
+
+## D-012 · Paleta de modo oscuro reemplazada por la real de Stitch (T6)
+
+- **Fecha:** 2026-11-09
+- **Estado:** Vigente (implementado sin probar en emulador — ver "Errores conocidos")
+- **Contexto:** en la sesión anterior el usuario probó la primera `DarkColors` (derivada a
+  mano de los roles `inverse-*`) en el emulador y la rechazó: las superficies no se aclaraban
+  con la elevación y las tarjetas grandes con rol `tertiaryFixed` (p. ej. "¿Necesitas hablar
+  con alguien?" en Apoyo) se veían como un recorte claro flotando sobre un fondo casi negro.
+  El usuario generó variantes oscuras reales en Stitch para ~35 pantallas
+  (`artifacts/modo-oscuro-stitch/`) y pidió aplicarlas.
+- **Decisión:**
+  1. Las 35 exportaciones son inconsistentes entre sí (distintas sesiones de generación): unas
+     traen la config Tailwind completa redefinida, otras un `<style id="dark-theme-overrides">`
+     con overrides puntuales, y varias quedaron con la config clara sin tocar. Se usó
+     `cuidador_inicio_modo_oscuro/code.html` como fuente única de la paleta porque fue la
+     única con los 41 roles M3 completos y coherentes entre sí.
+  2. **Excepción deliberada a la convención M3** de que los roles "Fixed" son constantes entre
+     esquemas: `tertiaryFixed`/`onTertiaryFixed`/`tertiaryFixedDim`/`onTertiaryFixedVariant` SÍ
+     cambian en `DarkColors`. Es justo el bug de arriba — esta app usa esos roles para tarjetas
+     grandes (tip de "Un paso a la vez", crisis de Apoyo, banner del wizard), no solo acentos
+     pequeños. El propio override de Stitch para esas pantallas específicas
+     (`paciente_inicio_modo_oscuro`, `paciente_registrar_c_mo_me_siento_paso_2_modo_oscuro`)
+     confirma el arreglo: en vez del durazno claro constante, esas tarjetas pasan a un marrón
+     oscuro cálido con texto crema — se adoptaron esos valores tal cual.
+  3. **La escala de elevación del export (`surfaceContainer`/`Low`/`Lowest`) se corrigió a
+     mano**: en los valores originales del export, esos tres roles estaban a 1-2 puntos de
+     luminosidad del fondo, así que tarjetas como "Tu plan de hoy" en `(paciente)/inicio.tsx`
+     quedaban prácticamente invisibles (reportado por el usuario tras esta misma sesión). Se
+     separó la escala conservando el tono frío de base, y se añadió un borde de 1px
+     (`outlineVariant`) a esas tarjetas, igual que en el mock de Stitch.
+- **Verificación:** todos los pares texto/fondo nuevos se recalcularon con la fórmula de
+  contraste WCAG (script Python ad-hoc, no quedó en el repo) — el más bajo da 5.22:1, la
+  mayoría por encima de 7:1. Sigue pendiente la verificación visual real en emulador.
+- **Requisitos relacionados:** RNF-003, RNF-007.
+
+---
+
 ## Cosas que el material pedía y quedan fuera (con su razón)
 - **Perfil del médico** — marcado como opcional/futuro en §I-C y §IV-C. (REC-003)
 - **Biomarcadores / sensores / wearables** — requieren validación clínica y años de estudio

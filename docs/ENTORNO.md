@@ -9,8 +9,10 @@ de entorno nuevo, anótalo aquí **y** en la plantilla, para no volver a perder 
 - Node: comprobar con `node -v` al empezar. Expo SDK 58 exige ≥22.13 y `agent-device` exige
   ≥22.12; con Node 20.x ambos avisan (`EBADENGINE`) o bloquean directamente (`expo lint`,
   `expo install` se niegan a correr), aunque `npx eslint`/`npx tsc` directos sí funcionan.
-  Actualizar con `winget install OpenJS.NodeJS.LTS` y **cerrar y reabrir todas las terminales
-  y VS Code** para que tome la versión nueva.
+  Este equipo usa **nvm (nvm4w)**: actualizar con `nvm install <versión>` + `nvm use <versión>`
+  (versión actual: **24.22.2**, 2026-11-10). Hay además un Node 26 suelto en
+  `C:\Program Files\nodejs` que nvm tapa en el PATH; no usarlo. Si se usa winget en cambio:
+  `winget install OpenJS.NodeJS.LTS` y **cerrar y reabrir todas las terminales y VS Code**.
 
 ## adb y el SDK de Android
 `adb` existe pero normalmente **no está en el PATH**. En cada sesión de terminal nueva

@@ -1,15 +1,11 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-09 · **Rama:** master · Último commit pusheado: `6034850` (docs: hash de
-STATUS tras T4). Working tree **sin commitear tras esta sesión** (T5 + T6 en curso): ver diff
-de `git status` para el detalle completo; además de lo de T5, esta sesión tocó
-`src/app/(auth)/acceder.tsx` (botón de volver + banner de error), `src/components/text-field.tsx`,
-`src/app/(paciente)/calendario.tsx`, `src/app/nueva-observacion.tsx`,
-`src/app/registrar-sintoma/paso-3.tsx` (bug real de contraste en oscuro, ver T6), y nuevo
-`artifacts/t6/` con 6 capturas de modo oscuro (sin trackear en git todavía, las trajo el usuario
-por WhatsApp — nombres `WhatsApp Image...jpeg`, conviene renombrarlas antes de commitear).
-Script temporal `scripts/reset-test-passwords.mjs` se usó y se borró en esta sesión (no debe
-quedar en el repo: usa la `service_role` key, nunca se commitea).
+**Fecha:** 2026-11-09 (3ª sesión del día) · **Rama:** master · Último commit pusheado:
+`da06c9e` (feat(T6): accesibilidad ajustable, fidelidad visual y modo oscuro — incluye también
+el módulo de Apoyo y las pruebas jest-expo de T5/T6 que habían quedado sin commitear). **Sin
+cambios de código en esta 3ª sesión** — solo se respondió una pregunta de onboarding de una
+compañera (ver "Pendientes en paralelo"). Working tree: `docs/STATUS.md` y `docs/DECISIONES.md`
+modificados (de la 2ª sesión, sin commitear a propósito — ver diff antes de commitear).
 
 ## ⚠️ Equipo y co-autoría Git (LEER ANTES DE CUALQUIER COMMIT)
 Proyecto en equipo de 3. **TODO commit debe atribuir a los tres.** El autor es Samuel
@@ -541,7 +537,41 @@ Código nuevo de las 3 RF, `typecheck`/`lint` limpios, **ya commiteado y pushead
   en `docs/ENTORNO.md`: arrancó en una terminal sin `adb` en el PATH). Se resolvió
   matando el proceso `node.exe` del daemon (`daemon.js`) y dejándolo reiniciar solo.
 
-## T6 — Accesibilidad + pruebas: EN CURSO (2026-11-09)
+## T6 (continuación, 2ª sesión 2026-11-09) — pase de fidelidad visual, pantalla de Accesibilidad, modo oscuro real
+
+Esta sesión partió de "Siguiente acción concreta" de la sesión anterior (ver más abajo, ya
+resuelta) y la amplió. Commit `da06c9e`, pusheado con `Co-Authored-By` de Amelyn y Mariana.
+
+- **Pase de fidelidad visual completo contra `docs/diseno/stitch-export/`** en: selección de
+  perfil (header "Paso 1 de 2" + ilustración hero + íconos + modal "¿Qué es Neurotrack EM?"),
+  inicio paciente (reescrito: chips de síntomas, "Tu plan de hoy" con datos reales, racha
+  semanal), inicio cuidador (reescrito: resumen real de actividades/recordatorios, "Anotar una
+  observación", tarjeta de autocuidado), calendario (barras de severidad en vez de un punto
+  genérico), wizard de síntomas (íconos + tarjetas de tranquilidad), actividades/progreso
+  (contadores de sección, íconos de insight coloreados, botón real "Preparar resumen para mi
+  consulta" vía `Share` nativo), módulo del cuidador (exportar notas, etiqueta "Se pasó" en
+  recordatorios vencidos, toggles de permisos con ícono+descripción), apoyo (íconos en tarjetas
+  de crisis). `acceder.tsx` y el detalle de contenido de Apoyo ya estaban casi idénticos a
+  Stitch de sesiones previas — no se tocaron. Nada de esto se verificó en emulador todavía.
+- **Pantalla nueva `src/app/accesibilidad.tsx`** (entrada desde un ícono nuevo en el header de
+  `(paciente)/inicio.tsx`): apariencia (claro/oscuro/automático), tamaño de texto, alto
+  contraste, reducir animaciones. Persistida en `AsyncStorage` (`src/features/settings/
+  persistence.ts`) e hidratada en `_layout.tsx`. Decisión completa, con lo que se descartó del
+  mock original del usuario y por qué, en **D-011** de `DECISIONES.md`.
+- **Paleta de modo oscuro reemplazada** por la real que el usuario generó en Stitch
+  (`artifacts/modo-oscuro-stitch/`, ~35 pantallas). Fuente, excepción a la convención M3 de
+  roles "Fixed", y verificación de contraste: **D-012** en `DECISIONES.md`.
+- **Bug real encontrado por el usuario tras la primera pasada de paleta oscura**: las tarjetas
+  de "Tu plan de hoy" (`(paciente)/inicio.tsx`) quedaban invisibles porque `surfaceContainer`
+  estaba a solo 1-2 puntos de luminosidad del fondo. Corregido ampliando la escala de elevación
+  en `src/theme/colors.ts` y añadiendo un borde de 1px (`outlineVariant`) a esas tarjetas — ver
+  detalle en D-012. **No confirmado todavía por el usuario en emulador.**
+- `tsc --noEmit`, `eslint src` y los 31 tests de jest en verde después de cada cambio de esta
+  sesión (se corrió repetidamente, no solo al final).
+- **Nada de esto se verificó en emulador.** Todo el trabajo fue código + comparación contra
+  capturas de Stitch; el usuario no ha abierto la app todavía con estos cambios.
+
+## T6 (1ª sesión, 2026-11-09)
 - **Pruebas jest-expo instaladas y corriendo** (ver Decisión D-004): `jest`, `jest-expo`,
   `@types/jest` en `devDependencies`; `"test": "jest"` + `"jest": {"preset": "jest-expo"}` en
   `package.json`. 3 archivos de pruebas de lógica pura, sin UI, 31 tests, todos en verde
@@ -629,9 +659,10 @@ Código nuevo de las 3 RF, `typecheck`/`lint` limpios, **ya commiteado y pushead
   1. Recorrido con TalkBack documentado pantalla por pantalla (el usuario ya hizo una pasada,
      falta dejar constancia de qué cubrió — capturas o notas en `artifacts/t6/talkback-notas.md`
      — para subir RNF-004/009 a Verificado). **No hecho.**
-  2. ~~Capturas en modo oscuro~~ **Hecho** (6 capturas en `artifacts/t6/`, bug de contraste
-     confirmado resuelto por el usuario) — pendiente solo renombrarlas con el patrón
-     `t6-oscuro-*.png` y trackearlas en git; la paleta en sí queda para después (ver arriba).
+  2. ~~Capturas en modo oscuro~~ **Hecho.** Las 6 de `artifacts/t6/` (ya trackeadas en git,
+     confirmado 2026-11-10) son de la paleta ANTERIOR y quedaron obsoletas; **las capturas
+     vigentes del modo oscuro están en `artifacts/modo-oscuro-stitch/`** (también trackeadas).
+     No hace falta renombrar las de `t6/`.
   3. Captura con fuente del sistema ampliada para RNF-002 (confirmar visualmente el fix de
      `lineHeight`). **No hecho.**
   4. Confirmar en emulador que la háptica nueva de Atención/Movimiento se siente, igual que ya
@@ -639,46 +670,53 @@ Código nuevo de las 3 RF, `typecheck`/`lint` limpios, **ya commiteado y pushead
      sesión).
 
 ## Siguiente acción concreta
-**Plan explícito del usuario para la próxima sesión (2026-11-09, decidido al cierre de esta
-sesión) — dos partes, en este orden:**
+**Verificar en emulador TODO lo de la 2ª sesión del 2026-11-09 (ver sección "T6 (continuación)"
+arriba) — nada de eso se ha visto correr todavía, solo se revisó por código y contra capturas
+de Stitch.** En orden sugerido:
 
-1. **Terminar T6** (ver pendientes 1, 3 y 4 de la sección "T6" arriba — el pendiente 2, modo
-   oscuro, ya está hecho salvo la paleta, que se deja para la parte 2):
+1. `adb shell "cmd uimode night yes"` y recorrer la app: confirmar que las superficies ahora sí
+   se aclaran con la elevación y que **las tarjetas de "Tu plan de hoy" en inicio del paciente
+   ya se ven** (el bug concreto que el usuario reportó al cierre de esta sesión). Si sigue sin
+   notarse, la próxima palanca es `surfaceContainerHigh`/`surfaceContainerHighest` en
+   `src/theme/colors.ts` (ver D-012) — no volver a tocar las fijas (`primary`/`secondary`/
+   `tertiary`), que ya están validadas por contraste.
+2. Abrir `/accesibilidad` desde el ícono nuevo en el header de Inicio (paciente): probar los 4
+   toggles uno por uno, cerrar y reabrir la app para confirmar que la preferencia persiste
+   (`AsyncStorage`), y tocar "Restablecer configuración".
+3. Con eso confirmado, retomar el pendiente de la sesión anterior que quedó sin hacer (no se
+   tocó en esta sesión):
    - Recorrido con TalkBack documentado (`artifacts/t6/talkback-notas.md`).
-   - Captura con fuente del sistema ampliada (`adb shell settings put system font_scale 1.3`)
-     en `(paciente)/apoyo.tsx` y en el wizard de síntomas paso 2.
-   - Confirmación verbal del usuario de que la háptica nueva de Atención/Movimiento se siente.
+   - Captura con fuente del sistema ampliada (`adb shell settings put system font_scale 1.3`).
+   - Confirmación verbal de que la háptica de Atención/Movimiento se siente.
    - Con eso, subir RNF-001, 002, 003, 004, 007 y 009 a Verificado en `REQUISITOS.md`.
-
-2. **Esperar las pantallas de modo oscuro que el usuario va a generar en Stitch** (se le dio un
-   prompt para iterar ahí, no implementado todavía — ver nota de "paleta oscura" en la sección
-   T6) **y, con esas imágenes ya en mano, hacer un pase de fidelidad visual completo**: comparar
-   **todas** las pantallas de `artifacts/` (no solo las nuevas de oscuro) contra las imágenes
-   equivalentes de `docs/diseno/stitch-export/` (56 pantallas, `code.html` + PNG) y ajustar la
-   implementación para que se vea igual a Stitch con alta fidelidad — colores, tipografía,
-   espaciado, forma de tarjetas/botones. Esto es el mismo pendiente de fidelidad visual que ya
-   se venía difiriendo desde T2/T3/T4 (`observaciones.tsx`, `acompanar.tsx`, `recordatorios.tsx`,
-   `permisos.tsx`, `vincularme.tsx`, `apoyo.tsx` ambos perfiles, `progreso.tsx`), ahora
-   **extendido explícitamente a incluir el modo oscuro** una vez el usuario traiga el resultado
-   de Stitch. No arrancar esta parte sin que el usuario haya pegado las capturas de Stitch —
-   es el insumo que falta, no hay nada que comparar todavía.
 
 Pendiente menor, no bloquea lo anterior:
 - RF-007 (selección de perfil) sigue sin marcar explícitamente en `REQUISITOS.md` aunque el
   andamiaje de T0 ya lo cubre — falta solo revisarlo y subirlo a Verificado con una captura.
 
 Pendientes en paralelo (no bloquean lo anterior):
-- Confirmar la **fecha de entrega** con el profesor (Duda 3, única duda crítica abierta).
-- Que Amelyn y Mariana **acepten** la invitación de colaboración del repo.
+- Confirmar la **hora exacta** de entrega con el profesor (la fecha ya es ~2026-11-12).
+- ~~Que Amelyn y Mariana acepten la invitación~~ **Resuelto** (usuario, 2026-11-10): ya están
+  en el repo; aparecen como coautoras en los commits.
+- ~~Una compañera no puede correr el proyecto localmente~~ **Resuelto** (usuario, 2026-11-10):
+  ya puede correr la app con su propio `.env`.
 - Borrar el repo de prueba temporal `coauthor-test` (requiere scope `delete_repo` o hacerlo por web).
 - Más adelante: `docs/ENTREGA-FINAL.md` (ENT-002), `README.md` (ENT-003), RLS cuando existan
   tablas de dominio.
-- Antes de commitear: renombrar las 6 capturas de `artifacts/t6/` (vienen como
-  `WhatsApp Image...jpeg`) a `t6-oscuro-<pantalla>.png`-style, y confirmar que
-  `scripts/reset-test-passwords.mjs` no quedó en el working tree (usa la `service_role` key,
-  nunca debe commitearse).
 
 ## Ya intentado, no repetir
+- **No asumas que todos los exports de "modo oscuro" de Stitch en `artifacts/modo-oscuro-stitch/`
+  tienen el mismo formato.** Al extraer la paleta real (2026-11-09, 2ª sesión) se encontró que
+  las ~35 carpetas vienen de generaciones distintas: unas traen la config Tailwind completa
+  redefinida con los 41 roles M3 (la más confiable: `cuidador_inicio_modo_oscuro`), otras solo
+  un `<style id="dark-theme-overrides">` con overrides puntuales por elemento (`paciente_inicio_
+  modo_oscuro`, útil para ver qué tarjetas cambiaron de rol, no para la paleta base), y varias
+  quedaron con la config **clara** sin tocar (`acceder_iniciar_sesi_n_modo_oscuro`,
+  `cuidador_vincularme_modo_oscuro`) — su `screen.png` sí se ve oscuro porque el navegador headless
+  que generó la captura sí aplicó estilos de `prefers-color-scheme`, pero el `code.html` no sirve
+  para extraer valores. Antes de usar un `code.html` de esa carpeta para sacar colores, grepear
+  `"surface": "#` y comparar contra el valor claro (`#fcf9f4`) para saber si de verdad trae
+  paleta oscura o es el archivo original sin regenerar.
 - **No generes SQL de datos de prueba con fechas relativas a `now()` (p. ej. `now() - interval
   'N days'`) cuando la pantalla a probar agrega por ventanas de calendario (semana/mes).**
   Pasó con `progreso_test_data.sql` (T3): "35-59 días atrás" se calculó en el momento de
@@ -742,25 +780,32 @@ Pendientes en paralelo (no bloquean lo anterior):
   del repo ya está configurado correcto; no revertir.
 
 ## Errores conocidos
-- `package.json` no tiene script `test`: la regla de "terminado" no corre pruebas. Pendiente
-  de añadir jest-expo (ver Decisión D-004) una vez aprobado; no instalar antes.
+- ~~`package.json` no tiene script `test`~~ **RESUELTO (T6):** `"test": "jest"` con preset
+  `jest-expo`, 31 tests en verde (`npx jest`).
 - ~~El scaffold por defecto NO compila ni pasa lint~~ **RESUELTO (2026-11-03, 2ª sesión).**
   `typecheck` y `lint` pasan (exit 0). Ver "Hecho en la última sesión" para los 3 cambios.
   El conflicto de versión de ESLint ya no existe (`eslint.config.js` flat presente).
 - El commit "Initial commit" (741ef4a) quedó atribuido a la cuenta vieja `Samuelsss-oss`. Es
   solo uno; se deja así salvo que se decida reescribir historial. Los commits nuevos ya van a
   `SamuelBlanco-65` + co-autores.
-- **Fecha de entrega: DESCONOCIDA** (Duda 3). El enunciado de Fase 3 es tajante ("un minuto
-  tarde = no se acepta") pero no da fecha/hora. Confirmar con el profesor cuanto antes.
-- **Node v20.20.2 está por debajo del mínimo de Expo SDK 58 (≥22.13).** `npx expo install` y
-  `npx expo lint` avisan/bloquean por esto; `npx eslint` directo y `npx tsc` sí funcionan. No
-  bloqueante todavía, pero conviene actualizar Node pronto (`winget install OpenJS.NodeJS.LTS`,
-  ver `docs/ENTORNO.md`). `agent-device` ya requiere Node ≥22.12 y está instalado aparte.
-- **Esquema de color oscuro sin verificar visualmente.** `DarkColors` (`src/theme/colors.ts`) es
-  derivado y fue auditado por cálculo de contraste, pero no se capturó en el emulador con el
-  tema oscuro activo (RNF-003/007 quedaron en "Implementado sin probar" por esto). Para
-  verificar: forzar dark mode en el emulador (`adb shell "cmd uimode night yes"`) y repetir el
-  pase de capturas de `artifacts/t0/`.
+- **Fecha de entrega: en 2 días desde 2026-11-10, es decir ~2026-11-12** (dato del usuario,
+  confirmado el 2026-11-10; la hora exacta sigue sin saberse). El enunciado de Fase 3 es
+  tajante ("un minuto tarde = no se acepta"). **Con este margen, priorizar lo que la rúbrica
+  puntúa y aún está en Pendiente: ENT-002 (documento), ENT-003 (README), ENT-004 (demo),
+  RT-007, ENT-005 (defensa).** No arrancar T7 (extensiones).
+- ~~**Node v20.20.2 por debajo del mínimo de Expo SDK 58**~~ **RESUELTO (2026-11-10).** El
+  equipo usa `nvm` (nvm4w, `C:\nvm4w\nodejs`); STATUS estaba desactualizado (ya estaba en
+  22.15.0). Se actualizó a **Node 24.22.2** (LTS 24.x más reciente) con `nvm install 24.22.2`
+  + `nvm use 24.22.2`. Verificado bajo esa versión: `tsc --noEmit` 0 errores, 31 tests jest en
+  verde, `expo-doctor` 20/20. Ojo: hay otro Node 26.13.0 en `C:\Program Files\nodejs` que
+  queda tapado por nvm en el PATH; no usarlo (Expo SDK 58 no se ha probado con Node 26).
+- **Esquema de color oscuro sin verificar visualmente (actualizado 2ª sesión 2026-11-09).**
+  `DarkColors` ya NO es el derivado a mano que el usuario rechazó — se reemplazó por la paleta
+  real de Stitch con la escala de elevación corregida (ver D-012, sección T6 de arriba). Pero
+  sigue sin capturarse en emulador con el tema oscuro activo tras este reemplazo (RNF-003/007
+  siguen en "Implementado sin probar" por esto). Para verificar: forzar dark mode (`adb shell
+  "cmd uimode night yes"`) y repetir el pase de capturas de `artifacts/t0/`, prestando atención
+  especial a "Tu plan de hoy" en inicio del paciente (el bug concreto que se corrigió esta sesión).
 
 ## Plan de implementación
 _(Cada tarea indica los IDs de requisito que cubre. Orden pensado para que siempre
@@ -780,8 +825,9 @@ haya algo funcionando. Obligatorio primero; recomendados al final.)_
   Verificado por el usuario en emulador con datos de prueba — ver sección "T3 — Progreso" arriba.
 - [x] **T4. Cuidador** — vinculación con consentimiento, observaciones, recordatorios
   (visual+háptica), acceso sincronizado a lo autorizado. (RF-006, RF-008, RF-012)
-  Probado por el usuario en emulador con dos cuentas, commiteado y pusheado — ver sección
-  "T4 — Módulo del cuidador" arriba. Falta solo tomar capturas para subir a Verificado.
+  Probado por el usuario en emulador con dos cuentas, commiteado y pusheado, **capturas en
+  `artifacts/t4/` — VALIDADO** (confirmado por el usuario 2026-11-10). Ver sección
+  "T4 — Módulo del cuidador" arriba.
 - [x] **T5. Apoyo/Info** — contenidos de apoyo; subtítulos si hay audiovisual. (RF-009, RF-010)
   Verificado en emulador para ambos perfiles — ver sección "T5 — Apoyo/Info" arriba.
 - [ ] **T6. Accesibilidad + pruebas** — pase de accesibilidad y pruebas jest-expo de la lógica. (RNF-*, pruebas)
