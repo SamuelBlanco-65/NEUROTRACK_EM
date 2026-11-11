@@ -6,6 +6,7 @@ import {
 } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
 
+import { buildConsentMetadata } from '@/features/legal/consent';
 import { supabase } from '@/lib/supabase';
 import { parseAuthLink } from './deep-link';
 import type { AuthError, Session } from './types';
@@ -90,7 +91,11 @@ export async function signUp(name: string, email: string, password: string): Pro
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: name }, emailRedirectTo: Linking.createURL(CONFIRM_REDIRECT_PATH) },
+    options: {
+      // `buildConsentMetadata` deja constancia de cuándo y qué versión de los términos aceptó la persona.
+      data: { full_name: name, ...buildConsentMetadata() },
+      emailRedirectTo: Linking.createURL(CONFIRM_REDIRECT_PATH),
+    },
   });
   if (error) throw toAuthError(error);
   // Con la confirmación de correo activa, registrar un correo que ya existe no da error (Supabase no

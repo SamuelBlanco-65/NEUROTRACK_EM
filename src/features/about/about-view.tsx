@@ -82,10 +82,10 @@ export function AboutView() {
       <View style={[styles.hero, { backgroundColor: colors.surfaceContainerLow }]}>
         <Image
           accessibilityIgnoresInvertColors
-          source={require('@/assets/images/ilustracion-acompanamiento.png')}
+          source={require('@/assets/images/acerca-fondo.jpeg')}
           style={styles.heroImage}
-          resizeMode="contain"
-          accessibilityLabel="Ilustración de acompañamiento de Neurotrack EM"
+          resizeMode="cover"
+          accessibilityLabel="Ilustración de dos personas caminando juntas por un sendero entre flores"
         />
       </View>
       <View style={styles.heroText}>
@@ -198,13 +198,11 @@ export function AboutView() {
 const styles = StyleSheet.create({
   root: { gap: Spacing.lg },
   hero: {
-    height: 190,
+    aspectRatio: 1,
     borderRadius: Radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
     overflow: 'hidden',
   },
-  heroImage: { width: 160, height: 160 },
+  heroImage: { width: '100%', height: '100%' },
   heroText: { gap: Spacing.xs },
   section: { gap: Spacing.sm },
   card: {

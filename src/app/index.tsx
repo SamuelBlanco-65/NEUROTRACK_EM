@@ -40,10 +40,10 @@ export default function SeleccionDePerfilScreen() {
         <View style={[styles.hero, { backgroundColor: colors.surfaceContainerLow }]}>
           <Image
             accessibilityIgnoresInvertColors
-            source={require('@/assets/images/ilustracion-acompanamiento.png')}
+            source={require('@/assets/images/perfil-hero.jpg')}
             style={styles.heroImage}
-            resizeMode="contain"
-            accessibilityLabel="Ilustración de acompañamiento de Neurotrack EM"
+            resizeMode="cover"
+            accessibilityLabel="Ilustración de dos personas caminando juntas por un sendero entre flores"
           />
         </View>
 
@@ -139,15 +139,13 @@ const styles = StyleSheet.create({
   },
   hero: {
     width: '100%',
-    height: 170,
+    height: 190,
     borderRadius: Radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
     overflow: 'hidden',
   },
   heroImage: {
-    width: 140,
-    height: 140,
+    width: '100%',
+    height: '100%',
   },
   heading: {
     gap: Spacing.xs,

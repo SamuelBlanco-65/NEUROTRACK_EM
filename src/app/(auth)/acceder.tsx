@@ -306,7 +306,7 @@ export default function AccederScreen() {
                 }}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked: acepto }}
-                accessibilityLabel="Acepto los términos de uso y autorizo el tratamiento de mis datos de salud"
+                accessibilityLabel="Acepto los términos de uso y autorizo el tratamiento de mis datos de salud, incluida su transferencia a los servidores de los proveedores de la app"
                 style={styles.consentRow}
                 testID="acceder-consentimiento">
                 <View
@@ -320,7 +320,8 @@ export default function AccederScreen() {
                   {acepto ? <MaterialIcons name="check" size={20} color={colors.onPrimary} /> : null}
                 </View>
                 <ThemedText variant="bodySm" style={styles.consentText}>
-                  Acepto los términos de uso y autorizo el tratamiento de mis datos de salud para que la app funcione.
+                  Acepto los términos de uso y autorizo el tratamiento de mis datos de salud, incluida su transferencia a
+                  los servidores de los proveedores de la app, para que funcione.
                 </ThemedText>
               </Pressable>
               <View style={styles.consentLinks}>
