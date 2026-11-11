@@ -1,26 +1,85 @@
 <!-- Supabase > Authentication > Emails > "Confirm signup".
-     Asunto sugerido: Confirma tu correo en Neurotrack EM -->
-<div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #1c1b18; line-height: 1.5;">
-  <h1 style="font-size: 22px; margin: 0 0 16px;">Te damos la bienvenida a Neurotrack EM</h1>
-  <p style="font-size: 16px; margin: 0 0 16px;">
-    Para terminar de crear tu cuenta, confirma tu correo tocando el botón. Puedes hacerlo desde cualquier
-    dispositivo; después inicia sesión en la app.
-  </p>
-  <p style="margin: 24px 0;">
-    <a href="{{ .SiteURL }}/confirmar?token_hash={{ .TokenHash }}&type=signup"
-       style="display: inline-block; background: #00424d; color: #ffffff; text-decoration: none; font-size: 18px; font-weight: bold; padding: 16px 28px; border-radius: 28px;">
-      Confirmar mi correo
-    </a>
-  </p>
-  <p style="font-size: 14px; color: #4a4741; margin: 0 0 8px;">
-    Si el botón no funciona, copia y pega este enlace en tu navegador:
-  </p>
-  <p style="font-size: 13px; color: #4a4741; word-break: break-all; margin: 0 0 24px;">{{ .SiteURL }}/confirmar?token_hash={{ .TokenHash }}&type=signup</p>
-  <p style="font-size: 14px; color: #4a4741; margin: 0;">
-    Si no creaste esta cuenta, puedes ignorar este mensaje: nadie podrá entrar sin confirmar el correo.
-  </p>
-  <hr style="border: none; border-top: 1px solid #d8d4cc; margin: 24px 0;" />
-  <p style="font-size: 12px; color: #6b665d; margin: 0;">
-    Neurotrack EM es un apoyo para el seguimiento y el acompañamiento. No reemplaza a tu equipo médico.
-  </p>
-</div>
+     Asunto sugerido: Confirma tu correo en Neurotrack EM
+     Colores = paleta de la app (src/theme/colors.ts). Claro por defecto; paleta oscura de la app en
+     los clientes que soportan prefers-color-scheme. El degradado de una sola tinta evita que Gmail
+     invierta los colores por su cuenta. -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Confirma tu correo en Neurotrack EM</title>
+<style>
+  :root { color-scheme: light dark; }
+  @media (prefers-color-scheme: dark) {
+    .fondo { background-color: #181b1f !important; background-image: none !important; }
+    .tarjeta { background-color: #1c2024 !important; background-image: none !important; }
+    .cabecera { background-color: #223a40 !important; background-image: none !important; }
+    .marca { color: #d5e6e7 !important; }
+    .titulo, .texto { color: #e5e9ee !important; }
+    .suave { color: #8e98a4 !important; }
+    .boton { background-color: #6ec6d6 !important; background-image: none !important; }
+    .boton a { color: #00363f !important; }
+    .aviso { background-color: #30261c !important; background-image: none !important; }
+    .aviso-texto { color: #f5f1eb !important; }
+    .linea { border-top-color: #3b444c !important; }
+  }
+</style>
+</head>
+<body class="fondo" style="margin:0; padding:0; background-color:#fcf9f4; background-image:linear-gradient(#fcf9f4,#fcf9f4);">
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">Un paso más para terminar de crear tu cuenta.</div>
+  <table role="presentation" class="fondo" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fcf9f4" style="background-color:#fcf9f4; background-image:linear-gradient(#fcf9f4,#fcf9f4);">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;">
+          <tr>
+            <td class="cabecera" bgcolor="#00424d" style="background-color:#00424d; background-image:linear-gradient(#00424d,#00424d); border-radius:24px 24px 0 0; padding:20px 28px;">
+              <span class="marca" style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; letter-spacing:2px; text-transform:uppercase; color:#ffffff;">Neurotrack EM</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="tarjeta" bgcolor="#f6f3ee" style="background-color:#f6f3ee; background-image:linear-gradient(#f6f3ee,#f6f3ee); border-radius:0 0 24px 24px; padding:32px 28px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',Arial,Helvetica,sans-serif;">
+              <h1 class="titulo" style="margin:0 0 16px; font-size:26px; line-height:1.25; color:#1c1c19;">Te damos la bienvenida</h1>
+              <p class="texto" style="margin:0 0 24px; font-size:17px; line-height:1.55; color:#1c1c19;">
+                Para terminar de crear tu cuenta, confirma tu correo. Puedes hacerlo desde cualquier dispositivo;
+                después inicia sesión en la app.
+              </p>
+
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
+                <tr>
+                  <td class="boton" bgcolor="#00424d" align="center" style="background-color:#00424d; background-image:linear-gradient(#00424d,#00424d); border-radius:28px;">
+                    <a href="{{ .SiteURL }}/confirmar?token_hash={{ .TokenHash }}&type=signup"
+                       style="display:inline-block; min-height:24px; padding:16px 32px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',Arial,Helvetica,sans-serif; font-size:18px; font-weight:bold; color:#ffffff; text-decoration:none;">
+                      Confirmar mi correo
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+                <tr>
+                  <td class="aviso" bgcolor="#f3dfcd" style="background-color:#f3dfcd; background-image:linear-gradient(#f3dfcd,#f3dfcd); border-radius:16px; padding:14px 16px;">
+                    <span class="aviso-texto" style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',Arial,Helvetica,sans-serif; font-size:15px; line-height:1.5; color:#241a0f;">
+                      Si no creaste esta cuenta, ignora este mensaje: nadie podrá entrar sin confirmar el correo.
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <p class="suave" style="margin:0 0 6px; font-size:14px; line-height:1.5; color:#40484a;">Si el botón no funciona, copia y pega este enlace en tu navegador:</p>
+              <p class="suave" style="margin:0; font-size:13px; line-height:1.5; color:#40484a; word-break:break-all;">{{ .SiteURL }}/confirmar?token_hash={{ .TokenHash }}&type=signup</p>
+
+              <div class="linea" style="margin:24px 0 16px; border-top:1px solid #bfc8ca; font-size:0; line-height:0;">&nbsp;</div>
+              <p class="suave" style="margin:0; font-size:12px; line-height:1.5; color:#40484a;">
+                Neurotrack EM es un apoyo para el seguimiento y el acompañamiento. No reemplaza a tu equipo médico.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,30 +1,39 @@
+/* Paleta = la de la app (src/theme/colors.ts): claro por defecto y el modo oscuro real de la app. */
 :root {
   --bg: #fcf9f4;
-  --surface: #ffffff;
-  --text: #1c1b18;
-  --text-muted: #4a4741;
+  --card: #f6f3ee;
+  --header: #00424d;
+  --header-text: #ffffff;
+  --text: #1c1c19;
+  --text-muted: #40484a;
   --primary: #00424d;
   --on-primary: #ffffff;
-  --border: #6b665d;
-  --ok-bg: #d6ece6;
-  --ok-text: #00424d;
+  --input-bg: #ffffff;
+  --border: #70787b;
+  --line: #bfc8ca;
+  --ok-bg: #d5e6e7;
+  --ok-text: #1c1c19;
   --err-bg: #f3dfcd;
-  --err-text: #3a2a14;
+  --err-text: #241a0f;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #14130f;
-    --surface: #1f1e1a;
-    --text: #e8e3da;
-    --text-muted: #c4beb2;
-    --primary: #7fd0e0;
-    --on-primary: #00212a;
-    --border: #9a9488;
-    --ok-bg: #16352f;
-    --ok-text: #bfe9de;
-    --err-bg: #3a2a14;
-    --err-text: #f3dfcd;
+    --bg: #181b1f;
+    --card: #1c2024;
+    --header: #223a40;
+    --header-text: #d5e6e7;
+    --text: #e5e9ee;
+    --text-muted: #8e98a4;
+    --primary: #6ec6d6;
+    --on-primary: #00363f;
+    --input-bg: #272e35;
+    --border: #6e7882;
+    --line: #3b444c;
+    --ok-bg: #29343b;
+    --ok-text: #d5e6e7;
+    --err-bg: #30261c;
+    --err-text: #f5f1eb;
   }
 }
 
@@ -40,28 +49,40 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', Arial, Helvetica, sans-serif;
-  font-size: 1.125rem;
-  line-height: 1.5;
+  font-size: 1.0625rem;
+  line-height: 1.55;
 }
 
+/* Tarjeta con banda de marca arriba, como en el correo y en la pantalla de acceso de la app. */
 main {
   width: 100%;
   max-width: 440px;
-  background: var(--surface);
+  background: var(--card);
   border-radius: 24px;
-  padding: 28px 24px;
+  padding-bottom: 28px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+main > :not(.marca) {
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
 .marca {
   margin: 0;
-  font-size: 0.875rem;
-  letter-spacing: 0.08em;
+  padding: 18px 24px;
+  background: var(--header);
+  color: var(--header-text);
+  font-size: 0.8125rem;
+  font-weight: bold;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-muted);
 }
+
+.marca + * { margin-top: 12px; }
 
 h1 { margin: 0; font-size: 1.625rem; line-height: 1.25; }
 p { margin: 0; }
@@ -76,7 +97,7 @@ input {
   padding: 12px 14px;
   font: inherit;
   color: var(--text);
-  background: var(--bg);
+  background: var(--input-bg);
   border: 2px solid var(--border);
   border-radius: 12px;
 }
@@ -104,8 +125,8 @@ button[disabled] { opacity: 0.7; cursor: progress; }
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  padding: 12px 14px;
-  border-radius: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
   font-size: 1rem;
 }
 
