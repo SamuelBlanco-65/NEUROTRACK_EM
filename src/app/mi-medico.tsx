@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenState } from '@/components/screen-state';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { CountBadge, InitialsAvatar, ShareChips } from '@/features/doctor/components';
 import { DEFAULT_DURATION, DURATION_OPTIONS } from '@/features/doctor/constants';
 import { describeExpiry, formatShortDate, isLinkExpired, sharedCategories } from '@/features/doctor/logic';
 import type { DoctorAccessDuration, DoctorLink, DoctorPermissions } from '@/features/doctor/types';
@@ -86,9 +87,14 @@ export default function MiMedicoScreen() {
 
   function confirmarRevocar(link: DoctorLink) {
     const name = link.doctorName ?? link.doctorEmail ?? 'este médico';
+    const shared = sharedCategories(link);
+    const seesNow =
+      [shared.sintomas && 'síntomas', shared.actividades && 'actividades', shared.notas && 'tus notas']
+        .filter(Boolean)
+        .join(', ') || 'nada';
     Alert.alert(
       `¿Quitar el acceso a ${name}?`,
-      'Dejará de ver tu resumen de inmediato. Puedes volver a compartirlo con un código nuevo.',
+      `Hoy ve: ${seesNow}. Dejará de ver tu resumen de inmediato. Puedes volver a compartirlo con un código nuevo.`,
       [
         { text: 'Cancelar', style: 'cancel' },
         { text: 'Quitar acceso', style: 'destructive', onPress: () => dispatch(revokeMyDoctor(link.id)) },
@@ -188,27 +194,38 @@ export default function MiMedicoScreen() {
 
             {incomingRequests.length > 0 ? (
               <View style={styles.section}>
-                <ThemedText variant="headlineSm" accessibilityRole="header">
-                  Solicitudes
-                </ThemedText>
+                <View style={styles.sectionHeader}>
+                  <ThemedText variant="headlineSm" accessibilityRole="header" style={styles.flex}>
+                    Solicitudes
+                  </ThemedText>
+                  <CountBadge text={`${incomingRequests.length} ${incomingRequests.length === 1 ? 'pendiente' : 'pendientes'}`} />
+                </View>
                 {incomingRequests.map((link) => {
                   const draft = draftFor(link.id);
                   const busy = respondingToId === link.id;
                   return (
                     <View key={link.id} style={[styles.card, { backgroundColor: colors.surfaceContainerLowest }]}>
-                      <ThemedText variant="labelLg">
-                        {link.doctorName ?? link.doctorEmail ?? 'Un médico'} quiere ver tu resumen
-                      </ThemedText>
-                      {link.doctorEmail && link.doctorName ? (
-                        <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
-                          {link.doctorEmail}
+                      <View style={styles.personRow}>
+                        <InitialsAvatar name={link.doctorName ?? link.doctorEmail} />
+                        <View style={styles.flex}>
+                          <ThemedText variant="labelLg">
+                            {link.doctorName ?? link.doctorEmail ?? 'Un médico'} quiere ver tu resumen
+                          </ThemedText>
+                          {link.doctorEmail && link.doctorName ? (
+                            <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
+                              {link.doctorEmail}
+                            </ThemedText>
+                          ) : null}
+                        </View>
+                      </View>
+                      <View style={[styles.note, { backgroundColor: colors.surfaceContainerLow }]}>
+                        <MaterialIcons name="badge" size={18} color={colors.primary} />
+                        <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.flex}>
+                          {link.professionalId
+                            ? `Registro profesional: ${link.professionalId}. Lo declaró el propio médico: Neurotrack EM no lo verifica.`
+                            : 'No indicó registro profesional. Neurotrack EM no verifica la identidad del médico.'}
                         </ThemedText>
-                      ) : null}
-                      <ThemedText variant="bodySm" colorRole="secondary">
-                        {link.professionalId
-                          ? `Registro profesional: ${link.professionalId}. Lo declaró el propio médico: Neurotrack EM no lo verifica.`
-                          : 'No indicó registro profesional. Neurotrack EM no verifica la identidad del médico.'}
-                      </ThemedText>
+                      </View>
 
                       <ThemedText variant="labelMd" style={styles.groupLabel}>
                         Qué puede ver
@@ -280,6 +297,7 @@ export default function MiMedicoScreen() {
                         </ThemedText>
                       </View>
 
+                      <View style={styles.actionsRow}>
                       <Pressable
                         onPress={() =>
                           dispatch(
@@ -298,11 +316,11 @@ export default function MiMedicoScreen() {
                         accessibilityRole="button"
                         accessibilityLabel={`Aceptar y compartir con ${link.doctorName ?? link.doctorEmail ?? 'este médico'}`}
                         accessibilityState={{ disabled: busy, busy }}
-                        style={[styles.primaryButton, { backgroundColor: colors.primary, opacity: busy ? 0.6 : 1 }]}
+                        style={[styles.primaryButton, styles.actionButton, { backgroundColor: colors.primary, opacity: busy ? 0.6 : 1 }]}
                         testID={`mi-medico-aceptar-${link.id}`}>
                         <MaterialIcons name="check" size={20} color={colors.onPrimary} />
                         <ThemedText variant="labelLg" colorRole="onPrimary">
-                          {busy ? 'Guardando…' : 'Aceptar y compartir'}
+                          {busy ? 'Guardando…' : 'Aceptar'}
                         </ThemedText>
                       </Pressable>
                       <Pressable
@@ -311,12 +329,16 @@ export default function MiMedicoScreen() {
                         accessibilityRole="button"
                         accessibilityLabel={`Rechazar solicitud de ${link.doctorName ?? link.doctorEmail ?? 'este médico'}`}
                         accessibilityState={{ disabled: busy }}
-                        style={[styles.textButton, { opacity: busy ? 0.6 : 1 }]}
+                        style={[
+                          styles.primaryButton,
+                          styles.actionButton,
+                          { backgroundColor: colors.surfaceContainer, opacity: busy ? 0.6 : 1 },
+                        ]}
                         testID={`mi-medico-rechazar-${link.id}`}>
-                        <ThemedText variant="labelMd" colorRole="error">
-                          Rechazar
-                        </ThemedText>
+                        <MaterialIcons name="close" size={20} color={colors.onSurface} />
+                        <ThemedText variant="labelLg">Rechazar</ThemedText>
                       </Pressable>
+                      </View>
                     </View>
                   );
                 })}
@@ -324,9 +346,14 @@ export default function MiMedicoScreen() {
             ) : null}
 
             <View style={styles.section}>
-              <ThemedText variant="headlineSm" accessibilityRole="header">
-                Con acceso
-              </ThemedText>
+              <View style={styles.sectionHeader}>
+                <ThemedText variant="headlineSm" accessibilityRole="header" style={styles.flex}>
+                  Con acceso
+                </ThemedText>
+                {myDoctors.length > 0 ? (
+                  <CountBadge text={`${myDoctors.length} ${myDoctors.length === 1 ? 'médico' : 'médicos'}`} />
+                ) : null}
+              </View>
               {myDoctors.length === 0 ? (
                 <View style={styles.stateBox}>
                   <ScreenState
@@ -338,17 +365,21 @@ export default function MiMedicoScreen() {
                 </View>
               ) : (
                 myDoctors.map((link) => {
-                  const shared = sharedCategories(link);
                   const expired = isLinkExpired(link);
                   return (
                     <View key={link.id} style={[styles.card, { backgroundColor: colors.surfaceContainerLowest }]}>
-                      <ThemedText variant="labelLg">{link.doctorName ?? link.doctorEmail ?? 'Médico'}</ThemedText>
-                      <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
-                        Ve:{' '}
-                        {[shared.sintomas && 'síntomas', shared.actividades && 'actividades', shared.notas && 'tus notas']
-                          .filter(Boolean)
-                          .join(', ') || 'nada por ahora'}
-                      </ThemedText>
+                      <View style={styles.personRow}>
+                        <InitialsAvatar name={link.doctorName ?? link.doctorEmail} />
+                        <View style={styles.flex}>
+                          <ThemedText variant="labelLg">{link.doctorName ?? link.doctorEmail ?? 'Médico'}</ThemedText>
+                          {link.doctorEmail && link.doctorName ? (
+                            <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
+                              {link.doctorEmail}
+                            </ThemedText>
+                          ) : null}
+                        </View>
+                      </View>
+                      <ShareChips permissions={link} />
                       <View style={styles.infoRow}>
                         <MaterialIcons name={expired ? 'event-busy' : 'event'} size={18} color={colors.onSurfaceVariant} />
                         <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.flex}>
@@ -367,9 +398,10 @@ export default function MiMedicoScreen() {
                         onPress={() => confirmarRevocar(link)}
                         accessibilityRole="button"
                         accessibilityLabel={`Quitar acceso a ${link.doctorName ?? link.doctorEmail ?? 'este médico'}`}
-                        style={styles.textButton}
+                        style={[styles.primaryButton, { backgroundColor: colors.tertiaryFixed }]}
                         testID={`mi-medico-revocar-${link.id}`}>
-                        <ThemedText variant="labelMd" colorRole="error">
+                        <MaterialIcons name="link-off" size={20} color={colors.onTertiaryFixed} />
+                        <ThemedText variant="labelLg" colorRole="onTertiaryFixed">
                           Quitar acceso
                         </ThemedText>
                       </Pressable>
@@ -455,6 +487,10 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   flex: { flex: 1 },
   stateBox: { minHeight: 160 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  personRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  actionsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm, paddingTop: Spacing.xs },
+  actionButton: { flexGrow: 1, flexBasis: 130, paddingHorizontal: Spacing.md },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

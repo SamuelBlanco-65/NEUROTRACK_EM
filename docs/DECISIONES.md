@@ -401,6 +401,14 @@ y se marca la anterior como **Reemplazada por D-00X**.
 - **Consecuencias:** el perfil `medico` no está ligado a la cuenta (igual que los otros: se elige al abrir la app).
   `ProfileKind` ahora tiene tres valores y `features/profile/constants.ts` centraliza el inicio y la etiqueta de cada uno.
   La retención y el borrado de cuenta ya lo cubren: `doctor_links` referencia `auth.users` con `on delete cascade`.
+- **Diseño (2026-11-11):** se comparó con los exports de Stitch (`artifacts/stitch-medico/`). Base: la implementación
+  propia. Adoptado de Stitch: chip de diferencia por síntoma, «% del período» en la constancia, barras verticales con
+  «Ver como tabla» y frase de resumen, fecha en chip en las notas, avatares con iniciales, contadores («1 pendiente»),
+  Aceptar/Rechazar lado a lado, «Quitar acceso» como botón con ícono, pasos «¿Cómo funciona?» en el vacío, ayuda
+  «¿Dónde está el código?» y «Limpiar código», síntomas del cuidador agrupados en una tarjeta. Descartado: datos que la
+  app no recoge (edad, diagnóstico, energía, expediente, especialidad, minutos de sesión), tono clínico («Panel clínico»,
+  «Expediente», PDF para historia clínica, «Finalizar revisión»), notas del cuidador visibles al médico (contradice
+  D-010), «cifrado de extremo a extremo» (es TLS), casillas separadas para el código y textos truncados.
 - **Requisitos relacionados:** REC-003, RT-004, RNF-012, RF-006.
 
 ---

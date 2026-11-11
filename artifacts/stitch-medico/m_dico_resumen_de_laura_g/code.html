@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible Next:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#fcf9f4;color:#1c1c19;}body{overscroll-behavior:none;font-family:'Atkinson Hyperlegible Next',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary":"#526162","secondary-fixed":"#d5e6e7","surface-container-high":"#ebe8e3","tertiary-fixed-dim":"#d6c3b2","on-tertiary-fixed":"#241a0f","on-surface-variant":"#40484a","primary":"#00424d","on-secondary-fixed":"#0f1e1f","secondary-fixed-dim":"#b9cacb","secondary-container":"#d5e6e7","surface":"#fcf9f4","on-tertiary-fixed-variant":"#514437","outline-variant":"#bfc8ca","on-primary":"#ffffff","surface-tint":"#2c6672","background":"#fcf9f4","primary-fixed-dim":"#98cfdd","on-primary-container":"#98cfdd","primary-fixed":"#b3ecfa","on-secondary-fixed-variant":"#3a494b","surface-dim":"#dcdad5","on-primary-fixed-variant":"#0b4e5a","on-tertiary-container":"#d6c3b2","inverse-surface":"#31302d","surface-container-highest":"#e5e2dd","surface-container-low":"#f6f3ee","tertiary":"#46392d","inverse-on-surface":"#f3f0eb","inverse-primary":"#98cfdd","on-secondary":"#ffffff","on-tertiary":"#ffffff","on-secondary-container":"#576768","tertiary-container":"#5e5043","on-error-container":"#93000a","on-background":"#1c1c19","on-primary-fixed":"#001f25","surface-bright":"#fcf9f4","surface-container":"#f0ede9","outline":"#70787b","on-error":"#ffffff","error-container":"#ffdad6","surface-variant":"#e5e2dd","surface-container-lowest":"#ffffff","tertiary-fixed":"#f3dfcd","primary-container":"#1e5a66","on-surface":"#1c1c19","error":"#ba1a1a"},borderRadius:{"DEFAULT":"1rem","lg":"2rem","xl":"3rem","full":"9999px"},spacing:{"space-sm":"0.75rem","space-lg":"1.5rem","gutter-mobile":"1rem","gutter":"1rem","space-xs":"0.375rem","margin-mobile":"1.25rem","margin":"1.25rem","space-xl":"2.25rem","space-md":"1rem"},fontFamily:{"headline-lg":["Atkinson Hyperlegible Next"],"label-md":["Atkinson Hyperlegible Next"],"headline-md":["Atkinson Hyperlegible Next"],"body-md":["Atkinson Hyperlegible Next"],"label-lg":["Atkinson Hyperlegible Next"],"body-lg":["Atkinson Hyperlegible Next"],"label-sm":["Atkinson Hyperlegible Next"],"body-sm":["Atkinson Hyperlegible Next"],"headline-sm":["Atkinson Hyperlegible Next"]},fontSize:{"headline-lg":["28px",{"lineHeight":"36px","fontWeight":"700"}],"label-md":["15px",{"lineHeight":"20px","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"32px","fontWeight":"700"}],"body-md":["17px",{"lineHeight":"26px","fontWeight":"400"}],"label-lg":["17px",{"lineHeight":"24px","fontWeight":"700"}],"body-lg":["19px",{"lineHeight":"28px","fontWeight":"400"}],"label-sm":["13px",{"lineHeight":"18px","fontWeight":"700"}],"body-sm":["15px",{"lineHeight":"22px","fontWeight":"400"}],"headline-sm":["20px",{"lineHeight":"28px","fontWeight":"700"}]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen flex flex-col"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(72,54,38,0.06)] pt-safe"><div class="h-20 px-margin-mobile flex items-center justify-between gap-space-xs"><button aria-label="Volver a la pantalla anterior" class="min-h-[48px] px-space-xs flex items-center gap-1 rounded-full hover:bg-surface-container active:bg-secondary-container transition-colors text-primary" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[24px]">arrow_back</span><span class="text-label-md font-label-md">Volver</span></button><div class="flex-1 min-w-0 px-space-xs text-center"><h1 class="text-headline-sm font-headline-sm text-primary truncate">Expediente Del Paciente</h1></div><div class="flex items-center justify-end"><button aria-label="Opciones de accesibilidad" class="min-h-[48px] min-w-[48px] px-space-xs py-1 flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-secondary-container transition-colors text-on-surface-variant" type="button"><span class="material-symbols-outlined text-[22px]">accessibility_new</span><span class="text-label-sm font-label-sm leading-none mt-0.5">Accesibilidad</span></button></div></div></header><main class="flex flex-col relative w-full px-margin-mobile pt-20 pb-safe bg-surface min-h-screen"><div class="flex flex-col w-full pb-8 space-y-6">
+<!-- Patient Header Card -->
+<section class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_4px_16px_rgba(72,54,38,0.06)] flex flex-col gap-4">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-headline-md text-headline-md flex-shrink-0 select-none">
+        LG
+      </div>
+<div class="flex flex-col min-w-0">
+<h2 class="font-headline-md text-headline-md text-on-surface truncate">Laura G.</h2>
+<p class="font-body-sm text-body-sm text-secondary">34 años · Seguimiento: 6 meses</p>
+</div>
+</div>
+<!-- Authorization Chip -->
+<div class="bg-surface-container-low px-3.5 py-2.5 rounded-full flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px] text-primary flex-shrink-0" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-body-sm text-body-sm leading-snug">Acceso de lectura autorizado por la paciente (Vence: 15 nov 2025)</span>
+</div>
+<!-- Download PDF Action -->
+<button class="w-full min-h-[48px] px-4 rounded-full bg-secondary-container hover:bg-secondary-fixed text-primary flex items-center justify-center gap-2 font-label-md text-label-md transition-colors active:scale-[0.99]" type="button">
+<span class="material-symbols-outlined text-[22px]">download</span>
+<span>Descargar PDF para historia clínica</span>
+</button>
+</section>
+<!-- Section 1: Síntesis del último mes -->
+<section class="flex flex-col gap-3">
+<div class="px-1">
+<h3 class="font-headline-sm text-headline-sm text-primary">Síntesis del último mes (Octubre)</h3>
+<div class="flex items-start gap-2 mt-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] mt-0.5 text-secondary">info</span>
+<p class="font-body-sm text-body-sm">Resumen elaborado a partir de los autoregistros diarios de la paciente.</p>
+</div>
+</div>
+<!-- Metric Tiles (Vertical Stack) -->
+<div class="flex flex-col gap-2.5">
+<!-- Tile 1 -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 shadow-[0_4px_16px_rgba(72,54,38,0.04)] flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">event_available</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Frecuencia de registro</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-0.5">24 días activos <span class="font-label-sm text-label-sm text-secondary">(3 días más que el mes anterior)</span></span>
+</div>
+</div>
+<!-- Tile 2 -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 shadow-[0_4px_16px_rgba(72,54,38,0.04)] flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">battery_charging_full</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Nivel de energía percibido</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-0.5">Promedio 6/10 <span class="font-label-sm text-label-sm text-secondary">(variación neutral: 0.2 puntos respecto al mes anterior)</span></span>
+</div>
+</div>
+<!-- Tile 3 -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 shadow-[0_4px_16px_rgba(72,54,38,0.04)] flex items-start gap-3.5">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">bedtime</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Días con descanso suficiente</span>
+<span class="font-body-md text-body-md text-on-surface-variant mt-0.5">19 días reportados</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Evolución de síntomas reportados -->
+<section class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_4px_16px_rgba(72,54,38,0.06)] flex flex-col gap-4">
+<div class="flex flex-col gap-1.5">
+<h3 class="font-headline-sm text-headline-sm text-primary">Evolución de síntomas reportados</h3>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Tendencia 3 meses</span>
+<p class="font-body-md text-body-md text-on-surface mt-1 bg-surface-container-low p-3.5 rounded-DEFAULT leading-relaxed">
+        En los últimos 90 días, la fatiga matutina se mantuvo en valores moderados y los episodios de rigidez disminuyeron 2 días en promedio.
+      </p>
+</div>
+<!-- Neutral Chart Visual (SVG) -->
+<div class="bg-surface-container-low rounded-DEFAULT p-4 flex flex-col gap-3">
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm">
+<span>Frecuencia mensual de fatiga (días)</span>
+<span class="font-body-sm text-body-sm text-secondary">Rango: 0 a 15 días</span>
+</div>
+<!-- Accessible Bar Visual with Warm Palette -->
+<div class="w-full flex items-end justify-between pt-4 pb-2 px-4 h-36">
+<!-- Agosto -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<span class="font-label-sm text-label-sm text-primary">8</span>
+<div class="w-10 bg-primary-container rounded-t-DEFAULT h-20 transition-all"></div>
+<span class="font-label-md text-label-md text-on-surface">Ago</span>
+</div>
+<!-- Septiembre -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<span class="font-label-sm text-label-sm text-primary">7</span>
+<div class="w-10 bg-[#e89874] rounded-t-DEFAULT h-[70px] transition-all"></div>
+<span class="font-label-md text-label-md text-on-surface">Sep</span>
+</div>
+<!-- Octubre -->
+<div class="flex flex-col items-center gap-2 flex-1">
+<span class="font-label-sm text-label-sm text-primary">7</span>
+<div class="w-10 bg-tertiary-fixed-dim rounded-t-DEFAULT h-[70px] transition-all"></div>
+<span class="font-label-md text-label-md text-on-surface">Oct</span>
+</div>
+</div>
+<div class="pt-2 text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Días con fatiga notable: Ago (8), Sep (7), Oct (7)</p>
+</div>
+</div>
+</section>
+<!-- Section 3: Actividades de estimulación y movimiento -->
+<section class="flex flex-col gap-3">
+<div class="px-1">
+<h3 class="font-headline-sm text-headline-sm text-primary">Actividades de estimulación y movimiento</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+        La paciente completó sesiones breves de atención y ejercicios de memoria 4 veces por semana.
+      </p>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Activity 1 -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 shadow-[0_4px_16px_rgba(72,54,38,0.04)] flex items-start gap-3.5">
+<div class="w-11 h-11 rounded-full bg-secondary-container text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">psychology</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Atención y memoria</span>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">85% sesiones finalizadas sin fatiga reportada</p>
+</div>
+</div>
+<!-- Activity 2 -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 shadow-[0_4px_16px_rgba(72,54,38,0.04)] flex items-start gap-3.5">
+<div class="w-11 h-11 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">self_improvement</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Movimiento suave / pausas activas</span>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">12 sesiones registradas en el mes</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Notas autorizadas de la paciente y acompañante -->
+<section class="flex flex-col gap-3">
+<div class="px-1">
+<h3 class="font-headline-sm text-headline-sm text-primary">Notas autorizadas</h3>
+<p class="font-body-sm text-body-sm text-secondary">Aportes cualitativos registrados durante el período</p>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Laura's Quote -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 shadow-[0_4px_16px_rgba(72,54,38,0.04)] flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary flex-shrink-0"></span>
+<span class="font-label-md text-label-md text-primary">Laura (Paciente)</span>
+</div>
+<blockquote class="font-body-md text-body-md text-on-surface italic pl-4 bg-surface-container-low/70 py-2.5 pr-3 rounded-DEFAULT leading-relaxed">
+          «Esta semana sentí menor rigidez en las mañanas al hacer las pausas guiadas.»
+        </blockquote>
+</div>
+<!-- Companion's Quote -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 shadow-[0_4px_16px_rgba(72,54,38,0.04)] flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary flex-shrink-0"></span>
+<span class="font-label-md text-label-md text-tertiary">Acompañante (Cuidado compartido)</span>
+</div>
+<blockquote class="font-body-md text-body-md text-on-surface italic pl-4 bg-surface-container-low/70 py-2.5 pr-3 rounded-DEFAULT leading-relaxed">
+          «Acompañó los estiramientos recomendados 3 días.»
+        </blockquote>
+</div>
+</div>
+</section>
+<!-- Clinical Disclaimer Notice -->
+<section class="bg-tertiary-fixed rounded-DEFAULT p-4 shadow-[0_4px_16px_rgba(72,54,38,0.03)] flex items-start gap-3 text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[24px] text-tertiary flex-shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="font-body-sm text-body-sm leading-relaxed text-on-tertiary-fixed-variant">
+<strong class="font-label-sm text-on-tertiary-fixed">Información observacional y descriptiva.</strong> Neurotrack EM no calcula índices diagnósticos de progresión ni sustituye la anamnesis clínica.
+    </p>
+</section>
+<!-- Final Action Button -->
+<section class="pt-2">
+<button class="w-full min-h-[56px] rounded-full bg-primary hover:bg-primary-container active:scale-[0.99] text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2.5 shadow-[0_4px_16px_rgba(0,66,77,0.2)] transition-all" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-[24px]">check_circle</span>
+<span>Finalizar revisión</span>
+</button>
+</section>
+</div></main></body></html>

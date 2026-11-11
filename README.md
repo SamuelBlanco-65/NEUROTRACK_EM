@@ -108,7 +108,7 @@ perfil en la primera pantalla.
 ```bash
 npm run typecheck    # tsc --noEmit
 npx expo lint        # ESLint (flat config)
-npm test             # 108 pruebas de lógica
+npm test             # 111 pruebas de lógica
 npx expo-doctor      # dependencias alineadas con el SDK
 ```
 

@@ -375,12 +375,12 @@ prueba o captura; **C** = confirmado por auditoría de código, sin evidencia en
 
 ### 4.1 Pruebas automatizadas
 
-108 pruebas con Jest (`jest-expo`) sobre la lógica de dominio, sin UI: 12 suites, todas en verde (`npm test`). Además
+111 pruebas con Jest (`jest-expo`) sobre la lógica de dominio, sin UI: 12 suites, todas en verde (`npm test`). Además
 `tsc --noEmit` y ESLint (configuración `eslint-config-expo`) pasan sin errores.
 
 | Suite | Pruebas | Qué cubre |
 |---|---|---|
-| `doctor/logic-test.ts` | 24 | Vigencia y caducidad del acceso; comparación por tipo de síntoma (días distintos, no registros); textos sin «mejor/peor/alerta»; constancia de registro; notas solo del período; texto compartido |
+| `doctor/logic-test.ts` | 27 | Vigencia y caducidad del acceso; diferencia corta, porcentaje de constancia y frase del gráfico; comparación por tipo de síntoma (días distintos, no registros); textos sin «mejor/peor/alerta»; constancia de registro; notas solo del período; texto compartido |
 | `audio/scripts-test.ts`, `screen-scripts-test.ts`, `voice-test.ts` | 32 | Guiones de lectura en voz alta, partición de textos largos, selección de voz |
 | `progress/logic-test.ts` | 14 | Rangos de semana, mes y 3 meses; agregación por grupo; tendencias; umbral de datos insuficientes |
 | `activities/logic-test.ts` | 11 | Generación de rondas; verificación de respuestas; subida de nivel por precisión |
@@ -462,7 +462,13 @@ de extremo a extremo) y la equidad de commits (RT-007) (`docs/REQUISITOS.md`).
    sea manipulado. La auditoría de seguridad mostró que RLS filtra filas pero no columnas, y que dejar que el cliente
    elija el código de invitación abre un oráculo para adivinarlo.
 3. **La accesibilidad requiere método:** calcular el contraste en ambos esquemas y no solo en el claro.
-4. **Mantener la lógica pura fuera de la UI** hizo posible probarla (108 pruebas).
+4. **Mantener la lógica pura fuera de la UI** hizo posible probarla (111 pruebas).
+5. **El diseño generado con IA hay que filtrarlo.** Al comparar el perfil médico con los diseños de Stitch
+   (`artifacts/stitch-medico/`) se adoptaron unos diez elementos: chip de diferencia por síntoma, porcentaje de constancia,
+   gráfico de barras con vista de tabla, avatares, contadores y pasos de ayuda en el estado vacío. Se descartaron los
+   que inventaban datos que la app no recoge (edad, diagnóstico, «nivel de energía», número de expediente), los de tono
+   clínico («Panel clínico», «Descargar PDF para historia clínica»), uno que mostraba al médico las notas privadas del
+   cuidador, afirmaciones falsas («cifrado de extremo a extremo») y textos cortados con «…».
 
 ### 5.2 Limitaciones conocidas
 

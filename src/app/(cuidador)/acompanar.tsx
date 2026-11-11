@@ -353,23 +353,25 @@ function SymptomsWeekSection({
           <ThemedText variant="bodyMd" accessibilityLiveRegion="polite">
             Registró síntomas en {days} {days === 1 ? 'día' : 'días'} esta semana.
           </ThemedText>
-          {byType.map((item) => (
-            <View
-              key={item.type}
-              style={[styles.areaCard, styles.symptomRow, { backgroundColor: colors.surfaceContainerLowest }]}
-              accessible
-              accessibilityLabel={`${symptomTypeLabel(item.type)}: ${item.days} ${item.days === 1 ? 'día' : 'días'}`}>
-              <View style={[styles.areaIcon, { backgroundColor: colors.secondaryContainer }]}>
-                <MaterialIcons name={SYMPTOM_TYPE_ICON[item.type]} size={22} color={colors.primary} />
+          <View style={[styles.areaCard, { backgroundColor: colors.surfaceContainerLowest }]}>
+            {byType.map((item) => (
+              <View
+                key={item.type}
+                style={styles.symptomRow}
+                accessible
+                accessibilityLabel={`${symptomTypeLabel(item.type)}: ${item.days} ${item.days === 1 ? 'día' : 'días'}`}>
+                <View style={[styles.areaIcon, { backgroundColor: colors.secondaryContainer }]}>
+                  <MaterialIcons name={SYMPTOM_TYPE_ICON[item.type]} size={22} color={colors.primary} />
+                </View>
+                <ThemedText variant="labelLg" style={styles.respectText}>
+                  {symptomTypeLabel(item.type)}
+                </ThemedText>
+                <ThemedText variant="bodyMd" colorRole="onSurfaceVariant">
+                  {item.days} {item.days === 1 ? 'día' : 'días'}
+                </ThemedText>
               </View>
-              <ThemedText variant="labelLg" style={styles.respectText}>
-                {symptomTypeLabel(item.type)}
-              </ThemedText>
-              <ThemedText variant="bodyMd" colorRole="onSurfaceVariant">
-                {item.days} {item.days === 1 ? 'día' : 'días'}
-              </ThemedText>
-            </View>
-          ))}
+            ))}
+          </View>
         </>
       )}
     </View>
@@ -383,6 +385,8 @@ const styles = StyleSheet.create({
   symptomRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.sm,
+    minHeight: MinTouchSize,
   },
   safeArea: {
     flex: 1,

@@ -6,6 +6,8 @@ import {
   buildComparisonSentence,
   buildDoctorSummaryText,
   compareSymptoms,
+  coveragePercent,
+  describeBuckets,
   expiresAtFromDuration,
   hasFewRecords,
   isLinkActive,
@@ -14,6 +16,7 @@ import {
   recordingCoverage,
   severityDistribution,
   sharedCategories,
+  shortDelta,
   summarizeActivities,
 } from '../logic';
 
@@ -213,6 +216,34 @@ describe('summarizeActivities', () => {
       { area: 'atencion', sessions: 0, level: null },
       { area: 'movimiento', sessions: 1, level: null },
     ]);
+  });
+});
+
+describe('textos cortos del resumen', () => {
+  test('shortDelta da la diferencia con singular y plural, o «Igual»', () => {
+    expect(shortDelta({ currentDays: 9, previousDays: 6 })).toBe('3 días más');
+    expect(shortDelta({ currentDays: 1, previousDays: 2 })).toBe('1 día menos');
+    expect(shortDelta({ currentDays: 2, previousDays: 2 })).toBe('Igual');
+  });
+
+  test('coveragePercent redondea y no pasa de 100 ni divide por cero', () => {
+    expect(coveragePercent({ daysWithRecords: 18, elapsedDays: 26 })).toBe(69);
+    expect(coveragePercent({ daysWithRecords: 3, elapsedDays: 0 })).toBe(0);
+    expect(coveragePercent({ daysWithRecords: 40, elapsedDays: 30 })).toBe(100);
+  });
+
+  test('describeBuckets nombra la semana o semanas con más días, sin valorar', () => {
+    expect(describeBuckets([{ label: 'Semana 1', symptomDays: 3 }, { label: 'Semana 2', symptomDays: 6 }])).toBe(
+      'Semana 2 concentró más días con síntomas (6 días).'
+    );
+    expect(
+      describeBuckets([
+        { label: 'Semana 1', symptomDays: 5 },
+        { label: 'Semana 2', symptomDays: 5 },
+        { label: 'Semana 3', symptomDays: 1 },
+      ])
+    ).toBe('Semana 1 y Semana 2 concentraron más días con síntomas (5 días).');
+    expect(describeBuckets([{ label: 'Semana 1', symptomDays: 0 }])).toMatch(/No hubo días/);
   });
 });
 

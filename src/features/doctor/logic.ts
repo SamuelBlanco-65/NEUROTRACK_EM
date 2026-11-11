@@ -43,6 +43,16 @@ export function isLinkActive(link: Pick<DoctorLink, 'status' | 'expiresAt'>, now
   return link.status === 'aceptado' && !isLinkExpired(link, now);
 }
 
+/** Iniciales para el avatar: «Laura Gómez» → «LG»; sin nombre → «P». */
+export function initialsOf(name: string | null): string {
+  const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return 'P';
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('');
+}
+
 /** «12 feb 2027» */
 export function formatShortDate(iso: string): string {
   const date = new Date(iso);
@@ -147,6 +157,31 @@ export function buildComparisonSentence(comparisons: SymptomComparison[], period
     .map((item) => `${symptomTypeLabel(item.type)}: ${item.text}`)
     .join('. ')
     .concat('.');
+}
+
+/** Texto corto para el chip de cada síntoma: «3 días más», «1 día menos» o «Igual». */
+export function shortDelta(item: Pick<SymptomComparison, 'currentDays' | 'previousDays'>): string {
+  const delta = item.currentDays - item.previousDays;
+  if (delta === 0) return 'Igual';
+  return `${daysWord(Math.abs(delta))} ${delta > 0 ? 'más' : 'menos'}`;
+}
+
+/** Porcentaje entero de días con registro sobre los transcurridos (0 si aún no transcurre ninguno). */
+export function coveragePercent(coverage: { daysWithRecords: number; elapsedDays: number }): number {
+  if (coverage.elapsedDays <= 0) return 0;
+  return Math.round((Math.min(coverage.daysWithRecords, coverage.elapsedDays) / coverage.elapsedDays) * 100);
+}
+
+/**
+ * Frase que acompaña al gráfico por semana o por mes: dice dónde se concentraron los días con síntomas,
+ * sin valorarlo. Los gráficos siempre llevan un resumen en texto (accesibilidad).
+ */
+export function describeBuckets(buckets: { label: string; symptomDays: number }[]): string {
+  const max = Math.max(0, ...buckets.map((bucket) => bucket.symptomDays));
+  if (max === 0) return 'No hubo días con síntomas registrados en este período.';
+  const top = buckets.filter((bucket) => bucket.symptomDays === max).map((bucket) => bucket.label);
+  const list = top.length === 1 ? top[0] : `${top.slice(0, -1).join(', ')} y ${top[top.length - 1]}`;
+  return `${list} ${top.length === 1 ? 'concentró' : 'concentraron'} más días con síntomas (${daysWord(max)}).`;
 }
 
 export function severityDistribution(logs: SymptomLog[], range: PeriodRange): SeverityDistribution {

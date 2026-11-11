@@ -13,6 +13,8 @@ import {
   buildComparisonSentence,
   buildDoctorSummaryText,
   compareSymptoms,
+  coveragePercent,
+  describeBuckets,
   describeExpiry,
   formatDayMonth,
   formatShortDate,
@@ -24,6 +26,7 @@ import {
   recordingCoverage,
   severityDistribution,
   sharedCategories,
+  shortDelta,
   summarizeActivities,
 } from '@/features/doctor/logic';
 import { SeverityBars } from '@/features/doctor/severity-bars';
@@ -45,6 +48,8 @@ const PERIODS: { id: DoctorPeriod; label: string }[] = [
 
 const NO_LOGS: SymptomLog[] = [];
 
+const CHART_HEIGHT = 110;
+
 const DIRECTION_ICON: Record<SymptomComparison['direction'], keyof typeof MaterialIcons.glyphMap> = {
   mas: 'arrow-upward',
   menos: 'arrow-downward',
@@ -61,6 +66,7 @@ export default function ResumenPacienteScreen() {
 
   const [period, setPeriod] = useState<DoctorPeriod>('mes');
   const [referenceISO, setReferenceISO] = useState(() => new Date().toISOString());
+  const [bucketView, setBucketView] = useState<'grafico' | 'tabla'>('grafico');
 
   const reference = useMemo(() => new Date(referenceISO), [referenceISO]);
   const currentRange = useMemo(() => getPeriodRange(period, reference), [period, reference]);
@@ -296,9 +302,14 @@ export default function ResumenPacienteScreen() {
             ) : (
               <>
                 <SectionCard colors={colors} title="Constancia de registro" icon="event-available">
-                  <ThemedText variant="headlineMd" testID="medico-resumen-constancia">
-                    {coverage.daysWithRecords} de {coverage.elapsedDays} días
-                  </ThemedText>
+                  <View style={styles.coverageRow}>
+                    <ThemedText variant="headlineMd" testID="medico-resumen-constancia">
+                      {coverage.daysWithRecords} de {coverage.elapsedDays} días
+                    </ThemedText>
+                    <ThemedText variant="labelMd" colorRole="secondary">
+                      {coveragePercent(coverage)} % del período
+                    </ThemedText>
+                  </View>
                   <View style={[styles.track, { backgroundColor: colors.surfaceContainerLow }]}>
                     <View
                       style={[
@@ -343,18 +354,14 @@ export default function ResumenPacienteScreen() {
                             <MaterialIcons name={SYMPTOM_TYPE_ICON[item.type]} size={20} color={colors.primary} />
                           </View>
                           <View style={styles.flex}>
-                            <ThemedText variant="labelLg">
-                              {symptomTypeLabel(item.type)} · {item.currentDays} {item.currentDays === 1 ? 'día' : 'días'}
-                              <ThemedText variant="bodySm" colorRole="secondary">
-                                {'  '}(antes: {item.previousDays})
-                              </ThemedText>
+                            <ThemedText variant="labelLg">{symptomTypeLabel(item.type)}</ThemedText>
+                            <ThemedText variant="bodySm" colorRole="secondary">
+                              {item.currentDays} {item.currentDays === 1 ? 'día' : 'días'} (antes: {item.previousDays})
                             </ThemedText>
-                            <View style={styles.compDelta}>
-                              <MaterialIcons name={DIRECTION_ICON[item.direction]} size={16} color={colors.onSurfaceVariant} />
-                              <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
-                                {item.text}
-                              </ThemedText>
-                            </View>
+                          </View>
+                          <View style={[styles.deltaChip, { backgroundColor: colors.surfaceContainerLow }]}>
+                            <MaterialIcons name={DIRECTION_ICON[item.direction]} size={16} color={colors.onSurface} />
+                            <ThemedText variant="labelMd">{shortDelta(item)}</ThemedText>
                           </View>
                         </View>
                       ))}
@@ -367,31 +374,61 @@ export default function ResumenPacienteScreen() {
                     </SectionCard>
 
                     <SectionCard colors={colors} title={period === 'mes' ? 'Por semana' : 'Por mes'} icon="date-range">
-                      <ThemedText variant="bodyMd">
-                        Días con síntomas en {currentRange.label}: {coverage.daysWithRecords}.
+                      <ThemedText variant="bodyMd" testID="medico-resumen-frase-semanas">
+                        {describeBuckets(buckets)}
                       </ThemedText>
-                      {buckets.map((bucket) => (
-                        <View
-                          key={bucket.id}
-                          style={styles.bucketRow}
-                          accessible
-                          accessibilityLabel={`${bucket.label}: ${bucket.symptomDays} ${bucket.symptomDays === 1 ? 'día' : 'días'} con síntomas`}>
-                          <ThemedText variant="labelMd" style={styles.bucketLabel}>
-                            {bucket.label}
-                          </ThemedText>
-                          <View style={[styles.bucketTrack, { backgroundColor: colors.surfaceContainerLow }]}>
+                      {bucketView === 'grafico' ? (
+                        <View style={styles.chart} testID="medico-resumen-grafico">
+                          {buckets.map((bucket) => (
                             <View
-                              style={[
-                                styles.fill,
-                                { width: `${(bucket.symptomDays / maxDays) * 100}%`, backgroundColor: colors.primary },
-                              ]}
-                            />
-                          </View>
-                          <ThemedText variant="labelMd" style={styles.bucketValue}>
-                            {bucket.symptomDays} {bucket.symptomDays === 1 ? 'día' : 'días'}
-                          </ThemedText>
+                              key={bucket.id}
+                              style={styles.chartColumn}
+                              accessible
+                              accessibilityLabel={`${bucket.label}: ${bucket.symptomDays} ${bucket.symptomDays === 1 ? 'día' : 'días'} con síntomas`}>
+                              <ThemedText variant="labelMd">{bucket.symptomDays}</ThemedText>
+                              <View
+                                style={[
+                                  styles.chartBar,
+                                  {
+                                    height: Math.max(4, (bucket.symptomDays / maxDays) * CHART_HEIGHT),
+                                    backgroundColor: bucket.symptomDays === maxDays ? colors.primary : colors.secondaryContainer,
+                                    borderColor: colors.primary,
+                                  },
+                                ]}
+                              />
+                              <ThemedText variant="labelSm" colorRole="secondary" style={styles.centerText}>
+                                {bucket.label.replace('Semana ', 'Sem ')}
+                              </ThemedText>
+                            </View>
+                          ))}
                         </View>
-                      ))}
+                      ) : (
+                        <View testID="medico-resumen-tabla">
+                          {buckets.map((bucket) => (
+                            <View key={bucket.id} style={[styles.tableRow, { borderColor: colors.outlineVariant }]}>
+                              <ThemedText variant="bodyMd" style={styles.flex}>
+                                {bucket.label}
+                              </ThemedText>
+                              <ThemedText variant="labelLg">
+                                {bucket.symptomDays} {bucket.symptomDays === 1 ? 'día' : 'días'}
+                              </ThemedText>
+                            </View>
+                          ))}
+                        </View>
+                      )}
+                      <Pressable
+                        onPress={() => setBucketView((current) => (current === 'grafico' ? 'tabla' : 'grafico'))}
+                        accessibilityRole="button"
+                        accessibilityLabel={bucketView === 'grafico' ? 'Ver como tabla' : 'Ver como gráfico'}
+                        style={[styles.toggleButton, { backgroundColor: colors.surfaceContainerLow }]}
+                        testID="medico-resumen-toggle-vista">
+                        <MaterialIcons
+                          name={bucketView === 'grafico' ? 'table-chart' : 'bar-chart'}
+                          size={20}
+                          color={colors.onSurface}
+                        />
+                        <ThemedText variant="labelLg">{bucketView === 'grafico' ? 'Ver como tabla' : 'Ver como gráfico'}</ThemedText>
+                      </Pressable>
                     </SectionCard>
                   </>
                 )}
@@ -444,9 +481,14 @@ export default function ResumenPacienteScreen() {
                   ) : (
                     notes.map((item) => (
                       <View key={item.id} style={[styles.noteCard, { backgroundColor: colors.surfaceContainerLow }]} testID={`medico-resumen-nota-${item.id}`}>
-                        <ThemedText variant="labelSm" colorRole="secondary">
-                          {formatDayMonth(item.occurredAt)} · {symptomTypeLabel(item.symptomType)}
-                        </ThemedText>
+                        <View style={styles.noteHeader}>
+                          <View style={[styles.dateChip, { backgroundColor: colors.surfaceContainerLowest }]}>
+                            <ThemedText variant="labelSm">{formatDayMonth(item.occurredAt)}</ThemedText>
+                          </View>
+                          <ThemedText variant="labelSm" colorRole="secondary">
+                            {symptomTypeLabel(item.symptomType)}
+                          </ThemedText>
+                        </View>
                         <ThemedText variant="bodyMd">«{item.note}»</ThemedText>
                       </View>
                     ))
@@ -455,10 +497,10 @@ export default function ResumenPacienteScreen() {
               )
             ) : null}
 
-            <View style={styles.infoRow}>
-              <MaterialIcons name="info-outline" size={16} color={colors.onSurfaceVariant} />
-              <ThemedText variant="bodySm" colorRole="secondary" style={styles.flex}>
-                {NOT_A_DIAGNOSIS}
+            <View style={[styles.infoCard, { backgroundColor: colors.surfaceContainerLow }]}>
+              <MaterialIcons name="info-outline" size={20} color={colors.primary} />
+              <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.flex}>
+                Información descriptiva registrada por el paciente. {NOT_A_DIAGNOSIS}
                 {link.lastViewedAt ? ` Último acceso registrado: ${formatShortDate(link.lastViewedAt)}.` : ''}
               </ThemedText>
             </View>
@@ -653,12 +695,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  compDelta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  deltaChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+  },
+  coverageRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: Spacing.xs },
+  chart: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-around', paddingTop: Spacing.sm },
+  chartColumn: { flex: 1, alignItems: 'center', gap: 4 },
+  chartBar: { width: 28, borderRadius: Radius.default / 2, borderWidth: 1 },
+  tableRow: { flexDirection: 'row', alignItems: 'center', minHeight: 40, borderBottomWidth: 1 },
+  toggleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    minHeight: MinTouchSize,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.md,
+    alignSelf: 'flex-end',
+  },
+  noteHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
+  dateChip: { borderRadius: Radius.full, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
   areaValues: { alignItems: 'flex-end' },
-  bucketRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, minHeight: 32 },
-  bucketLabel: { minWidth: 74, flexShrink: 1 },
-  bucketTrack: { flex: 1, height: 12, borderRadius: Radius.full, overflow: 'hidden' },
-  bucketValue: { minWidth: 64, textAlign: 'right' },
   noteCard: {
     borderRadius: Radius.default,
     padding: Spacing.sm,

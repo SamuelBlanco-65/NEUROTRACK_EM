@@ -747,13 +747,13 @@ solo **lee** un resumen que el paciente autoriza; sin chat, sin alertas, sin dia
   ve «último acceso».
 - **Legal:** términos y privacidad con sección «Médico tratante»; casilla de consentimiento actualizada;
   `LEGAL_VERSION = '2026-11.2'`.
-- **Verificación:** `tsc`, `eslint src` y **108 pruebas jest** en verde. Auditorías `security-reviewer` y
+- **Verificación:** `tsc`, `eslint src` y **111 pruebas jest** en verde (tras combinar con Stitch, ver D-016; el bundle carga en el emulador). Auditorías `security-reviewer` y
   `accessibility-reviewer` aplicadas. El usuario confirmó de palabra que probó el flujo con dos cuentas;
   **`artifacts/t10/` está vacía**, así que REC-003 sigue «Implementado sin probar» hasta tener capturas.
 - **Deuda conocida (no tocada):** (1) en modo oscuro `onPrimary` sobre `primaryContainer` da ~1,1:1 y afecta ~30 archivos
   de pantallas anteriores (las del médico usan `primary`); (2) `claim_invite`/`caregiver_links` tienen el mismo oráculo de
   códigos y la misma carrera del límite que se corrigieron en `doctor_links`; (3) el placeholder de `TextField` da 4,1:1 en
-  oscuro; (4) comparar el diseño del médico con el de Stitch (el usuario iba a pasarlo).
+  oscuro; (4) ~~comparar con Stitch~~ hecho el 2026-11-11 (D-016, «Diseño»); falta verlo en pantalla con dos cuentas.
 
 ## Siguiente acción concreta
 **`README.md` (ENT-003) y `docs/ENTREGA-FINAL.md` (ENT-002) ya están escritos y pusheados.** El documento tiene las

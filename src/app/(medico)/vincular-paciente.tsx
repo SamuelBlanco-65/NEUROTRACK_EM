@@ -100,6 +100,27 @@ export default function VincularPacienteScreen() {
             errorText={claimError?.message}
             testID="vincular-paciente-codigo"
           />
+          <View style={styles.codeHelpRow}>
+            <ThemedText variant="bodySm" colorRole="secondary" style={styles.flex}>
+              {CODE_LENGTH} letras o números
+            </ThemedText>
+            {code.length > 0 ? (
+              <Pressable
+                onPress={() => {
+                  setCode('');
+                  dispatch(claimErrorCleared());
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Limpiar código"
+                hitSlop={8}
+                style={styles.clearButton}
+                testID="vincular-paciente-limpiar">
+                <ThemedText variant="labelMd" colorRole="primary">
+                  Limpiar código
+                </ThemedText>
+              </Pressable>
+            ) : null}
+          </View>
 
           <View style={styles.optionalField}>
             <TextField
@@ -124,6 +145,18 @@ export default function VincularPacienteScreen() {
             <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.flex}>
               Tu acceso será de solo lectura. Puedes perderlo si el paciente lo retira o si vence.
             </ThemedText>
+          </View>
+
+          <View style={[styles.trustCard, { backgroundColor: colors.surfaceContainerLow }]} testID="vincular-paciente-ayuda">
+            <MaterialIcons name="help-outline" size={20} color={colors.primary} />
+            <View style={styles.flex}>
+              <ThemedText variant="labelMd" accessibilityRole="header">
+                ¿Dónde está el código de tu paciente?
+              </ThemedText>
+              <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
+                En su app, en Mi cuenta › Mi médico. Sirve una vez y vale 7 días.
+              </ThemedText>
+            </View>
           </View>
 
           <Pressable
@@ -174,6 +207,8 @@ const styles = StyleSheet.create({
     gap: Spacing.lg,
   },
   optionalField: { gap: Spacing.xs },
+  codeHelpRow: { flexDirection: 'row', alignItems: 'center', marginTop: -Spacing.sm },
+  clearButton: { minHeight: 32, justifyContent: 'center' },
   trustCard: {
     flexDirection: 'row',
     gap: Spacing.sm,
