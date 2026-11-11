@@ -68,6 +68,27 @@ las versiones recientes de TypeScript ya no los incluyen solas.
 Borrar `node_modules` puede fallar por la longitud de las rutas. Alternativa:
 `npx rimraf node_modules` en lugar de `Remove-Item -Recurse`.
 
+## Node en el Bash de Claude Code (Git Bash)
+El Bash de esta herramienta toma por defecto el **Node 26** de `C:\Program Files\nodejs` (nvm queda tapado). Antes de
+`npx`, `npm` o `jest` anteponer `export PATH="/c/nvm4w/nodejs:$PATH"` (da la 24.22.2 de nvm4w). `tsc` funciona con
+cualquiera, pero `expo lint`/`expo install` y las pruebas se hacen con la 24.
+
+## Páginas web estáticas en Vercel (`web-auth/`)
+- Plan Hobby gratuito (uso personal/no comercial; confirmar límites en su página de precios). Iniciar sesión con la
+  cuenta de GitHub dueña del repo (`SamuelBlanco-65`) y dar acceso solo a `NEUROTRACK_EM`.
+- Project settings: **Root Directory `web-auth`**; variables `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY` (sin el
+  prefijo `EXPO_PUBLIC_`); redespliega solo con cada push a `master`. Cambiar una variable exige redesplegar.
+- Detalle y lista de prueba: `docs/SUPABASE-CORREO.md`.
+
+## Vista previa de HTML (correos y web) con Chrome headless
+```
+"/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --disable-gpu --hide-scrollbars \
+  --window-size=500,760 --screenshot=<salida>.png file:///<ruta>.html
+```
+Usar ancho **≥ 500** (menos recorta el lado derecho). Sin `--blink-settings=preferredColorScheme=0|1` sigue el modo
+del sistema. Para correos, sustituir antes `{{ .SiteURL }}` y `{{ .TokenHash }}` con `sed` en una copia del
+scratchpad. No sustituye una prueba en Gmail real (Gmail aplica su propio modo oscuro).
+
 ## Cosas que NO hay que intentar
 _(Se llena con lo aprendido; evita repetir callejones sin salida entre proyectos.)_
 - Instalar paquetes con `npm install <paquete>` en un proyecto Expo: usar `npx expo install`.

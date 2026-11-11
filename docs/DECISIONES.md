@@ -56,6 +56,9 @@ y se marca la anterior como **Reemplazada por D-00X**.
 - **Consecuencias:** Alcance acotado y defendible. Lo que queda fuera se documenta aquí y en
   REQUISITOS para no parecer un olvido.
 - **Requisitos relacionados:** RF-001..RF-010, RT-003, REC-003
+- **Actualización 2026-11-11:** el equipo decidió hacer el **perfil del médico (REC-003)** en la próxima
+  sesión, como extra (el enunciado de Fase 3 no lo exige). Sensores, wearables y validación clínica siguen
+  fuera. Al empezar, registrar aquí la decisión de diseño del perfil médico (vinculación, solo lectura, qué ve).
 
 ---
 
@@ -308,8 +311,56 @@ y se marca la anterior como **Reemplazada por D-00X**.
 
 ---
 
+## D-014 · Correos de confirmar cuenta y recuperar contraseña: página web en Vercel con `token_hash`
+
+- **Fecha:** 2026-11-11
+- **Estado:** Vigente (probado de punta a punta por el usuario con una cuenta real; sin captura)
+- **Contexto:** el primer diseño enviaba `{{ .ConfirmationURL }}` con `redirectTo` a la app (`neurotrackem://…`
+  o `exp://<IP>:8081/…`). Fallaba: PKCE ata el enlace al dispositivo que pidió el correo, Expo Go no registra el
+  esquema `neurotrackem://` y el visor de Gmail no abre esquemas propios (ventana negra). El usuario pidió que el
+  enlace funcione desde cualquier dispositivo.
+- **Decisión:** las plantillas de Supabase enlazan a una **página estática** (`web-auth/`, desplegada en
+  Vercel Hobby, gratis) con `{{ .SiteURL }}/confirmar|restablecer?token_hash={{ .TokenHash }}&type=…`. La página
+  llama a `verifyOtp` **al tocar el botón / enviar el formulario** (no al abrir, para que los revisores
+  automáticos de correo no gasten el enlace), cambia la contraseña con `updateUser` y cierra todas las
+  sesiones (`signOut({ scope: 'global' })`). No guarda sesión. La URL y la clave de Supabase entran por variables
+  de entorno de Vercel (`build.js` genera `config.js`, ignorado por git). La web va **siempre en modo claro**
+  con la paleta de la app (el usuario rechazó el modo oscuro automático).
+- **Alternativas consideradas:** (a) código de 6 dígitos con `verifyOtp` dentro de la app: no depende de hosting
+  ni de URLs, pero la persona tiene que copiar y escribir el código — se dejó como plan B; (b) APK con esquema
+  propio: solo sirve para quien lo tenga instalado; (c) mantener el enlace a la app: descartado por lo de arriba.
+- **Consecuencias:** hay un componente fuera de la app que desplegar y mantener; el Site URL de Supabase debe ser
+  la URL de Vercel; las plantillas hay que pegarlas a mano en el panel (viven en `supabase/email-templates/`).
+  La web sale en la política de privacidad como tercero. `src/app/correo/*` queda sin uso (respaldo).
+- **Requisitos relacionados:** RF-011, RNF-006, RNF-007, RNF-012.
+
+---
+
+## D-015 · Texto legal y constancia de consentimiento
+
+- **Fecha:** 2026-11-11
+- **Estado:** Vigente (implementado, `tsc`/`eslint`/jest en verde; no es asesoría legal)
+- **Contexto:** la app trata datos de salud (sensibles, Ley 1581 de 2012). La política decía «escríbenos desde
+  GitHub», no identificaba al responsable ni a los terceros, y el consentimiento no dejaba constancia.
+- **Decisión:** (1) contacto `neurotrackem@gmail.com` y responsable = «el equipo de Neurotrack EM»;
+  (2) sección de terceros (Supabase, Gmail, Vercel) y aviso de transferencia a otro país, aceptado al registrarse
+  (la casilla lo menciona); (3) derechos con plazos de 10 días hábiles (consultas) y 15 (reclamos); (4) retención:
+  mientras exista la cuenta; (5) mayoría de edad **sin excepciones**; (6) créditos de licencias (Atkinson
+  Hyperlegible, Material Icons); (7) al registrarse se guardan `accepted_terms_at` y `accepted_terms_version`
+  (`LEGAL_VERSION` en `features/legal/documents.ts`) en los metadatos del usuario, además de `created_at` del
+  servidor. Los metadatos los envía el cliente, así que son constancia razonable, no prueba infalible.
+- **Alternativas consideradas:** tabla de consentimientos con trigger en el servidor (más sólida; implicaba otra
+  migración a mano antes de la entrega) — pendiente si se publica de verdad.
+- **Consecuencias:** al cambiar el texto legal hay que **subir `LEGAL_VERSION`**. Si se hace el perfil médico (un
+  destinatario nuevo de datos de salud) hay que actualizar los documentos y la casilla. El registro ante la SIC no
+  aplica a este proyecto académico (verificar si se publica).
+- **Requisitos relacionados:** RF-011, RT-004, RNF-012.
+
+---
+
 ## Cosas que el material pedía y quedan fuera (con su razón)
-- **Perfil del médico** — marcado como opcional/futuro en §I-C y §IV-C. (REC-003)
+- **Perfil del médico** — marcado como opcional/futuro en §I-C y §IV-C (REC-003). **Actualización 2026-11-11: el
+  equipo lo hará en la próxima sesión**, ver D-003.
 - **Biomarcadores / sensores / wearables** — requieren validación clínica y años de estudio
   fuera del alcance del semestre (§IV-C). (RT-003)
 - **Versión auditiva completa de las actividades y voz/dictado** — el propio artículo los deja

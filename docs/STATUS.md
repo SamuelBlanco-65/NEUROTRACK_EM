@@ -1,10 +1,12 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-10 · **Rama:** master · Último commit pusheado: `7133316`
-(feat(T7): dictado por voz y lectura en voz alta, REC-001/REC-002; con Co-Authored-By de Amelyn,
-Mariana y Claude). Antes: `e767792` (docs), `da06c9e` (T6). **Sin commitear:** solo
-`supabase/seed/demo_data_completo.sql` (seed de demostración, a propósito: sin revisar). Este
-cierre además modifica `docs/STATUS.md`, `docs/REQUISITOS.md` y `docs/ENTORNO.md`.
+**Fecha:** 2026-11-11 · **Rama:** master · Último commit pusheado: `345e723`
+(feat(legal): política y términos completos, constancia de consentimiento e imagen de bienvenida;
+con Co-Authored-By de Amelyn, Mariana y Claude). Antes, el mismo día: `4266cd8`, `eeadd52`, `f5fd565`.
+Ver «Hecho el 2026-11-11» más abajo. **Sin commitear:** los cambios de cierre en `docs/STATUS.md`,
+`docs/DECISIONES.md` (D-014, D-015), `docs/REQUISITOS.md` y `docs/ENTORNO.md`.
+Nota: el seed `supabase/seed/demo_data_completo.sql` ya se revisó y se subió (solo placeholders
+`PACIENTE@EJEMPLO.COM` / `CUIDADOR@EJEMPLO.COM`, sin correos reales).
 
 ## ⚠️ Equipo y co-autoría Git (LEER ANTES DE CUALQUIER COMMIT)
 Proyecto en equipo de 3. **TODO commit debe atribuir a los tres.** El autor es Samuel
@@ -669,7 +671,8 @@ resuelta) y la amplió. Commit `da06c9e`, pusheado con `Co-Authored-By` de Amely
      sesión).
 
 ## T7 — Voz: REC-001 y REC-002 implementados y commiteados (2026-11-10)
-Perfil del médico (REC-003): **idea registrada, decidido NO hacerlo por ahora** (el usuario lo
+Perfil del médico (REC-003): **ACTUALIZADO 2026-11-11: el equipo lo hará en la próxima sesión, ver
+«Siguiente objetivo de la próxima sesión»**. Antes se había decidido NO hacerlo (el usuario lo
 dejó en "contemplar, todavía no hacer"). Decisión y razones de la voz: **D-013**.
 - **REC-001 (dictado):** botón «Dictar con voz» en `registrar-sintoma/paso-3.tsx`
   (`features/audio/dictation-button.tsx`) enfoca la nota y guía a usar el micrófono del
@@ -696,15 +699,79 @@ dejó en "contemplar, todavía no hacer"). Decisión y razones de la voz: **D-01
 - `supabase/seed/demo_data_completo.sql` (sin commitear): datos de demostración para simular
   actividad. Antes de commitearlo, comprobar que no tenga un correo real (el repo es público).
 
-## Siguiente acción concreta
-**Cerrar T7 con evidencia (≈10 min, en el celular con Expo Go):** (1) en el paso 3 de registrar
-síntoma, tocar «Dictar con voz» y confirmar que abre el teclado y que el micrófono del teclado
-escribe en la nota; (2) con «Lectura en voz alta» encendida, tomar una captura de un botón
-«Escuchar» y otra del dictado, y guardarlas en `artifacts/t7/`. Con eso se suben REC-001 y
-REC-002 a Verificado en `REQUISITOS.md` y `STATUS.md`.
+## Hecho el 2026-11-11 (resumen; el `/cierre` completo puede ampliarlo)
+Todo commiteado y pusheado con Co-Authored-By de los 3 (`f5fd565`, `eeadd52`, `4266cd8`, `345e723`).
+`tsc` 0 errores, `eslint` limpio sobre lo tocado, **80 tests jest en verde** (antes 68). Nada de esto
+se vio aún en pantalla del celular salvo el flujo de correo (ver abajo).
+- **Correos reales (confirmar cuenta / recuperar contraseña) — probado de punta a punta por el usuario:**
+  SMTP propio (Gmail) en Supabase + **página estática en Vercel** (`web-auth/`, URL
+  `https://neurotrackem-web-auth.vercel.app`, Root Directory `web-auth`, variables `SUPABASE_URL` y
+  `SUPABASE_PUBLISHABLE_KEY`; `build.js` genera `config.js`, ignorado por git). Las plantillas usan
+  `{{ .SiteURL }}/confirmar|restablecer?token_hash={{ .TokenHash }}&type=signup|recovery` y la página llama a
+  `verifyOtp` al tocar el botón / enviar el formulario: **funciona desde cualquier dispositivo** (el flujo
+  anterior con enlace a la app fallaba por PKCE y porque Expo Go no registra `neurotrackem://`). Pasos de
+  configuración en `docs/SUPABASE-CORREO.md`. Plantillas y página con la paleta de la app; **la web va siempre
+  en modo claro** (decisión del usuario; el modo oscuro automático del teléfono la dejaba negra).
+  Las pantallas `src/app/correo/*` quedan como respaldo, ya sin uso.
+- **Pantalla «Recuperar contraseña»** (`src/app/(auth)/recuperar.tsx` + `features/auth/recover-password-form.tsx`):
+  correo → «Enviar correo» → «Revisa tu correo». Validación en `features/auth/validation.ts` (con prueba).
+- **«¿Qué es Neurotrack EM?»** ahora es pantalla completa `src/app/acerca.tsx` (+ `features/about/`): para quién
+  es, funciones, cómo empezar, privacidad, accesibilidad, preguntas frecuentes y aviso médico con una línea sobre
+  123 / Línea 106 (el bloque grande de crisis se quitó: ya existe en Apoyo). Textos en `features/about/content.ts`.
+- **Legal:** términos y privacidad ampliados (contacto `neurotrackem@gmail.com`, responsable = «el equipo de
+  Neurotrack EM», terceros Supabase/Gmail/Vercel y transferencia internacional, retención, derechos con plazos de
+  10/15 días hábiles, mayoría de edad sin excepción, créditos). **Constancia del consentimiento:** al registrarse
+  se guardan `accepted_terms_at` y `accepted_terms_version` (`LEGAL_VERSION`, hoy `2026-11`) en los metadatos
+  (`features/legal/consent.ts`). Si se cambia el texto legal, **subir `LEGAL_VERSION`**. No es asesoría legal.
+- **Imágenes:** `assets/images/acerca-fondo.jpeg` (ilustración que pasó el usuario) en «¿Qué es?» y una versión
+  recortada `perfil-hero.jpg` en la selección de perfil. Falta la variante oscura (en oscuro es un bloque claro).
+- **Pendiente de verificar por el usuario (no confirmado):** ejecutar
+  `supabase/migrations/20261114000000_harden_links_and_account.sql` en el SQL Editor; que `neurotrackem@gmail.com`
+  exista con esa ortografía (antes se escribió «gmial»); que el texto legal diga Gmail y no Brevo; revisar en el
+  celular recuperar contraseña, «¿Qué es?», la primera pantalla con la imagen nueva y la casilla de consentimiento.
+- Metro quedó corriendo en segundo plano (`exp://192.168.40.71:8081`); cerrarlo si estorba.
 
-**Después, por prioridad de rúbrica (entrega ~2026-11-12, hora sin confirmar):** ENT-003
-(`README.md`), ENT-002 (`docs/ENTREGA-FINAL.md`), RT-007 (`git shortlog -sne` con los 3) y
+## Siguiente objetivo de la próxima sesión: perfil del médico tratante (REC-003)
+**Cambio de decisión (2026-11-11):** el equipo quiere hacerlo (antes: «contemplar, todavía no hacer», D-003).
+Al empezar, actualizar D-003 en `DECISIONES.md`, la fila REC-003 en `REQUISITOS.md` y la frase «Fuera: …perfil del
+médico» de `BRIEF.md`.
+**Qué dice la fuente de verdad (PDF) sobre este perfil:**
+- Es **opcional**: «un perfil donde el neurólogo pueda ver los resultados del paciente y comparar el resultado de
+  los meses anteriores con el actual, detectando de mejor manera cambios que necesiten ser atendidos».
+- Es **complementario**: la app «no busca reemplazar la atención médica, sino proporcionar información adicional al
+  médico tratante» (propuesta de valor: «sin quitarle el protagonismo al médico tratante»).
+- Revisa información **resumida**, en **solo lectura** (BRIEF.md). El §IV-C lo dejaba como trabajo futuro; el
+  enunciado de Fase 3 no lo exige (es un extra, no puntúa por sí solo).
+**Cómo encajaría con lo que ya existe (propuesta, sin aprobar):**
+- Vinculación por código de invitación y permisos como el cuidador (`caregiver_links`): el paciente autoriza y puede
+  revocar; probablemente un tipo de vínculo «médico» y políticas RLS de **solo lectura**.
+- Contenido: progreso mes actual vs anterior (reutilizar `features/progress/logic.ts`), tendencia de síntomas y
+  actividades, resumen como el de «Preparar resumen para mi consulta». Presentar **tendencias o diferencias, no
+  alertas clínicas** (RT-004: no diagnostica ni valida clínicamente).
+- Nuevo perfil `medico` en la selección de perfil, con su grupo de rutas, y verificarlo con dos cuentas como se hizo
+  con el cuidador.
+**Legal (no olvidar):** un profesional de salud que ve datos sensibles es un destinatario nuevo. Actualizar
+términos y privacidad (hoy dicen «solo tú» y el cuidador que autorices), la casilla de consentimiento si aplica y
+subir `LEGAL_VERSION`.
+**Prioridad:** la entrega es ~2026-11-12 (hora sin confirmar). Si la sesión es **antes** de entregar, primero
+`README.md` (ENT-003), `docs/ENTREGA-FINAL.md` (ENT-002) y el ensayo de la demo; el perfil médico es un extra.
+
+## Siguiente acción concreta
+**Escribir `README.md` en la raíz (ENT-003, pendiente y puntúa en la rúbrica):** clonar, `npm install`
+(Node ≥22.13), crear `.env` con `EXPO_PUBLIC_SUPABASE_URL` y `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
+ejecutar en orden `supabase/migrations/*.sql`, `npx expo start --go`, arquitectura (Expo Router + Redux Toolkit
++ Supabase + `web-auth/` en Vercel), resumen de accesibilidad y créditos. Fuentes ya escritas: `docs/ENTORNO.md`,
+`docs/SUPABASE-CORREO.md`, este STATUS. **Si la entrega (~2026-11-12) ya pasó**, la siguiente acción es el perfil
+del médico (ver «Siguiente objetivo de la próxima sesión»).
+
+**Antes o junto al README, ≈10 min en el celular (lista de «Pendiente de verificar» de «Hecho el 2026-11-11»):**
+ejecutar la migración `20261114…` en Supabase, probar recuperar contraseña, «¿Qué es?», la primera pantalla con
+la imagen y la casilla de consentimiento. Y cerrar T7 con evidencia: en el paso 3 de registrar síntoma tocar
+«Dictar con voz» y confirmar que el micrófono del teclado escribe en la nota; con «Lectura en voz alta» encendida,
+capturar un botón «Escuchar» y el dictado en `artifacts/t7/`. Con eso REC-001 y REC-002 suben a Verificado.
+
+**Después, por prioridad de rúbrica (entrega ~2026-11-12, hora sin confirmar):** ENT-002
+(`docs/ENTREGA-FINAL.md`), RT-007 (`git shortlog -sne` con los 3) y
 ensayo de la demo (ENT-004); la defensa individual (ENT-005, 40%) pesa más que cualquier
 verificación visual pendiente. Si queda tiempo, la verificación de T6 de la sesión del 09-nov
 (nada de eso se ha visto correr; solo se revisó por código):
@@ -719,8 +786,8 @@ verificación visual pendiente. Si queda tiempo, la verificación de T6 de la se
    Atención/Movimiento; con eso subir RNF-001, 002, 003, 004, 007 y 009 a Verificado.
 
 Pendiente menor, no bloquea lo anterior:
-- RF-007 (selección de perfil) sigue sin marcar explícitamente en `REQUISITOS.md` aunque el
-  andamiaje de T0 ya lo cubre — falta solo revisarlo y subirlo a Verificado con una captura.
+- ~~RF-007 sin marcar~~ **Ya está Verificado** en `REQUISITOS.md` (capturas `artifacts/t0/`). Solo la primera
+  pantalla cambió después (imagen nueva `perfil-hero.jpg`): una captura nueva en `artifacts/` la dejaría al día.
 
 Pendientes en paralelo (no bloquean lo anterior):
 - Confirmar la **hora exacta** de entrega con el profesor (la fecha ya es ~2026-11-12).
@@ -733,6 +800,31 @@ Pendientes en paralelo (no bloquean lo anterior):
   tablas de dominio.
 
 ## Ya intentado, no repetir
+- **Correo cuyo enlace redirige a la app (`{{ .ConfirmationURL }}` con `redirectTo = Linking.createURL(...)`) NO sirve
+  en este proyecto.** El usuario veía una ventana negra al tocar el botón. Causas: (1) PKCE guarda el verificador en
+  el dispositivo que pidió el correo, así que abrir el enlace en otro dispositivo o en el computador falla;
+  (2) Expo Go no registra `neurotrackem://` (solo `exp://<IP>:8081`, que cambia por red), el navegador no encuentra
+  qué app lo abre; (3) el visor de Gmail no abre esquemas propios. Solución adoptada: la página `web-auth/` con
+  `token_hash` (D-014). Descartado por ahora (no implementado): código de 6 dígitos con `verifyOtp` dentro de la
+  app; sirve como alternativa si se quitara Vercel.
+- **No poner modo oscuro automático (`prefers-color-scheme`) en la web de Vercel.** El usuario la veía «negra, sin
+  relación con la app» con el teléfono en oscuro (primero con un negro cálido propio `#14130f`, luego con la paleta
+  oscura de la app). Decisión: **siempre clara** (`color-scheme: light` en `web-auth/styles.css` y en el `<meta>`).
+- **Gmail aplica su propio modo oscuro a los correos y ignora `prefers-color-scheme`.** Las plantillas usan fondos
+  `linear-gradient` de una sola tinta para que no inviertan los colores y llevan la paleta oscura de la app solo
+  para clientes que la soportan (Apple Mail, Outlook). **No se verificó en Gmail real**: si sigue negro, pedir
+  captura antes de tocar más.
+- **En el Bash de esta sesión el Node por defecto es el 26** (nvm queda tapado). Antes de `npx`, `npm` o `jest`:
+  `export PATH="/c/nvm4w/nodejs:$PATH"` (da 24.22.2). Ver ENTORNO.md.
+- **Capturas de páginas con Chrome headless** (`chrome.exe --headless=new --screenshot=...`): con
+  `--window-size` menor a ~500 de ancho recorta el lado derecho (artefacto, no del diseño); sin
+  `--blink-settings=preferredColorScheme=1` sigue el modo del sistema (el Windows del usuario está en oscuro, por
+  eso la captura «clara» salía oscura). Ver ENTORNO.md.
+- **Un `rm -rf` en Bash fue denegado por permisos:** crear una carpeta nueva en el scratchpad en vez de borrar.
+- **`TextField` (`src/components/text-field.tsx`) solo acepta un subconjunto de props de `TextInput`** y ya fija
+  `autoCapitalize="none"`: pasar `autoCapitalize` hace fallar `tsc`.
+- **Variables de Vercel sin el prefijo `EXPO_PUBLIC_`** (`SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`): `web-auth/build.js`
+  busca exactamente esos nombres y el build falla si faltan. Pegar un `.env` entero en Vercel las crea con prefijo.
 - **En la herramienta Bash, NO crear archivos largos con heredocs (`cat <<'EOF'`, `python - <<'EOF'`)
   si el contenido lleva comillas, apóstrofes o secuencias de escape (backslash + n, backslash + s).**
   Falló tres veces con `unexpected EOF while looking for matching` y, una vez, una regex con
@@ -826,8 +918,22 @@ Pendientes en paralelo (no bloquean lo anterior):
   del repo ya está configurado correcto; no revertir.
 
 ## Errores conocidos
-- **`supabase/seed/demo_data_completo.sql` sin commitear ni revisar** (puede tener un correo real;
-  el repo es público). No lo subas sin abrirlo.
+- **Sin captura ni confirmación en celular de lo hecho el 2026-11-11** salvo el flujo de correo de punta a punta
+  (confirmado verbalmente por el usuario, sin captura): pantalla «Recuperar contraseña», «¿Qué es Neurotrack EM?»,
+  imagen en la primera pantalla, casilla de consentimiento. Capturas pendientes en `artifacts/`.
+- **La ilustración `acerca-fondo.jpeg` / `perfil-hero.jpg` solo existe en versión clara**; en modo oscuro es un bloque
+  luminoso. Falta la variante oscura (el prompt para generarla se dio en la sesión; no se sabe si el usuario la hizo).
+- **Texto legal con supuestos a confirmar:** dice «Gmail (Google)» como proveedor de correo (si se usó Brevo, cambiar
+  `features/legal/documents.ts`); el correo de contacto `neurotrackem@gmail.com` se escribió antes como
+  «gmial» — confirmar que existe con esa ortografía y que alguien revisa su bandeja. Las cuentas creadas antes del
+  2026-11-11 no tienen `accepted_terms_at`.
+- **Migración `supabase/migrations/20261114000000_harden_links_and_account.sql`**: no consta que el usuario la haya
+  ejecutado en el SQL Editor (viene con «Mi cuenta» / borrar cuenta).
+- `src/app/correo/*.tsx` y `src/features/auth/deep-link.ts` quedaron como respaldo del flujo anterior; ya no los usan
+  las plantillas. Se pueden borrar o dejar; `deep-link-test.ts` los prueba.
+- ~~**`supabase/seed/demo_data_completo.sql` sin commitear ni revisar**~~ **RESUELTO (2026-11-11):** se
+  revisó (solo placeholders `PACIENTE@EJEMPLO.COM` / `CUIDADOR@EJEMPLO.COM`) y se commiteó. Antes de
+  correrlo hay que sustituir esos dos correos por los de las cuentas de prueba, sin commitearlos.
 - **Sin captura ni confirmación del dictado (REC-001) y sin capturas de REC-002** — ver
   "Siguiente acción concreta".
 - ~~`package.json` no tiene script `test`~~ **RESUELTO (T6):** `"test": "jest"` con preset
@@ -881,11 +987,15 @@ haya algo funcionando. Obligatorio primero; recomendados al final.)_
 - [x] **T5. Apoyo/Info** — contenidos de apoyo; subtítulos si hay audiovisual. (RF-009, RF-010)
   Verificado en emulador para ambos perfiles — ver sección "T5 — Apoyo/Info" arriba.
 - [ ] **T6. Accesibilidad + pruebas** — pase de accesibilidad y pruebas jest-expo de la lógica. (RNF-*, pruebas)
-- [~] **T7. Extensiones** — voz/dictado y versión auditiva commiteados en `7133316` (REC-001, REC-002, D-013); falta confirmar el dictado y capturas para Verificado; perfil médico (REC-003) aplazado por decisión del equipo ("contemplar, todavía no hacer").
+- [~] **T7. Extensiones** — voz/dictado y versión auditiva commiteados en `7133316` (REC-001, REC-002, D-013); falta confirmar el dictado y capturas para Verificado; perfil médico (REC-003): **decidido hacerlo en la próxima sesión** (2026-11-11), ver sección «Siguiente objetivo».
 - [ ] **T8. Documento Final** — `docs/ENTREGA-FINAL.md`: 5 secciones, matriz competitiva (Fase 1),
   diagrama de arquitectura E2E, **matriz trazable de accesibilidad** (mejora → archivo → prueba),
   pruebas y conclusiones; refs IEEE/APA. (ENT-002, EVA-001)
 - [ ] **T9. README + entrega** — `README.md` (instalación, env vars, arquitectura, ejecución,
   accesibilidad); guion de demo en vivo; verificar commits equitativos de los 3. (ENT-003, ENT-004, RT-007)
+- [x] **T7b. Correos reales + recuperar contraseña + legal + «¿Qué es?»** (2026-11-11) — RF-011 ampliado, D-014,
+  D-015. Correo de punta a punta probado por el usuario (sin captura); pantallas nuevas sin ver en celular.
+- [ ] **T10. Perfil del médico tratante (REC-003)** — decidido el 2026-11-11 para la próxima sesión; ver
+  «Siguiente objetivo de la próxima sesión». Extra: no lo exige el enunciado.
 - [ ] **Transversal. Defensa individual** — repartir módulos por integrante y que cada quien
   entienda su código (estado, navegación, datos, accesibilidad). (ENT-005, EVA-004, 40%)
