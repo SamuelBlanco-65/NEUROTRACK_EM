@@ -756,12 +756,12 @@ solo **lee** un resumen que el paciente autoriza; sin chat, sin alertas, sin dia
   oscuro; (4) comparar el diseño del médico con el de Stitch (el usuario iba a pasarlo).
 
 ## Siguiente acción concreta
-**Escribir `README.md` en la raíz (ENT-003, pendiente y puntúa en la rúbrica):** clonar, `npm install`
-(Node ≥22.13), crear `.env` con `EXPO_PUBLIC_SUPABASE_URL` y `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
-ejecutar en orden `supabase/migrations/*.sql`, `npx expo start --go`, arquitectura (Expo Router + Redux Toolkit
-+ Supabase + `web-auth/` en Vercel), resumen de accesibilidad y créditos. Fuentes ya escritas: `docs/ENTORNO.md`,
-`docs/SUPABASE-CORREO.md`, este STATUS. Después: `docs/ENTREGA-FINAL.md` (ENT-002), capturas de T10 en
-`artifacts/t10/` y el ensayo de la demo (ENT-004). Riesgo de RT-007: `git shortlog -sne` solo cuenta a Samuel
+**`README.md` (ENT-003) ya está escrito y pusheado (`89ca918`)**; falta que otra persona lo siga desde cero. La
+siguiente acción es **`docs/ENTREGA-FINAL.md` (ENT-002, 20 %)**: documento técnico de 5 a 8 páginas en Markdown con
+5 secciones (visión y estado del arte, arquitectura E2E con diagrama, accesibilidad con matriz trazable
+mejora → archivo → prueba, pruebas y conclusiones), referencias IEEE/APA. Fuentes: `docs/REQUISITOS.md`,
+`docs/DECISIONES.md`, la «FUENTE DE VERDAD» (matriz competitiva y referencias) y el README. Después: capturas de T10 en
+`artifacts/t10/`, el ensayo de la demo (ENT-004) y la defensa individual (ENT-005). Riesgo de RT-007: `git shortlog -sne` solo cuenta a Samuel
 (Amelyn y Mariana van como Co-Authored-By); ver D-007.
 
 **Antes o junto al README, ≈10 min en el celular (lista de «Pendiente de verificar» de «Hecho el 2026-11-11»):**
