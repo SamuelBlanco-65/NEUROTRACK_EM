@@ -13,7 +13,7 @@ Equipo: Samuel Blanco, Amelyn Hofmann y Mariana Tirado.
 
 | Perfil | Qué puede hacer |
 |---|---|
-| **Paciente** | Registrar cómo se siente (síntomas con severidad y nota) y verlos en un calendario; hacer actividades de estimulación cognitiva (memoria, atención) y motriz (movimiento) con dificultad progresiva y sin cronómetro; ver su progreso (semana, mes, 3 meses); recibir recordatorios y mensajes de ánimo; consultar un espacio de apoyo con líneas de ayuda; decidir **qué ve** su cuidador y su médico. |
+| **Paciente** | Registrar cómo se siente (síntomas con severidad y nota) y verlos en un calendario; hacer actividades de estimulación cognitiva (memoria, atención, lógica) y motriz (movimiento) con dificultad progresiva y sin cronómetro; ver su progreso (semana, mes, 3 meses); recibir recordatorios y mensajes de ánimo; consultar un espacio de apoyo con líneas de ayuda; decidir **qué ve** su cuidador y su médico. |
 | **Cuidador** | Vincularse con un código que le da el paciente; ver lo que el paciente autorizó (progreso, síntomas de la semana); anotar observaciones privadas; crear recordatorios; enviar mensajes de ánimo. |
 | **Médico tratante** *(opcional)* | Ver, **solo en lectura**, un resumen de lo que el paciente autorizó: constancia de registro, síntomas del período frente al anterior, intensidad, actividades y, si el paciente lo permite, sus notas. El acceso caduca y el paciente puede retirarlo cuando quiera. |
 
@@ -72,6 +72,8 @@ En el **SQL Editor** de Supabase, ejecuta **en orden** cada archivo de `supabase
 | 6 | `20261113000000_reminders.sql` | Recordatorios |
 | 7 | `20261114000000_harden_links_and_account.sql` | Reclamo seguro de códigos y borrado de cuenta |
 | 8 | `20261115000000_doctor_links.sql` | Perfil del médico y lectura compartida de síntomas |
+| 9 | `20261116000000_activity_area_logica.sql` | Habilita el área «Lógica» en el progreso y el historial |
+| 10 | `20261117000000_caregiver_patient_name.sql` | Nombre del paciente en el vínculo aceptado, para mostrárselo al cuidador |
 
 Son idempotentes (puedes volver a correrlas). No hay CLI de Supabase enlazada: se ejecutan a mano.
 
@@ -108,7 +110,7 @@ perfil en la primera pantalla.
 ```bash
 npm run typecheck    # tsc --noEmit
 npx expo lint        # ESLint (flat config)
-npm test             # 111 pruebas de lógica
+npm test             # 124 pruebas de lógica
 npx expo-doctor      # dependencias alineadas con el SDK
 ```
 
@@ -147,7 +149,7 @@ pestañas nativas (`NativeTabs`); `(medico)` es una pila sin pestañas.
 |---|---|
 | `auth` | Registro, acceso, recuperación de contraseña, validaciones |
 | `symptoms` | Registro y calendario de síntomas; lectura compartida |
-| `activities` | Actividades de memoria, atención y movimiento; niveles |
+| `activities` | Actividades de memoria, atención, lógica y movimiento; niveles |
 | `progress` | Períodos, agregación y tendencias del paciente |
 | `caregiver` | Vinculación, observaciones, mensajes de ánimo |
 | `reminders` | Recordatorios con alternativa visual y háptica |
@@ -164,7 +166,8 @@ Datos de salud sensibles (Ley 1581 de 2012, Colombia). Todo está restringido po
   el único que puede aceptar, y puede retirar el acceso en cualquier momento. El acceso del médico además caduca.
 - Los síntomas de terceros solo se leen con la función `shared_symptom_logs`; las **notas** son un permiso aparte,
   apagado por defecto.
-- Los códigos de invitación los genera el servidor y los intentos de reclamo están limitados.
+- Los intentos de reclamo de códigos están limitados. El código del médico lo genera el servidor; el del cuidador lo
+  genera la app y su límite de intentos no es atómico (limitación conocida, `docs/ENTREGA-FINAL.md` §5.2).
 - La sesión se guarda cifrada (AES-256, clave en `expo-secure-store`).
 
 Decisiones con su razón en [`docs/DECISIONES.md`](docs/DECISIONES.md).
@@ -176,8 +179,8 @@ La accesibilidad es un requisito del dominio (EM: fatiga, temblor, visión, cogn
 - **Texto escalable:** respeta el tamaño de fuente del sistema, y el `lineHeight` se escala a mano para que nada se
   recorte (`src/components/themed-text.tsx`).
 - **Contraste calculado** con la fórmula WCAG en claro y oscuro; modo oscuro de bajo brillo sin blanco ni negro puros,
-  y opción de alto contraste. Pendiente conocido: en oscuro, el texto de los botones sobre `primaryContainer` no llega a
-  4,5:1 (ver `docs/ENTREGA-FINAL.md`, §5.2).
+  y opción de alto contraste. Validado con `node scripts/validar-paleta.mjs` (18 pares, ambos esquemas, y simulación de
+  daltonismo).
 - **Lector de pantalla (TalkBack):** roles, etiquetas, pistas y estados en todos los controles, regiones vivas al
   cambiar datos, orden de lectura lógico y `testID` estables.
 - **Área táctil ≥ 48 dp**, sin gestos complejos ni tiempos límite en las actividades.

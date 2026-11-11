@@ -144,7 +144,8 @@ y se marca la anterior como **Reemplazada por D-00X**.
 ## D-009 · Actividades (T2): "Lógica" queda bloqueada sin juego real; Memoria falla rápido
 
 - **Fecha:** 2026-11-08
-- **Estado:** Vigente
+- **Estado:** Reemplazada en parte (2026-11-11, 3ª sesión): «Lógica» ya NO queda bloqueada; ver D-018. El punto 2
+  (Memoria falla rápido) y el 3 (`expo-haptics`) siguen vigentes.
 - **Contexto:** RF-003 exige 1-2 actividades cognitivas, no las 4 que insinúa el export de
   Stitch (Memoria, Atención, Movimiento, Lógica). El export muestra "Lógica" bloqueada hasta
   nivel 3 de Memoria, pero no hay un diseño de ese juego. Además, el juego de Memoria
@@ -410,6 +411,78 @@ y se marca la anterior como **Reemplazada por D-00X**.
   «Expediente», PDF para historia clínica, «Finalizar revisión»), notas del cuidador visibles al médico (contradice
   D-010), «cifrado de extremo a extremo» (es TLS), casillas separadas para el código y textos truncados.
 - **Requisitos relacionados:** REC-003, RT-004, RNF-012, RF-006.
+
+---
+
+## D-017 · Contraste del botón principal en oscuro: usar `primary`, no cambiar la paleta
+
+- **Fecha:** 2026-11-11 (3ª sesión) · **Estado:** Vigente (implementado; visto en emulador oscuro el 2026-11-11, 4ª: `artifacts/t11/01`, `02`, `07`)
+- **Contexto:** `onPrimary` sobre `primaryContainer` daba ~1,1:1 en el esquema oscuro (`#00363f` sobre `#223a40`) en 25
+  archivos de pantallas; los íconos y barras de nivel pintados con `primaryContainer` sobre `surface` eran casi invisibles.
+  Incumplía WCAG AA y lo prometido en la propuesta (§V-D3, §V-D4). La limitación estaba declarada en `ENTREGA-FINAL.md`.
+- **Decisión:** sustituir `colors.primaryContainer` por `colors.primary` en `src/app/` y `src/features/` (no en
+  `src/theme/`). La paleta de D-012 no se modifica. Resultado medido con `scripts/validar-paleta.mjs`: texto sobre botón
+  principal 6,7:1 en oscuro y 11,1:1 en claro. También `placeholderTextColor` → `onSurfaceVariant`.
+- **Alternativas:** (a) cambiar `primaryContainer` en `DarkColors` — descartado: lo usa `onPrimaryContainer` (que no
+  se usa en `src/`, pero está en la paleta de Stitch) y obliga a revalidar D-012; (b) subir solo el texto del botón —
+  descartado: el problema también afecta íconos y barras.
+- **Consecuencias:** en claro el verde-azulado de botones e íconos queda un poco más oscuro (`#00424d` frente a `#1e5a66`).
+  `primaryContainer` ya no se usa en pantallas; si se vuelve a usar, validar el par en ambos esquemas.
+- **Requisitos relacionados:** RNF-003, RNF-007, RNF-001.
+
+---
+
+## D-018 · Actividad «Lógica»: series numéricas, sin cronómetro, con migración propia
+
+- **Fecha:** 2026-11-11 (3ª sesión) · **Estado:** Vigente (implementado y jugado de punta a punta en emulador el 2026-11-11, 4ª: `artifacts/t11/04`–`06`, migración ejecutada y nivel guardado; reemplaza el punto 1 de D-009)
+- **Contexto:** la propuesta (§V-B) promete memoria, atención y lógica; la tarjeta «Lógica» seguía bloqueada con
+  «Próximamente», lo que prometía algo que nunca ocurría. El usuario pidió terminarla.
+- **Decisión:** juego de **series numéricas**: se muestra la serie y un «?» y se elige entre 4 opciones el número que
+  sigue. 5 niveles (suma de 1/2/5/10 · suma de 2 a 9 · resta · ×2 o ×3 · dos pasos alternados), 2 de 3 rondas correctas para
+  subir (mismo criterio que Memoria y Atención, RF-003), sin cronómetro. Tras responder se muestra la regla. Opciones sin
+  negativos y todas distintas. Misma estructura que Atención en el store (`logicaRound`, `logicaOptionTapped`).
+  Se añadió la lista `ACTIVITY_AREAS` para no repetir las áreas en cada pantalla.
+- **Migración:** `20261116000000_activity_area_logica.sql` amplía los `check (area in (...))` de `activity_progress` y
+  `activity_sessions`. Sin ella el juego se puede jugar pero no se guarda el nivel ni el historial (el error se tolera,
+  RNF-012).
+- **Alternativas:** (a) dejarla bloqueada y declararla fuera de alcance — descartado por el usuario; (b) juego de patrones de
+  figuras — descartado: se parecería a Atención y a Memoria; la propuesta habla de «lógico matemática» (§I-B).
+- **Consecuencias:** 4 áreas en Actividades, Acompañar y el resumen del médico; 13 pruebas nuevas (124 en total).
+- **Requisitos relacionados:** RF-003, RNF-008, RNF-010.
+
+---
+
+## D-019 · El cuidador ve el nombre del paciente: columna `patient_name` llenada por un trigger, solo con vínculo aceptado
+
+- **Fecha:** 2026-11-11 (4ª sesión) · **Estado:** Vigente (implementado, migración ejecutada y verificado en emulador)
+- **Contexto:** el inicio del cuidador decía «Acompañas a la persona que acompañas» porque el cuidador no puede leer
+  `auth.users` (RLS) y la fila de `caregiver_links` no traía el nombre del paciente.
+- **Decisión:** columna `patient_name` en `caregiver_links`, calculada por el trigger `caregiver_links_set_patient_name`
+  (`security definer`) desde `raw_user_meta_data ->> 'full_name'` del paciente, **solo cuando `status = 'aceptado'`**; en
+  otro estado queda en `null`. Mismo patrón que `doctor_links.patient_name` (D-016). Sin nombre, la app dice «Acompañas a tu
+  persona vinculada».
+- **Por qué solo aceptado:** la política `caregiver_links_select_unclaimed_by_code` deja leer la fila con el código; así quien
+  adivine un código no obtiene el nombre, y el paciente ya consintió cuando acepta. El trigger sobrescribe cualquier valor
+  del cliente, así nadie puede poner un nombre falso.
+- **Alternativas:** (a) join contra `auth.users` desde el cliente — imposible por RLS; (b) una función RPC — más código para
+  un dato que ya cabe en la fila; (c) guardar el nombre en `profiles` — no existe esa tabla en el MVP.
+- **Consecuencias:** 10 migraciones (README y figura 2 de `ENTREGA-FINAL.md`). Quien instale desde cero debe correrla; sin
+  ella las pantallas del cuidador fallan al pedir la columna. El nombre se congela cuando el vínculo pasa a aceptado: si
+  el paciente cambia su nombre después, no se actualiza hasta un nuevo vínculo.
+- **Requisitos relacionados:** RF-006, RF-012.
+
+## D-020 · Video de la app: grabación real del emulador + montaje con Hyperframes, sin voz en off
+
+- **Fecha:** 2026-11-11 (4ª sesión) · **Estado:** Vigente (hecho; visto por muestreo de fotogramas, no completo)
+- **Decisión:** estilo «video de ficha de tienda»: las tomas del emulador real (`adb screenrecord`, 3 perfiles, 17 clips,
+  1,35×) dentro de un teléfono, con rótulo por cada vista, tarjetas de perfil, intro y cierre; salida 1920×1080 a 30 fps,
+  música ambiental **sintetizada por el propio script** (sin derechos de terceros) y sin voz en off.
+- **Por qué:** los datos y pantallas son reales (RT/ENT-001 exigen app funcional, no mocks); el montaje es reproducible
+  (`artifacts/video/promo/build.mjs`) y editable en HTML.
+- **Alternativas:** solo ffmpeg con rótulos (plan base, descartado: el usuario pidió animación y sonido); locución — pendiente
+  si el usuario la quiere.
+- **Consecuencias:** `artifacts/video/` pesa ~158 MB y no está en Git; se recortaron las partes con el correo personal;
+  las cuentas de demo son reales: cambiar sus contraseñas o borrarlas cuando termine la entrega, sobre todo si el video se publica.
 
 ---
 
