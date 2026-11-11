@@ -175,8 +175,9 @@ La accesibilidad es un requisito del dominio (EM: fatiga, temblor, visión, cogn
 
 - **Texto escalable:** respeta el tamaño de fuente del sistema, y el `lineHeight` se escala a mano para que nada se
   recorte (`src/components/themed-text.tsx`).
-- **Contraste validado** en claro y oscuro (se calculó con la fórmula WCAG); modo oscuro de bajo brillo sin blanco ni
-  negro puros, y opción de alto contraste.
+- **Contraste calculado** con la fórmula WCAG en claro y oscuro; modo oscuro de bajo brillo sin blanco ni negro puros,
+  y opción de alto contraste. Pendiente conocido: en oscuro, el texto de los botones sobre `primaryContainer` no llega a
+  4,5:1 (ver `docs/ENTREGA-FINAL.md`, §5.2).
 - **Lector de pantalla (TalkBack):** roles, etiquetas, pistas y estados en todos los controles, regiones vivas al
   cambiar datos, orden de lectura lógico y `testID` estables.
 - **Área táctil ≥ 48 dp**, sin gestos complejos ni tiempos límite en las actividades.

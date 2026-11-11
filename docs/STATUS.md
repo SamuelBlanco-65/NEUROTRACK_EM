@@ -756,12 +756,13 @@ solo **lee** un resumen que el paciente autoriza; sin chat, sin alertas, sin dia
   oscuro; (4) comparar el diseño del médico con el de Stitch (el usuario iba a pasarlo).
 
 ## Siguiente acción concreta
-**`README.md` (ENT-003) ya está escrito y pusheado (`89ca918`)**; falta que otra persona lo siga desde cero. La
-siguiente acción es **`docs/ENTREGA-FINAL.md` (ENT-002, 20 %)**: documento técnico de 5 a 8 páginas en Markdown con
-5 secciones (visión y estado del arte, arquitectura E2E con diagrama, accesibilidad con matriz trazable
-mejora → archivo → prueba, pruebas y conclusiones), referencias IEEE/APA. Fuentes: `docs/REQUISITOS.md`,
-`docs/DECISIONES.md`, la «FUENTE DE VERDAD» (matriz competitiva y referencias) y el README. Después: capturas de T10 en
-`artifacts/t10/`, el ensayo de la demo (ENT-004) y la defensa individual (ENT-005). Riesgo de RT-007: `git shortlog -sne` solo cuenta a Samuel
+**`README.md` (ENT-003) y `docs/ENTREGA-FINAL.md` (ENT-002) ya están escritos y pusheados.** El documento tiene las
+5 secciones del enunciado §2, 4 diagramas Mermaid, la matriz trazable (16 mejoras de §V) y 12 referencias IEEE, con
+marcadores `[PENDIENTE: …]` donde falta evidencia. **Siguiente acción:** tomar las capturas de T10 (lista de 21 en la
+conversación del 2026-11-11, nombres `01-…` a `23-…` en `artifacts/t10/`), el recorrido TalkBack documentado y las
+capturas con fuente al 130 % y modo oscuro; luego **repasar `ENTREGA-FINAL.md`** quitando los marcadores y ajustando la
+Tabla 4 y la Tabla 5. Después: comparar el perfil médico con los exports de Stitch, el ensayo de la demo (ENT-004) y la
+defensa individual (ENT-005). Riesgo de RT-007: `git shortlog -sne` solo cuenta a Samuel
 (Amelyn y Mariana van como Co-Authored-By); ver D-007.
 
 **Antes o junto al README, ≈10 min en el celular (lista de «Pendiente de verificar» de «Hecho el 2026-11-11»):**
