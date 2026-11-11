@@ -190,15 +190,15 @@ neuritis óptica afecta hasta al 70 % de los pacientes (§V-D1) y la alteración
 
 ### 3.1 Semántica para lectores de pantalla (TalkBack)
 
-- **Propiedades nativas en todos los controles:** `accessibilityRole` en 203 lugares, `accessibilityLabel` en 167,
+- **Propiedades nativas en todos los controles:** `accessibilityRole` en 211 líneas de código, `accessibilityLabel` en 172,
   `accessibilityState` (seleccionado, marcado, deshabilitado, ocupado) y `accessibilityHint` cuando la acción no es obvia
   (conteo con `grep` sobre `src/`). Roles con significado: `radiogroup`/`radio` (perfil, severidad, período), `switch`
   (permisos), `header`, `alert` y `progressbar`.
 - **Agrupamiento contra focos fragmentados:** tarjetas y filas son un solo elemento `accessible` con etiqueta completa. Cada
   permiso de «Mi médico» es un `Pressable` con rol `switch`, y el `Switch` visual se oculta al lector
   (`importantForAccessibility="no-hide-descendants"`) para que no se anuncie dos veces (`src/app/mi-medico.tsx`).
-- **Cambios dinámicos:** `accessibilityLiveRegion` en 33 lugares (carga, errores de campo, cambio de período, código nuevo).
-- **`testID`** estables en los 297 controles interactivos, usados en la verificación en emulador.
+- **Cambios dinámicos:** `accessibilityLiveRegion` en 35 lugares (carga, errores de campo, cambio de período, código nuevo).
+- **`testID`** estables (309 referencias en `src/`), usados en la verificación en emulador.
 
 ### 3.2 Diseño visual, contraste y tipografía adaptativa
 
@@ -229,7 +229,7 @@ const scaledLineHeight = lineHeight ? lineHeight * appTextScale * PixelRatio.get
 
 ### 3.3 Ergonomía táctil y navegación
 
-- **Área táctil:** `MinTouchSize = 48` dp en todos los botones; los íconos de 32 dp llevan `hitSlop={8}` (40 usos) y los
+- **Área táctil:** `MinTouchSize = 48` dp en todos los botones; los íconos de 32 dp llevan `hitSlop={8}` (43 usos) y los
   botones principales miden 56 dp.
 - **Sin gestos complejos ni tiempo límite:** todo son toques simples; Memoria y atención no tienen cronómetro (§V-C).
 - **Retroalimentación multicanal:** `expo-haptics` en las tres actividades y al marcar un recordatorio; mensajes visibles de
@@ -256,7 +256,7 @@ captura.
 | 12 | Apariencia independiente del sistema (§V-D4) | `features/settings/persistence.ts` | Prueba del equipo en emulador | C |
 | 13 | Lector de pantalla, etiquetas, orden lógico (§V-D5) | `accessibility*` en `src/app/**`, `src/components/**` | Auditoría y 14 capturas con TalkBack en celular (`artifacts/talkback/`, 4.3) | V |
 | 14 | Dictado para síntomas (§V-D5) | `features/audio/dictation-button.tsx` | Captura del micrófono del teclado escribiendo la nota: `artifacts/talkback/08`, `10` | V |
-| 15 | Versión auditiva (§V-D5, extensión) | `expo-speech`, «Lectura en voz alta» | 32 pruebas Jest; confirmado en celular | C |
+| 15 | Versión auditiva (§V-D5, extensión) | `expo-speech`, «Lectura en voz alta» | 34 pruebas Jest; confirmado en celular | C |
 
 ---
 
