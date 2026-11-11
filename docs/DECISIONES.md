@@ -58,7 +58,7 @@ y se marca la anterior como **Reemplazada por D-00X**.
 - **Requisitos relacionados:** RF-001..RF-010, RT-003, REC-003
 - **Actualización 2026-11-11:** el equipo decidió hacer el **perfil del médico (REC-003)** en la próxima
   sesión, como extra (el enunciado de Fase 3 no lo exige). Sensores, wearables y validación clínica siguen
-  fuera. Al empezar, registrar aquí la decisión de diseño del perfil médico (vinculación, solo lectura, qué ve).
+  fuera. La decisión de diseño del perfil médico (vinculación, solo lectura, qué ve) está en **D-016**.
 
 ---
 
@@ -358,9 +358,56 @@ y se marca la anterior como **Reemplazada por D-00X**.
 
 ---
 
+## D-016 · Perfil del médico tratante (REC-003): solo lectura, autorizado por el paciente, con caducidad
+
+- **Fecha:** 2026-11-11
+- **Estado:** Vigente (implementado sin probar en celular; migración `20261115000000_doctor_links.sql` sin ejecutar)
+- **Contexto:** la fuente de verdad lo define como perfil opcional «para que el neurólogo pueda ver los resultados del
+  paciente y comparar el resultado de los meses anteriores con el actual», y a la app como complemento que «no busca
+  reemplazar la atención médica». Es un extra: el enunciado de Fase 3 no lo exige.
+- **Decisión:**
+  1. **El médico solo lee un resumen.** Sin chat, sin mensajes, sin indicaciones y sin escribir nada del paciente:
+     evita que la app se vuelva un canal clínico (telesalud) y la responsabilidad por mensajes no leídos.
+  2. **Tendencias, nunca alertas.** Compara el período actual con el anterior con diferencias neutras («3 días más
+     que el mes anterior»), sin «mejor/peor», semáforos, riesgos ni diagnósticos (RT-004). Siempre un aviso fijo de
+     que no es una evaluación clínica, y la constancia de registro («18 de 30 días») para no confundir un día sin
+     registro con un día sin síntomas.
+  3. **Tabla propia `doctor_links`**, no un `role` en `caregiver_links`: las políticas del cuidador (recordatorios,
+     mensajes, observaciones) solo exigen `status='aceptado'` y le darían al médico poderes de escritura.
+  4. **Permisos por categoría** (síntomas, actividades) y **notas como permiso aparte, apagado por defecto**: son el
+     dato más íntimo. RLS filtra filas, no columnas, así que la nota se oculta con una función
+     (`shared_symptom_logs`, security definer) que es la única vía de lectura de síntomas para terceros.
+  5. **Caducidad y último acceso:** el paciente elige 3 meses, 6 meses, 1 año o sin fecha; pasada la fecha el médico
+     deja de ver datos aunque el vínculo siga «aceptado» (lo comprueba la base de datos, no la app). El paciente ve
+     cuándo lo revisó su médico (`mark_doctor_viewed`).
+  6. **Sin verificación profesional:** el registro profesional (RETHUS) es autodeclarado y opcional, y el paciente lo ve
+     marcado como «no verificado». Verificarlo exigiría integrarse con un registro oficial; fuera de alcance.
+  7. **Vinculación** parecida a la del cuidador, pero endurecida tras la auditoría de seguridad del 2026-11-11:
+     el código (8 caracteres, vale 7 días) lo **genera el servidor** (`create_doctor_invite`; sin política de insert,
+     para que nadie pueda probar códigos ajenos fuera del límite de intentos), se reclama con `claim_doctor_invite`
+     (límite de 10 fallos por 15 min, atómico con un candado por usuario) y un trigger impide que el paciente
+     reescriba la identidad del médico o invente estados. El nombre del paciente solo se copia al aceptar.
+     **El mismo oráculo de códigos y la misma carrera del límite existen en `caregiver_links`/`claim_invite`
+     (migraciones anteriores, ya ejecutadas): quedan como deuda conocida.**
+- **Arreglo de un bug del cuidador en la misma migración:** `share_sintomas` no se aplicaba en ninguna política
+  (el cuidador nunca podía leer `symptom_logs`). Ahora lo cubre `shared_symptom_logs`, sin notas, y la pantalla
+  Acompañar muestra «Síntomas esta semana».
+- **Legal:** términos y privacidad suman la sección «Médico tratante» (deber de reserva, no es historia clínica ni
+  telesalud, no verificamos al profesional); la casilla de consentimiento menciona al profesional de salud; se subió
+  `LEGAL_VERSION` a `2026-11.2`. No es asesoría legal: conviene que la revise alguien con formación jurídica antes de
+  un uso real.
+- **Alternativas consideradas:** (a) chat o notas del médico — descartado por (1); (b) alertas de cambio — descartado
+  por RT-004 y por riesgo de falsos negativos; (c) verificar RETHUS — fuera de alcance.
+- **Consecuencias:** el perfil `medico` no está ligado a la cuenta (igual que los otros: se elige al abrir la app).
+  `ProfileKind` ahora tiene tres valores y `features/profile/constants.ts` centraliza el inicio y la etiqueta de cada uno.
+  La retención y el borrado de cuenta ya lo cubren: `doctor_links` referencia `auth.users` con `on delete cascade`.
+- **Requisitos relacionados:** REC-003, RT-004, RNF-012, RF-006.
+
+---
+
 ## Cosas que el material pedía y quedan fuera (con su razón)
 - **Perfil del médico** — marcado como opcional/futuro en §I-C y §IV-C (REC-003). **Actualización 2026-11-11: el
-  equipo lo hará en la próxima sesión**, ver D-003.
+  equipo lo hizo como extra, ver D-016.**
 - **Biomarcadores / sensores / wearables** — requieren validación clínica y años de estudio
   fuera del alcance del semestre (§IV-C). (RT-003)
 - **Versión auditiva completa de las actividades y voz/dictado** — el propio artículo los deja

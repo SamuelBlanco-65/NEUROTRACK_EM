@@ -90,7 +90,7 @@ function toCaregiverLink(row: CaregiverLinkRow): CaregiverLink {
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sin 0/O ni 1/I: se confunden al transcribir a mano
 
 /** Aleatoriedad criptográfica (polyfill importado en `@/lib/supabase`); 256 es múltiplo de 32, sin sesgo. */
-function generateInviteCode(): string {
+export function generateInviteCode(): string {
   const bytes = new Uint8Array(6);
   crypto.getRandomValues(bytes);
   let code = '';

@@ -14,7 +14,7 @@ export type LegalDocument = {
 export const SUPPORT_EMAIL = 'neurotrackem@gmail.com';
 
 /** Versión de los documentos que se acepta al crear la cuenta. Súbela cada vez que cambie su contenido. */
-export const LEGAL_VERSION = '2026-11';
+export const LEGAL_VERSION = '2026-11.2';
 
 export const LEGAL_DOCUMENTS: Record<LegalDocId, LegalDocument> = {
   terminos: {
@@ -27,7 +27,7 @@ export const LEGAL_DOCUMENTS: Record<LegalDocId, LegalDocument> = {
       {
         heading: 'Qué es Neurotrack EM',
         body: [
-          'Es una app de acompañamiento para personas con esclerosis múltiple y sus cuidadores: te permite registrar síntomas, hacer actividades de estimulación y compartir, si tú quieres, parte de esa información con alguien de confianza. Es un proyecto académico.',
+          'Es una app de acompañamiento para personas con esclerosis múltiple y sus cuidadores: te permite registrar síntomas, hacer actividades de estimulación y compartir, si tú quieres, parte de esa información con alguien de confianza o con tu médico tratante. Es un proyecto académico.',
         ],
       },
       {
@@ -50,6 +50,14 @@ export const LEGAL_DOCUMENTS: Record<LegalDocId, LegalDocument> = {
         body: [
           'Solo tú decides quién te acompaña. Una persona cuidadora ve únicamente lo que tú autorices (síntomas, progreso, recordatorios) y puedes quitarle el acceso cuando quieras.',
           'Si eres cuidador, usa lo que ves con respeto y solo para acompañar a esa persona.',
+        ],
+      },
+      {
+        heading: 'Médico tratante',
+        body: [
+          'Tu médico tratante solo ve un resumen de lo que tú autorices (síntomas, actividades y, aparte, tus notas escritas, que vienen apagadas), después de que aceptes su solicitud y hasta la fecha que elijas. Solo puede leer: no puede cambiar tus registros. Puedes quitarle el acceso cuando quieras y deja de ver tu información de inmediato.',
+          'Si eres profesional de la salud y usas la app con un paciente: úsala solo para atender a quien te autorizó, solo con lo que habilitó y mientras dure su autorización. Mantén la reserva sobre lo que ves (secreto profesional, Ley 23 de 1981) y no lo compartas ni lo uses para otro fin. Si usas «Compartir resumen», el texto lleva el nombre del paciente y, si él las autorizó, sus notas: envíalo solo por canales seguros.',
+          'Neurotrack EM no es una historia clínica ni un servicio de telesalud: no sirve para dar indicaciones ni para comunicarte con el paciente. Lo que copies a la historia clínica es tu responsabilidad. No verificamos que seas profesional ni tu registro: el paciente lo ve tal como lo escribiste.',
         ],
       },
       {
@@ -95,6 +103,7 @@ export const LEGAL_DOCUMENTS: Record<LegalDocId, LegalDocument> = {
           'Tu nombre y correo electrónico.',
           'Lo que registras: síntomas con su severidad y notas, resultados y nivel en las actividades, y recordatorios.',
           'Si eres cuidador: tus observaciones privadas y los mensajes de ánimo que envías.',
+          'Si eres médico tratante: tu nombre y correo y, si lo escribes, tu registro profesional (lo declaras tú; no lo verificamos), además de la última fecha en que revisaste el resumen de un paciente, que el paciente puede ver.',
           'La fecha y la versión de los documentos que aceptaste al crear tu cuenta.',
           'Tus preferencias de accesibilidad se guardan solo en tu teléfono.',
         ],
@@ -108,13 +117,15 @@ export const LEGAL_DOCUMENTS: Record<LegalDocId, LegalDocument> = {
       {
         heading: 'Para qué los usamos',
         body: [
-          'Únicamente para que la app funcione: mostrarte tu calendario y tu progreso, sincronizarlos entre tus dispositivos y compartirlos con quien tú autorices. No vendemos tus datos ni los usamos para publicidad.',
+          'Únicamente para que la app funcione: mostrarte tu calendario y tu progreso, sincronizarlos entre tus dispositivos y compartirlos con quien tú autorices (una persona cuidadora o tu médico tratante, para apoyar la conversación en consulta). La app no genera alertas ni conclusiones clínicas. No vendemos tus datos ni los usamos para publicidad.',
         ],
       },
       {
         heading: 'Quién puede verlos',
         body: [
           'Solo tú. Una persona cuidadora ve únicamente lo que habilitaste en «Cuidadores» y solo después de que aceptes su solicitud. Las notas privadas de un cuidador no las ve el paciente.',
+          'Tu médico tratante ve únicamente lo que habilitaste en «Mi médico», después de que aceptes su solicitud y hasta la fecha que elijas (o sin fecha de fin). Solo puede leer. Tus notas escritas son un permiso aparte y vienen apagadas. Si quitas el acceso, deja de ver tu información de inmediato.',
+          'Neurotrack EM no es tu historia clínica. Si tu médico copia información a la suya, esa copia la gestiona él conforme a la ley.',
         ],
       },
       {

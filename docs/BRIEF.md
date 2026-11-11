@@ -17,14 +17,16 @@ generando un historial útil para la próxima consulta (§II-C).
 - **Paciente** (principal): registra síntomas, hace actividades, ve su evolución, encuentra apoyo.
 - **Cuidador / familiar** (principal): registra observaciones, acompaña, recibe recordatorios,
   accede a lo que el paciente autorice.
-- **Médico tratante** (opcional, fuera del MVP): revisaría resúmenes. Trabajo futuro.
+- **Médico tratante** (opcional, extra fuera del MVP): revisa un resumen de solo lectura de lo que el paciente
+  autorice, comparando el mes actual con el anterior, sin alertas ni diagnósticos (D-016).
 
 ## Alcance (MVP, §IV-C)
 Dentro: registro + calendario de síntomas, set reducido de actividades de estimulación
 (no todas las áreas), módulo básico del cuidador, cuentas y sincronización entre dispositivos.
 Transversal: accesibilidad WCAG 2.2 AA (prioridad semestre: escalado de texto, contraste
 validado, lector de pantalla).
-Fuera: biomarcadores digitales, sensores/wearables, validación clínica, perfil del médico.
+Fuera: biomarcadores digitales, sensores/wearables, validación clínica. El perfil del médico se hizo como extra
+(D-016), no como parte del MVP.
 
 ## Entregables (Fase 3, §6 — 100% de la nota final)
 1. **Documento Técnico Final** — Markdown en `/docs` (`ENTREGA-FINAL.md`), 5 secciones, 5–8 págs,

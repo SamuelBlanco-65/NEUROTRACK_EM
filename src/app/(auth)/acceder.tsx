@@ -18,6 +18,7 @@ import { ThemedView } from '@/components/themed-view';
 import { resendConfirmationEmail } from '@/features/auth/api';
 import type { AuthError } from '@/features/auth/types';
 import { isValidEmail } from '@/features/auth/validation';
+import { PROFILE_HOME, PROFILE_LABEL } from '@/features/profile/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { authErrorCleared, confirmationNoticeCleared, login, register } from '@/store/slices/auth-slice';
 import { profileCleared } from '@/store/slices/profile-slice';
@@ -52,7 +53,7 @@ export default function AccederScreen() {
 
   if (!perfil) return <Redirect href="/" />;
   if (authStatus === 'authenticated') {
-    return <Redirect href={perfil === 'paciente' ? '/(paciente)/inicio' : '/(cuidador)/inicio'} />;
+    return <Redirect href={PROFILE_HOME[perfil]} />;
   }
 
   const enviando = authStatus === 'authenticating';
@@ -168,7 +169,7 @@ export default function AccederScreen() {
           <View style={[styles.profileChip, { backgroundColor: colors.secondaryContainer }]}>
             <MaterialIcons name="person" size={20} color={colors.primaryContainer} />
             <ThemedText variant="labelSm" colorRole="onSecondaryContainer">
-              Perfil: {perfil === 'paciente' ? 'Paciente' : 'Cuidador'}
+              Perfil: {PROFILE_LABEL[perfil]}
             </ThemedText>
           </View>
         </View>
@@ -306,7 +307,7 @@ export default function AccederScreen() {
                 }}
                 accessibilityRole="checkbox"
                 accessibilityState={{ checked: acepto }}
-                accessibilityLabel="Acepto los términos de uso y autorizo el tratamiento de mis datos de salud, incluida su transferencia a los servidores de los proveedores de la app"
+                accessibilityLabel="Acepto los términos de uso y autorizo el tratamiento de mis datos de salud, incluida su transferencia a los servidores de los proveedores de la app y su consulta por las personas, cuidador o profesional de salud, que yo autorice"
                 style={styles.consentRow}
                 testID="acceder-consentimiento">
                 <View
@@ -321,7 +322,8 @@ export default function AccederScreen() {
                 </View>
                 <ThemedText variant="bodySm" style={styles.consentText}>
                   Acepto los términos de uso y autorizo el tratamiento de mis datos de salud, incluida su transferencia a
-                  los servidores de los proveedores de la app, para que funcione.
+                  los servidores de los proveedores de la app y su consulta por las personas (cuidador o profesional de
+                  salud) que yo autorice, para que funcione.
                 </ThemedText>
               </Pressable>
               <View style={styles.consentLinks}>

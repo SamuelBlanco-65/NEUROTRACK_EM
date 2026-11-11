@@ -25,6 +25,19 @@ describe('documentos legales', () => {
     expect(texto).toMatch(/15 días hábiles/);
   });
 
+  it('cubren al médico tratante: solo lectura, permiso aparte para notas, reserva y que no es historia clínica', () => {
+    const terminos = allText('terminos');
+    const privacidad = allText('privacidad');
+    expect(terminos).toMatch(/Médico tratante/);
+    expect(terminos).toMatch(/solo puede leer/i);
+    expect(terminos).toMatch(/secreto profesional/i);
+    expect(terminos).toMatch(/no es una historia clínica/i);
+    expect(privacidad).toMatch(/«Mi médico»/);
+    expect(privacidad).toMatch(/notas escritas son un permiso aparte/i);
+    expect(privacidad).toMatch(/no es tu historia clínica/i);
+    expect(privacidad).toMatch(/registro profesional/i);
+  });
+
   it('exigen mayoría de edad sin excepciones', () => {
     const texto = allText('terminos');
     expect(texto).toMatch(/mayor de 18 años/);

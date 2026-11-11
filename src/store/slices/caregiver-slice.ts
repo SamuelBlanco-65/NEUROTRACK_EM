@@ -25,6 +25,8 @@ import type {
   CaregiverObservationDraft,
   CaregiverPermissions,
 } from '@/features/caregiver/types';
+import { listSharedSymptomLogs } from '@/features/symptoms/api';
+import type { SymptomLog } from '@/features/symptoms/types';
 import type { RootState } from '@/store/store';
 
 function startOfWeekISO(): string {
@@ -64,6 +66,9 @@ type CaregiverState = {
   viewedWeekSessionCount: number;
   viewedLastPracticeByArea: Record<ActivityArea, string | null>;
   viewStatus: LoadStatus;
+  // Síntomas de la semana del paciente acompañado (sin notas), solo si compartió `share_sintomas`.
+  viewedSymptoms: SymptomLog[];
+  symptomsStatus: LoadStatus;
 };
 
 const initialState: CaregiverState = {
@@ -88,6 +93,8 @@ const initialState: CaregiverState = {
   viewedWeekSessionCount: 0,
   viewedLastPracticeByArea: { memoria: null, atencion: null, movimiento: null },
   viewStatus: 'idle',
+  viewedSymptoms: [],
+  symptomsStatus: 'idle',
 };
 
 export const fetchPatientCaregiverData = createAsyncThunk<
@@ -277,6 +284,25 @@ export const fetchCaregiverPatientActivity = createAsyncThunk<
   }
 });
 
+/** Síntomas de la semana en curso del paciente acompañado, vía `shared_symptom_logs` (sin notas). */
+export const fetchCaregiverPatientSymptoms = createAsyncThunk<
+  SymptomLog[],
+  string,
+  { rejectValue: CaregiverError }
+>('caregiver/fetchPatientSymptoms', async (patientId, { rejectWithValue }) => {
+  try {
+    const now = new Date();
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString();
+    return await listSharedSymptomLogs(patientId, startOfWeekISO(), endOfToday);
+  } catch (error) {
+    const known = error as { message?: string };
+    return rejectWithValue({
+      errorClass: 'servidor',
+      message: known.message ?? 'No pudimos cargar los síntomas',
+    });
+  }
+});
+
 const caregiverSlice = createSlice({
   name: 'caregiver',
   initialState,
@@ -393,6 +419,16 @@ const caregiverSlice = createSlice({
       })
       .addCase(fetchCaregiverPatientActivity.rejected, (state) => {
         state.viewStatus = 'error';
+      })
+      .addCase(fetchCaregiverPatientSymptoms.pending, (state) => {
+        state.symptomsStatus = 'cargando';
+      })
+      .addCase(fetchCaregiverPatientSymptoms.fulfilled, (state, action) => {
+        state.symptomsStatus = 'listo';
+        state.viewedSymptoms = action.payload;
+      })
+      .addCase(fetchCaregiverPatientSymptoms.rejected, (state) => {
+        state.symptomsStatus = 'error';
       });
   },
 });

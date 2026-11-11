@@ -5,6 +5,7 @@ import { resetAll } from './actions';
 import activitiesReducer from './slices/activities-slice';
 import authReducer from './slices/auth-slice';
 import caregiverReducer from './slices/caregiver-slice';
+import doctorReducer from './slices/doctor-slice';
 import profileReducer from './slices/profile-slice';
 import progressReducer from './slices/progress-slice';
 import remindersReducer from './slices/reminders-slice';
@@ -19,6 +20,7 @@ const appReducer = combineReducers({
   activities: activitiesReducer,
   progress: progressReducer,
   caregiver: caregiverReducer,
+  doctor: doctorReducer,
   reminders: remindersReducer,
 });
 

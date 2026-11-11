@@ -8,7 +8,14 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { AREA_META, MAX_LEVEL } from '@/features/activities/constants';
 import type { ActivityArea } from '@/features/activities/types';
-import { fetchCaregiverPatientActivity, fetchMyLinksAsCaregiver, sendCheerMessage } from '@/store/slices/caregiver-slice';
+import { SYMPTOM_TYPE_ICON, symptomTypeLabel } from '@/features/symptoms/constants';
+import { distinctSymptomDays, symptomDaysByType } from '@/features/symptoms/summary';
+import {
+  fetchCaregiverPatientActivity,
+  fetchCaregiverPatientSymptoms,
+  fetchMyLinksAsCaregiver,
+  sendCheerMessage,
+} from '@/store/slices/caregiver-slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
 
@@ -30,6 +37,8 @@ export default function CuidadorAcompanarScreen() {
     viewedWeekSessionCount,
     viewedLastPracticeByArea,
     viewStatus,
+    viewedSymptoms,
+    symptomsStatus,
   } = useAppSelector((state) => state.caregiver);
   const [cheerOpen, setCheerOpen] = useState(false);
   const [sentMessage, setSentMessage] = useState<string | null>(null);
@@ -45,7 +54,8 @@ export default function CuidadorAcompanarScreen() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (activeLink) dispatch(fetchCaregiverPatientActivity(activeLink.patientId));
+    if (activeLink?.shareProgreso) dispatch(fetchCaregiverPatientActivity(activeLink.patientId));
+    if (activeLink?.shareSintomas) dispatch(fetchCaregiverPatientSymptoms(activeLink.patientId));
   }, [dispatch, activeLink]);
 
   async function enviarAnimo(message: string) {
@@ -102,20 +112,29 @@ export default function CuidadorAcompanarScreen() {
     );
   }
 
-  if (!activeLink.shareProgreso) {
+  if (!activeLink.shareProgreso && !activeLink.shareSintomas) {
     return (
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
           <ScreenState
             kind="vacio"
-            title="Sin acceso al progreso"
-            description="La persona que acompañas no activó compartir su progreso."
+            title="Sin acceso por ahora"
+            description="La persona que acompañas no activó compartir su progreso ni sus síntomas."
             testID="acompanar-sin-permiso"
           />
         </SafeAreaView>
       </ThemedView>
     );
   }
+
+  const symptomsSection = (
+    <SymptomsWeekSection
+      shared={activeLink.shareSintomas}
+      status={symptomsStatus}
+      logs={viewedSymptoms}
+      colors={colors}
+    />
+  );
 
   return (
     <ThemedView style={styles.container}>
@@ -126,7 +145,21 @@ export default function CuidadorAcompanarScreen() {
           </ThemedText>
         </View>
 
-        {viewStatus === 'error' ? (
+        {!activeLink.shareProgreso ? (
+          <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+            {symptomsSection}
+            <View
+              style={[styles.respectCard, { backgroundColor: colors.surfaceContainerLow }]}
+              accessible
+              accessibilityLabel="Actividades: la persona que acompañas no compartió su progreso."
+              testID="acompanar-progreso-no-compartido">
+              <MaterialIcons name="visibility-off" size={20} color={colors.onSurfaceVariant} />
+              <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.respectText}>
+                La persona que acompañas no compartió su progreso en las actividades.
+              </ThemedText>
+            </View>
+          </ScrollView>
+        ) : viewStatus === 'error' ? (
           <ScreenState kind="error" title="No pudimos cargar el progreso" testID="acompanar-error" />
         ) : viewStatus === 'cargando' || viewStatus === 'idle' ? (
           <ScreenState kind="cargando" title="Cargando…" testID="acompanar-cargando" />
@@ -202,6 +235,8 @@ export default function CuidadorAcompanarScreen() {
               ) : null}
             </View>
 
+            {symptomsSection}
+
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <ThemedText variant="headlineSm">Áreas de práctica</ThemedText>
@@ -264,9 +299,90 @@ export default function CuidadorAcompanarScreen() {
   );
 }
 
+/** «Síntomas esta semana»: solo conteos por tipo, sin notas (las notas nunca llegan al cuidador). */
+function SymptomsWeekSection({
+  shared,
+  status,
+  logs,
+  colors,
+}: {
+  shared: boolean;
+  status: 'idle' | 'cargando' | 'listo' | 'error';
+  logs: Parameters<typeof symptomDaysByType>[0];
+  colors: ReturnType<typeof useThemeColors>;
+}) {
+  if (!shared) {
+    return (
+      <View
+        style={[styles.respectCard, { backgroundColor: colors.surfaceContainerLow }]}
+        accessible
+        accessibilityLabel="Síntomas esta semana: la persona que acompañas no compartió sus síntomas."
+        testID="acompanar-sintomas-no-compartido">
+        <MaterialIcons name="visibility-off" size={20} color={colors.onSurfaceVariant} />
+        <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.respectText}>
+          La persona que acompañas no compartió sus síntomas.
+        </ThemedText>
+      </View>
+    );
+  }
+
+  const days = distinctSymptomDays(logs);
+  const byType = symptomDaysByType(logs);
+
+  return (
+    <View style={styles.section} testID="acompanar-sintomas">
+      <ThemedText variant="headlineSm" accessibilityRole="header">
+        Síntomas esta semana
+      </ThemedText>
+      {status === 'error' ? (
+        <View accessibilityRole="alert" accessibilityLiveRegion="assertive">
+          <ThemedText variant="bodyMd" colorRole="onSurfaceVariant">
+            No pudimos cargar los síntomas. Inténtalo de nuevo más tarde.
+          </ThemedText>
+        </View>
+      ) : status === 'cargando' || status === 'idle' ? (
+        <ThemedText variant="bodyMd" colorRole="onSurfaceVariant">
+          Cargando…
+        </ThemedText>
+      ) : days === 0 ? (
+        <ThemedText variant="bodyMd" colorRole="onSurfaceVariant">
+          Esta semana no ha registrado síntomas.
+        </ThemedText>
+      ) : (
+        <>
+          <ThemedText variant="bodyMd" accessibilityLiveRegion="polite">
+            Registró síntomas en {days} {days === 1 ? 'día' : 'días'} esta semana.
+          </ThemedText>
+          {byType.map((item) => (
+            <View
+              key={item.type}
+              style={[styles.areaCard, styles.symptomRow, { backgroundColor: colors.surfaceContainerLowest }]}
+              accessible
+              accessibilityLabel={`${symptomTypeLabel(item.type)}: ${item.days} ${item.days === 1 ? 'día' : 'días'}`}>
+              <View style={[styles.areaIcon, { backgroundColor: colors.secondaryContainer }]}>
+                <MaterialIcons name={SYMPTOM_TYPE_ICON[item.type]} size={22} color={colors.primary} />
+              </View>
+              <ThemedText variant="labelLg" style={styles.respectText}>
+                {symptomTypeLabel(item.type)}
+              </ThemedText>
+              <ThemedText variant="bodyMd" colorRole="onSurfaceVariant">
+                {item.days} {item.days === 1 ? 'día' : 'días'}
+              </ThemedText>
+            </View>
+          ))}
+        </>
+      )}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  symptomRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   safeArea: {
     flex: 1,

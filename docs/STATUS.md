@@ -1,10 +1,8 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-11 · **Rama:** master · Último commit pusheado: `345e723`
-(feat(legal): política y términos completos, constancia de consentimiento e imagen de bienvenida;
-con Co-Authored-By de Amelyn, Mariana y Claude). Antes, el mismo día: `4266cd8`, `eeadd52`, `f5fd565`.
-Ver «Hecho el 2026-11-11» más abajo. **Sin commitear:** los cambios de cierre en `docs/STATUS.md`,
-`docs/DECISIONES.md` (D-014, D-015), `docs/REQUISITOS.md` y `docs/ENTORNO.md`.
+**Fecha:** 2026-11-11 · **Rama:** master · Ver «Hecho el 2026-11-11» y «T10 — Perfil del médico» más abajo.
+Commits del día (todos con Co-Authored-By de Amelyn, Mariana y Claude): `f5fd565`, `eeadd52`, `4266cd8`,
+`345e723`, `f06d957` y los del perfil médico (T10). Consultar `git log` para los hashes.
 Nota: el seed `supabase/seed/demo_data_completo.sql` ya se revisó y se subió (solo placeholders
 `PACIENTE@EJEMPLO.COM` / `CUIDADOR@EJEMPLO.COM`, sin correos reales).
 
@@ -731,38 +729,40 @@ se vio aún en pantalla del celular salvo el flujo de correo (ver abajo).
   celular recuperar contraseña, «¿Qué es?», la primera pantalla con la imagen nueva y la casilla de consentimiento.
 - Metro quedó corriendo en segundo plano (`exp://192.168.40.71:8081`); cerrarlo si estorba.
 
-## Siguiente objetivo de la próxima sesión: perfil del médico tratante (REC-003)
-**Cambio de decisión (2026-11-11):** el equipo quiere hacerlo (antes: «contemplar, todavía no hacer», D-003).
-Al empezar, actualizar D-003 en `DECISIONES.md`, la fila REC-003 en `REQUISITOS.md` y la frase «Fuera: …perfil del
-médico» de `BRIEF.md`.
-**Qué dice la fuente de verdad (PDF) sobre este perfil:**
-- Es **opcional**: «un perfil donde el neurólogo pueda ver los resultados del paciente y comparar el resultado de
-  los meses anteriores con el actual, detectando de mejor manera cambios que necesiten ser atendidos».
-- Es **complementario**: la app «no busca reemplazar la atención médica, sino proporcionar información adicional al
-  médico tratante» (propuesta de valor: «sin quitarle el protagonismo al médico tratante»).
-- Revisa información **resumida**, en **solo lectura** (BRIEF.md). El §IV-C lo dejaba como trabajo futuro; el
-  enunciado de Fase 3 no lo exige (es un extra, no puntúa por sí solo).
-**Cómo encajaría con lo que ya existe (propuesta, sin aprobar):**
-- Vinculación por código de invitación y permisos como el cuidador (`caregiver_links`): el paciente autoriza y puede
-  revocar; probablemente un tipo de vínculo «médico» y políticas RLS de **solo lectura**.
-- Contenido: progreso mes actual vs anterior (reutilizar `features/progress/logic.ts`), tendencia de síntomas y
-  actividades, resumen como el de «Preparar resumen para mi consulta». Presentar **tendencias o diferencias, no
-  alertas clínicas** (RT-004: no diagnostica ni valida clínicamente).
-- Nuevo perfil `medico` en la selección de perfil, con su grupo de rutas, y verificarlo con dos cuentas como se hizo
-  con el cuidador.
-**Legal (no olvidar):** un profesional de salud que ve datos sensibles es un destinatario nuevo. Actualizar
-términos y privacidad (hoy dicen «solo tú» y el cuidador que autorices), la casilla de consentimiento si aplica y
-subir `LEGAL_VERSION`.
-**Prioridad:** la entrega es ~2026-11-12 (hora sin confirmar). Si la sesión es **antes** de entregar, primero
-`README.md` (ENT-003), `docs/ENTREGA-FINAL.md` (ENT-002) y el ensayo de la demo; el perfil médico es un extra.
+## T10 — Perfil del médico tratante (REC-003): implementado; el usuario lo probó, sin capturas (2026-11-11)
+Extra (el enunciado de Fase 3 no lo exige). Decisión y razones: **D-016**. Es una **ayuda, no un sustituto**: el médico
+solo **lee** un resumen que el paciente autoriza; sin chat, sin alertas, sin diagnóstico (RT-004).
+- **Migración** `supabase/migrations/20261115000000_doctor_links.sql` (el usuario confirmó que la ejecutó): tabla
+  `doctor_links`, RPC `create_doctor_invite` / `claim_doctor_invite` / `mark_doctor_viewed` / `shared_symptom_logs`,
+  políticas de lectura del médico en `activity_progress` y `activity_sessions`. Endurecida tras la auditoría de seguridad
+  (código generado en el servidor, límite de intentos atómico, trigger que protege la identidad del vínculo).
+  `shared_symptom_logs` también **arregla el permiso «Síntomas» del cuidador**, que antes no tenía efecto.
+- **Código:** `src/features/doctor/` (types, constants, `logic.ts` puro con pruebas, `api.ts`, `severity-bars.tsx`),
+  `src/store/slices/doctor-slice.ts`, `src/features/profile/constants.ts` (`PROFILE_HOME`/`PROFILE_LABEL` para los 3
+  perfiles), `src/features/symptoms/summary.ts`. Pantallas: `src/app/(medico)/{pacientes,vincular-paciente,paciente/[id]}`,
+  `src/app/mi-medico.tsx` (paciente, desde «Mi cuenta»), sección «Síntomas esta semana» en `(cuidador)/acompanar.tsx`.
+- **Qué ve el médico:** constancia de registro («N de M días»), síntomas del período frente al anterior con diferencias
+  neutras, intensidad (barras + palabra), por semana/mes, actividades (sesiones y nivel) y notas **solo si el paciente las
+  autorizó** (permiso aparte, apagado por defecto). Mes o 3 meses. El paciente elige duración (3/6/12 meses o sin fecha) y
+  ve «último acceso».
+- **Legal:** términos y privacidad con sección «Médico tratante»; casilla de consentimiento actualizada;
+  `LEGAL_VERSION = '2026-11.2'`.
+- **Verificación:** `tsc`, `eslint src` y **108 pruebas jest** en verde. Auditorías `security-reviewer` y
+  `accessibility-reviewer` aplicadas. El usuario confirmó de palabra que probó el flujo con dos cuentas;
+  **`artifacts/t10/` está vacía**, así que REC-003 sigue «Implementado sin probar» hasta tener capturas.
+- **Deuda conocida (no tocada):** (1) en modo oscuro `onPrimary` sobre `primaryContainer` da ~1,1:1 y afecta ~30 archivos
+  de pantallas anteriores (las del médico usan `primary`); (2) `claim_invite`/`caregiver_links` tienen el mismo oráculo de
+  códigos y la misma carrera del límite que se corrigieron en `doctor_links`; (3) el placeholder de `TextField` da 4,1:1 en
+  oscuro; (4) comparar el diseño del médico con el de Stitch (el usuario iba a pasarlo).
 
 ## Siguiente acción concreta
 **Escribir `README.md` en la raíz (ENT-003, pendiente y puntúa en la rúbrica):** clonar, `npm install`
 (Node ≥22.13), crear `.env` con `EXPO_PUBLIC_SUPABASE_URL` y `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
 ejecutar en orden `supabase/migrations/*.sql`, `npx expo start --go`, arquitectura (Expo Router + Redux Toolkit
 + Supabase + `web-auth/` en Vercel), resumen de accesibilidad y créditos. Fuentes ya escritas: `docs/ENTORNO.md`,
-`docs/SUPABASE-CORREO.md`, este STATUS. **Si la entrega (~2026-11-12) ya pasó**, la siguiente acción es el perfil
-del médico (ver «Siguiente objetivo de la próxima sesión»).
+`docs/SUPABASE-CORREO.md`, este STATUS. Después: `docs/ENTREGA-FINAL.md` (ENT-002), capturas de T10 en
+`artifacts/t10/` y el ensayo de la demo (ENT-004). Riesgo de RT-007: `git shortlog -sne` solo cuenta a Samuel
+(Amelyn y Mariana van como Co-Authored-By); ver D-007.
 
 **Antes o junto al README, ≈10 min en el celular (lista de «Pendiente de verificar» de «Hecho el 2026-11-11»):**
 ejecutar la migración `20261114…` en Supabase, probar recuperar contraseña, «¿Qué es?», la primera pantalla con
@@ -995,7 +995,7 @@ haya algo funcionando. Obligatorio primero; recomendados al final.)_
   accesibilidad); guion de demo en vivo; verificar commits equitativos de los 3. (ENT-003, ENT-004, RT-007)
 - [x] **T7b. Correos reales + recuperar contraseña + legal + «¿Qué es?»** (2026-11-11) — RF-011 ampliado, D-014,
   D-015. Correo de punta a punta probado por el usuario (sin captura); pantallas nuevas sin ver en celular.
-- [ ] **T10. Perfil del médico tratante (REC-003)** — decidido el 2026-11-11 para la próxima sesión; ver
-  «Siguiente objetivo de la próxima sesión». Extra: no lo exige el enunciado.
+- [~] **T10. Perfil del médico tratante (REC-003)** — implementado y probado por el usuario (2026-11-11); falta
+  guardar capturas en `artifacts/t10/` para pasar a Verificado; ver «T10» arriba y D-016. Extra: no lo exige el enunciado.
 - [ ] **Transversal. Defensa individual** — repartir módulos por integrante y que cada quien
   entienda su código (estado, navegación, datos, accesibilidad). (ENT-005, EVA-004, 40%)

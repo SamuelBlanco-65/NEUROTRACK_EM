@@ -39,6 +39,12 @@ function toSymptomsError(error: unknown): SymptomsError {
         message: 'Falta crear la tabla de síntomas en la base de datos (ver supabase/migrations)',
       };
     }
+    if (error.code === 'PGRST202' || error.code === '42883') {
+      return {
+        errorClass: 'servidor',
+        message: 'Falta actualizar la base de datos con la última migración (ver supabase/migrations)',
+      };
+    }
     if (error.code === 'PGRST301' || error.code === '401') {
       return { errorClass: 'validacion', message: 'Tu sesión expiró, vuelve a iniciar sesión' };
     }
@@ -92,6 +98,27 @@ export async function listSymptomLogsForMonth(
 
   if (error) throw toSymptomsError(error);
   return (data as SymptomLogRow[]).map(toSymptomLog);
+}
+
+/**
+ * Síntomas de OTRA persona, leídos con su permiso: única vía de lectura para cuidadores y médicos
+ * (la función `shared_symptom_logs` del servidor valida el vínculo y los permisos). La nota solo
+ * llega al médico que el paciente autorizó a verlas; en los demás casos `note` es `null`.
+ * Sin acceso devuelve cero filas, no un error. Rango `[fromISO, toISO)`.
+ */
+export async function listSharedSymptomLogs(
+  patientId: string,
+  fromISO: string,
+  toISO: string
+): Promise<SymptomLog[]> {
+  const { data, error } = await supabase.rpc('shared_symptom_logs', {
+    p_patient: patientId,
+    p_from: fromISO,
+    p_to: toISO,
+  });
+
+  if (error) throw toSymptomsError(error);
+  return ((data ?? []) as SymptomLogRow[]).map(toSymptomLog);
 }
 
 /** Para la pantalla de Progreso (RF-005): un rango arbitrario en vez de un mes calendario. */

@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { PROFILE_LABEL } from '@/features/profile/constants';
 import { logout, removeAccount } from '@/store/slices/auth-slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
@@ -37,7 +38,7 @@ export default function CuentaScreen() {
   function confirmarBorrado() {
     Alert.alert(
       'Eliminar mi cuenta',
-      'Se borrarán tu cuenta y todos tus registros (síntomas, actividades, recordatorios y accesos de cuidadores). Esta acción no se puede deshacer.',
+      'Se borrarán tu cuenta y todos tus registros (síntomas, actividades, recordatorios y accesos de cuidadores y médicos). Esta acción no se puede deshacer.',
       [
         { text: 'Cancelar', style: 'cancel' },
         { text: 'Eliminar para siempre', style: 'destructive', onPress: borrarCuenta },
@@ -90,7 +91,7 @@ export default function CuentaScreen() {
               </ThemedText>
               {profile ? (
                 <ThemedText variant="labelSm" colorRole="secondary">
-                  Perfil: {profile === 'paciente' ? 'Paciente' : 'Cuidador'}
+                  Perfil: {PROFILE_LABEL[profile]}
                 </ThemedText>
               ) : null}
             </View>
@@ -110,6 +111,9 @@ export default function CuentaScreen() {
           ) : null}
 
           <View style={styles.group}>
+            {profile === 'paciente' ? (
+              <LinkRow icon="medical-services" label="Mi médico" onPress={() => router.push('/mi-medico')} testID="cuenta-mi-medico" />
+            ) : null}
             <LinkRow icon="accessibility-new" label="Accesibilidad" onPress={() => router.push('/accesibilidad')} testID="cuenta-accesibilidad" />
             <LinkRow icon="description" label="Términos de uso" onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc: 'terminos' } })} testID="cuenta-terminos" />
             <LinkRow icon="privacy-tip" label="Privacidad y datos de salud" onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc: 'privacidad' } })} testID="cuenta-privacidad" />

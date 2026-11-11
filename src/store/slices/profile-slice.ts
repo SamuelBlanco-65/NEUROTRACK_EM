@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-export type ProfileKind = 'paciente' | 'cuidador';
+export type ProfileKind = 'paciente' | 'cuidador' | 'medico';
 
 type ProfileState = {
   selected: ProfileKind | null;

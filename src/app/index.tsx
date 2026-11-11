@@ -1,11 +1,12 @@
 import { Redirect, router } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ProfileOption } from '@/components/profile-option';
+import { PROFILE_HOME } from '@/features/profile/constants';
 import { profileSelected } from '@/store/slices/profile-slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
@@ -17,12 +18,12 @@ export default function SeleccionDePerfilScreen() {
   const colors = useThemeColors();
 
   if (selected && authStatus !== 'authenticated') return <Redirect href="/(auth)/acceder" />;
-  if (selected === 'paciente') return <Redirect href="/(paciente)/inicio" />;
-  if (selected === 'cuidador') return <Redirect href="/(cuidador)/inicio" />;
+  if (selected) return <Redirect href={PROFILE_HOME[selected]} />;
 
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.brandRow}>
           <View style={styles.brandLabel}>
             <View style={[styles.brandDot, { backgroundColor: colors.primary }]} />
@@ -77,6 +78,19 @@ export default function SeleccionDePerfilScreen() {
             iconColor={colors.tertiary}
             testID="profile-option-cuidador"
           />
+          <ThemedText variant="labelSm" colorRole="secondary" style={styles.optionalLabel}>
+            Opcional
+          </ThemedText>
+          <ProfileOption
+            title="Soy médico tratante"
+            description="Revisa el resumen que tu paciente decide compartir contigo"
+            selected={selected === 'medico'}
+            onPress={() => dispatch(profileSelected('medico'))}
+            icon="medical-services"
+            iconBackgroundColor={colors.surfaceContainerHigh}
+            iconColor={colors.primary}
+            testID="profile-option-medico"
+          />
         </View>
 
         <View style={styles.noteRow}>
@@ -99,6 +113,7 @@ export default function SeleccionDePerfilScreen() {
           </ThemedText>
           <MaterialIcons name="help-outline" size={20} color={colors.secondary} />
         </Pressable>
+        </ScrollView>
       </SafeAreaView>
     </ThemedView>
   );
@@ -110,8 +125,11 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+  },
+  content: {
     paddingHorizontal: Spacing.margin,
     paddingTop: Spacing.sm,
+    paddingBottom: Spacing.lg,
     gap: Spacing.lg,
   },
   brandRow: {
@@ -151,7 +169,10 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   options: {
-    gap: Spacing.md,
+    gap: Spacing.sm,
+  },
+  optionalLabel: {
+    textAlign: 'center',
   },
   noteRow: {
     flexDirection: 'row',
