@@ -132,3 +132,10 @@ scratchpad. No sustituye una prueba en Gmail real (Gmail aplica su propio modo o
 ## Cosas que NO hay que intentar
 _(Se llena con lo aprendido; evita repetir callejones sin salida entre proyectos.)_
 - Instalar paquetes con `npm install <paquete>` en un proyecto Expo: usar `npx expo install`.
+
+## Exportar `docs/ENTREGA-FINAL.md` a PDF (2026-11-11)
+No hay pandoc. Se genera con Chrome headless: una página HTML que carga `marked@12.0.2` y `mermaid@10.9.1` desde jsDelivr, convierte
+el Markdown (insertado como JSON), dibuja los dos diagramas y se imprime con
+`chrome.exe --headless=new --disable-gpu --no-pdf-header-footer --virtual-time-budget=30000 --print-to-pdf=<salida>.pdf file:///<ruta>.html`.
+Necesita internet. Hoja A4, Georgia 11 pt, márgenes 18/17 mm, diagramas al 82 % de ancho. Para contar páginas no hay `pdfinfo`:
+`pdftotext -layout x.pdf x.txt` y contar los `\f`. El script de generación quedó en el scratchpad de la sesión, no en el repo.

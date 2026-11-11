@@ -38,11 +38,12 @@ Rúbrica: Documento 20% · Funcionalidad + Repo 30% · Presentación 10% · **De
 1. **RT-007:** que Amelyn y Mariana hagan al menos un commit propio desde su equipo, en su módulo (sin falsear `--author`, D-007).
 2. **Demo en vivo (ENT-004, 10%):** ensayar paciente → cuidador → médico y mostrar TalkBack, modo oscuro y texto grande. No hay
    diapositivas ni guion: `docs/GUIA-VIDEO.md` sigue sin llenar.
-3. **Defensa individual (ENT-005, 40%):** cada quien repasa su módulo (Samuel = síntomas/datos/auth, Amelyn = cuidador,
+3. **Defensa individual (ENT-005, 40%)** (guía de estudio: `docs/ESTUDIO-DEFENSA.md` y `.pdf`, 24 secciones con archivos, código y banco de 75 preguntas): cada quien repasa su módulo (Samuel = síntomas/datos/auth, Amelyn = cuidador,
    Mariana = actividades/progreso; el perfil médico no tiene dueño asignado). Saber explicar `accessibilityRole`,
    `lineHeight`, `Pressable`, thunks y RLS.
 4. **Confirmar con el profesor la hora de entrega** y cómo se carga el documento en la plataforma del curso (el enunciado lo
-   exige además del repo). Contar las páginas del documento (5–8 sin portada ni referencias).
+   exige además del repo). El PDF (`docs/ENTREGA-FINAL.pdf`, 10 páginas: portada, 8 de cuerpo y referencias) se regenera desde el
+   Markdown con Chrome headless; ver ENTORNO.md. Si se edita el Markdown, volver a generarlo.
 
 ## Qué está hecho (resumen por módulo)
 | Módulo | Estado | Dónde mirar |
