@@ -1,5 +1,7 @@
-/* Paleta = la de la app (src/theme/colors.ts): claro por defecto y el modo oscuro real de la app. */
+/* Paleta = la del modo claro de la app (src/theme/colors.ts). Siempre clara: no sigue el modo oscuro del
+   teléfono, para que confirmar el correo y cambiar la contraseña se vean igual que la app. */
 :root {
+  color-scheme: light;
   --bg: #fcf9f4;
   --card: #f6f3ee;
   --header: #00424d;
@@ -15,26 +17,6 @@
   --ok-text: #1c1c19;
   --err-bg: #f3dfcd;
   --err-text: #241a0f;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #181b1f;
-    --card: #1c2024;
-    --header: #223a40;
-    --header-text: #d5e6e7;
-    --text: #e5e9ee;
-    --text-muted: #8e98a4;
-    --primary: #6ec6d6;
-    --on-primary: #00363f;
-    --input-bg: #272e35;
-    --border: #6e7882;
-    --line: #3b444c;
-    --ok-bg: #29343b;
-    --ok-text: #d5e6e7;
-    --err-bg: #30261c;
-    --err-text: #f5f1eb;
-  }
 }
 
 * { box-sizing: border-box; }

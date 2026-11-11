@@ -15,8 +15,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextField, type TextFieldInput } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { requestPasswordReset, resendConfirmationEmail } from '@/features/auth/api';
+import { resendConfirmationEmail } from '@/features/auth/api';
 import type { AuthError } from '@/features/auth/types';
+import { isValidEmail } from '@/features/auth/validation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { authErrorCleared, confirmationNoticeCleared, login, register } from '@/store/slices/auth-slice';
 import { profileCleared } from '@/store/slices/profile-slice';
@@ -25,10 +26,6 @@ import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
 type Mode = 'login' | 'registro';
 
 const MIN_PASSWORD_LENGTH = 8;
-
-function validarCorreo(correo: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
-}
 
 export default function AccederScreen() {
   const dispatch = useAppDispatch();
@@ -46,7 +43,6 @@ export default function AccederScreen() {
   const [camposInvalidos, setCamposInvalidos] = useState<Record<string, string>>({});
   const [acepto, setAcepto] = useState(false);
   const [resetNotice, setResetNotice] = useState<string | null>(null);
-  const [resetSending, setResetSending] = useState(false);
   const [resendSending, setResendSending] = useState(false);
 
   const nombreRef = useRef<TextFieldInput>(null);
@@ -74,7 +70,7 @@ export default function AccederScreen() {
     if (mode === 'registro' && nombre.trim().length === 0) {
       errores.nombre = 'Cuéntanos cómo te llamas';
     }
-    if (!validarCorreo(correo)) {
+    if (!isValidEmail(correo)) {
       errores.correo = 'Escribe un correo válido';
     }
     // Al crear la cuenta se exige una contraseña de 8+ (datos de salud); al iniciar sesión solo que no esté
@@ -109,7 +105,7 @@ export default function AccederScreen() {
   async function reenviarConfirmacion() {
     const destino = pendingConfirmationEmail ?? correo;
     setResetNotice(null);
-    if (!validarCorreo(destino)) {
+    if (!isValidEmail(destino)) {
       setCamposInvalidos({ correo: 'Escribe tu correo para reenviarte la confirmación' });
       correoRef.current?.focus();
       return;
@@ -126,24 +122,11 @@ export default function AccederScreen() {
     }
   }
 
-  async function recuperarContrasena() {
+  function recuperarContrasena() {
     setResetNotice(null);
-    if (!validarCorreo(correo)) {
-      setCamposInvalidos({ correo: 'Escribe tu correo arriba y vuelve a tocar «¿Olvidaste tu contraseña?»' });
-      correoRef.current?.focus();
-      return;
-    }
-    setCamposInvalidos({});
-    setResetSending(true);
-    try {
-      await requestPasswordReset(correo);
-      setResetNotice(`Si ${correo.trim()} tiene una cuenta, te enviamos un correo para cambiar la contraseña.`);
-    } catch (error) {
-      setCamposInvalidos({ correo: (error as AuthError).message });
-      correoRef.current?.focus();
-    } finally {
-      setResetSending(false);
-    }
+    dispatch(authErrorCleared());
+    // La pantalla de recuperación llega con el correo ya escrito aquí, para no pedirlo dos veces.
+    router.push({ pathname: '/recuperar', params: { correo: correo.trim() } });
   }
 
   async function enviar() {
@@ -394,15 +377,13 @@ export default function AccederScreen() {
           {mode === 'login' ? (
             <Pressable
               onPress={recuperarContrasena}
-              disabled={resetSending}
               accessibilityRole="link"
               accessibilityLabel="¿Olvidaste tu contraseña?"
-              accessibilityHint="Te enviamos un correo para cambiarla"
-              accessibilityState={{ disabled: resetSending, busy: resetSending }}
+              accessibilityHint="Abre una pantalla para que te enviemos un correo y la cambies"
               style={styles.forgotLink}
               testID="acceder-olvide-password">
               <ThemedText variant="labelMd" colorRole="primary" style={styles.forgotText}>
-                {resetSending ? 'Enviando correo…' : '¿Olvidaste tu contraseña?'}
+                ¿Olvidaste tu contraseña?
               </ThemedText>
             </Pressable>
           ) : null}

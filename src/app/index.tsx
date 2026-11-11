@@ -1,7 +1,6 @@
-import { Redirect } from 'expo-router';
-import { useState } from 'react';
+import { Redirect, router } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Image, Modal, Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -16,7 +15,6 @@ export default function SeleccionDePerfilScreen() {
   const selected = useAppSelector((state) => state.profile.selected);
   const authStatus = useAppSelector((state) => state.auth.status);
   const colors = useThemeColors();
-  const [infoVisible, setInfoVisible] = useState(false);
 
   if (selected && authStatus !== 'authenticated') return <Redirect href="/(auth)/acceder" />;
   if (selected === 'paciente') return <Redirect href="/(paciente)/inicio" />;
@@ -89,55 +87,19 @@ export default function SeleccionDePerfilScreen() {
         </View>
 
         <Pressable
-          onPress={() => setInfoVisible(true)}
+          onPress={() => router.push('/acerca')}
           hitSlop={8}
-          accessibilityRole="button"
+          accessibilityRole="link"
           accessibilityLabel="¿Qué es Neurotrack EM?"
-          style={styles.infoLink}>
+          accessibilityHint="Abre una pantalla con información sobre la app"
+          style={styles.infoLink}
+          testID="inicio-que-es">
           <ThemedText variant="bodyMd" colorRole="secondary" style={styles.infoLinkText}>
             ¿Qué es Neurotrack EM?
           </ThemedText>
           <MaterialIcons name="help-outline" size={20} color={colors.secondary} />
         </Pressable>
       </SafeAreaView>
-
-      <Modal visible={infoVisible} transparent animationType="slide" onRequestClose={() => setInfoVisible(false)}>
-        <View style={styles.modalBackdrop}>
-          <View style={[styles.modalSheet, { backgroundColor: colors.surfaceContainerLowest }]}>
-            <View style={[styles.modalHandle, { backgroundColor: colors.surfaceContainerHighest }]} />
-            <View style={styles.modalHeader}>
-              <View style={styles.modalTitleRow}>
-                <MaterialIcons name="favorite-border" size={26} color={colors.primary} />
-                <ThemedText variant="headlineSm" accessibilityRole="header">
-                  Sobre Neurotrack EM
-                </ThemedText>
-              </View>
-              <Pressable
-                onPress={() => setInfoVisible(false)}
-                hitSlop={8}
-                accessibilityRole="button"
-                accessibilityLabel="Cerrar ventana"
-                style={styles.modalClose}>
-                <MaterialIcons name="close" size={24} color={colors.secondary} />
-              </Pressable>
-            </View>
-            <ThemedText variant="bodyMd" colorRole="secondary" style={styles.modalBody}>
-              Neurotrack EM es un espacio sereno y accesible diseñado especialmente para
-              acompañarte en tu día a día con Esclerosis Múltiple, facilitando el registro de
-              síntomas, nivel de energía y rutinas sin fricción.
-            </ThemedText>
-            <Pressable
-              onPress={() => setInfoVisible(false)}
-              accessibilityRole="button"
-              accessibilityLabel="Entendido"
-              style={[styles.modalButton, { backgroundColor: colors.primary }]}>
-              <ThemedText variant="labelLg" style={{ color: colors.onPrimary }}>
-                Entendido
-              </ThemedText>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
     </ThemedView>
   );
 }
@@ -211,48 +173,5 @@ const styles = StyleSheet.create({
   },
   infoLinkText: {
     textDecorationLine: 'underline',
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
-  },
-  modalSheet: {
-    borderTopLeftRadius: Radius.lg,
-    borderTopRightRadius: Radius.lg,
-    padding: Spacing.lg,
-    gap: Spacing.md,
-  },
-  modalHandle: {
-    width: 48,
-    height: 6,
-    borderRadius: 3,
-    alignSelf: 'center',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  modalTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    flexShrink: 1,
-  },
-  modalClose: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalBody: {
-    lineHeight: 24,
-  },
-  modalButton: {
-    minHeight: 56,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
