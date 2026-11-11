@@ -25,6 +25,7 @@ export default function NuevaObservacionScreen() {
   const { myLinksAsCaregiver, savingObservation } = useAppSelector((state) => state.caregiver);
   const [category, setCategory] = useState<ObservationCategory>('animo');
   const [note, setNote] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const activeLink = useMemo(
     () => myLinksAsCaregiver.find((link) => link.status === 'aceptado') ?? null,
@@ -33,10 +34,16 @@ export default function NuevaObservacionScreen() {
 
   async function guardar() {
     if (!activeLink || note.trim().length === 0) return;
-    await dispatch(
+    setErrorMessage(null);
+    const result = await dispatch(
       addObservation({ linkId: activeLink.id, patientId: activeLink.patientId, category, note: note.trim() })
     );
-    router.back();
+    if (addObservation.fulfilled.match(result)) {
+      router.back();
+    } else {
+      // La nota se queda en pantalla: no se pierde lo que escribió.
+      setErrorMessage(result.payload?.message ?? 'No pudimos guardar la observación. Inténtalo de nuevo.');
+    }
   }
 
   return (
@@ -95,6 +102,7 @@ export default function NuevaObservacionScreen() {
             placeholderTextColor={colors.outline}
             multiline
             numberOfLines={4}
+            maxLength={1000}
             style={[styles.textArea, { backgroundColor: colors.surfaceContainerLow, color: colors.onSurface }]}
             accessibilityLabel="Descripción de la observación"
             testID="nueva-observacion-texto"
@@ -106,6 +114,19 @@ export default function NuevaObservacionScreen() {
               Esta nota queda en tu bitácora privada de cuidador.
             </ThemedText>
           </View>
+
+          {errorMessage ? (
+            <View
+              style={[styles.privacyBanner, { backgroundColor: colors.tertiaryFixed }]}
+              accessibilityRole="alert"
+              accessibilityLiveRegion="assertive"
+              testID="nueva-observacion-error">
+              <MaterialIcons name="error" size={20} color={colors.onTertiaryFixed} />
+              <ThemedText variant="labelMd" colorRole="onTertiaryFixed" style={styles.privacyText}>
+                {errorMessage}
+              </ThemedText>
+            </View>
+          ) : null}
 
           <Pressable
             onPress={guardar}

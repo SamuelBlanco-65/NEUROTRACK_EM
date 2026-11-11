@@ -66,5 +66,8 @@ export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+    // PKCE: el enlace del correo trae un `code` de un solo uso que la app canjea (ver features/auth/api.ts),
+    // en vez de tokens de sesión en la URL.
+    flowType: 'pkce',
   },
 });

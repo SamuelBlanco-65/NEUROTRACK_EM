@@ -23,10 +23,17 @@ const AREAS: ActivityArea[] = ['memoria', 'atencion', 'movimiento'];
 export default function CuidadorAcompanarScreen() {
   const dispatch = useAppDispatch();
   const colors = useThemeColors();
-  const { myLinksAsCaregiver, viewedProgress, viewedWeekSessionCount, viewedLastPracticeByArea, viewStatus } =
-    useAppSelector((state) => state.caregiver);
+  const {
+    myLinksAsCaregiver,
+    caregiverStatus,
+    viewedProgress,
+    viewedWeekSessionCount,
+    viewedLastPracticeByArea,
+    viewStatus,
+  } = useAppSelector((state) => state.caregiver);
   const [cheerOpen, setCheerOpen] = useState(false);
   const [sentMessage, setSentMessage] = useState<string | null>(null);
+  const [cheerError, setCheerError] = useState<string | null>(null);
 
   const activeLink = useMemo(
     () => myLinksAsCaregiver.find((link) => link.status === 'aceptado') ?? null,
@@ -43,13 +50,41 @@ export default function CuidadorAcompanarScreen() {
 
   async function enviarAnimo(message: string) {
     if (!activeLink) return;
-    await dispatch(sendCheerMessage({ linkId: activeLink.id, patientId: activeLink.patientId, message }));
-    setSentMessage(message);
+    setCheerError(null);
+    const result = await dispatch(
+      sendCheerMessage({ linkId: activeLink.id, patientId: activeLink.patientId, message })
+    );
+    if (sendCheerMessage.fulfilled.match(result)) {
+      setSentMessage(message);
+    } else {
+      setCheerError(result.payload?.message ?? 'No pudimos enviar el mensaje. Inténtalo de nuevo.');
+    }
   }
 
   function cerrarConfirmacion() {
     setSentMessage(null);
+    setCheerError(null);
     setCheerOpen(false);
+  }
+
+  if (caregiverStatus === 'idle' || caregiverStatus === 'cargando') {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <ScreenState kind="cargando" title="Cargando…" testID="acompanar-cargando-vinculo" />
+        </SafeAreaView>
+      </ThemedView>
+    );
+  }
+
+  if (caregiverStatus === 'error') {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <ScreenState kind="error" title="No pudimos cargar tu vínculo" testID="acompanar-error-vinculo" />
+        </SafeAreaView>
+      </ThemedView>
+    );
   }
 
   if (!activeLink) {
@@ -137,7 +172,20 @@ export default function CuidadorAcompanarScreen() {
                       </Pressable>
                     </View>
                   ) : (
-                    CHEER_MESSAGES.map((message) => (
+                    <>
+                      {cheerError ? (
+                        <View
+                          style={[styles.cheerConfirmation, { backgroundColor: colors.tertiaryFixed }]}
+                          accessibilityRole="alert"
+                          accessibilityLiveRegion="assertive"
+                          testID="acompanar-animo-error">
+                          <MaterialIcons name="error" size={18} color={colors.onTertiaryFixed} />
+                          <ThemedText variant="labelSm" colorRole="onTertiaryFixed" style={styles.cheerConfirmationText}>
+                            {cheerError}
+                          </ThemedText>
+                        </View>
+                      ) : null}
+                      {CHEER_MESSAGES.map((message) => (
                       <Pressable
                         key={message}
                         onPress={() => enviarAnimo(message)}
@@ -147,7 +195,8 @@ export default function CuidadorAcompanarScreen() {
                         testID={`acompanar-animo-opcion-${message.slice(0, 4)}`}>
                         <ThemedText variant="bodySm">{message}</ThemedText>
                       </Pressable>
-                    ))
+                      ))}
+                    </>
                   )}
                 </View>
               ) : null}

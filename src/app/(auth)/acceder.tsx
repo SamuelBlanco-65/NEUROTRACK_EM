@@ -1,18 +1,30 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Redirect, router } from 'expo-router';
-import { useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useRef, useState, type RefObject } from 'react';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { TextField } from '@/components/text-field';
+import { TextField, type TextFieldInput } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { requestPasswordReset, resendConfirmationEmail } from '@/features/auth/api';
+import type { AuthError } from '@/features/auth/types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { authErrorCleared, confirmationNoticeCleared, login, register } from '@/store/slices/auth-slice';
 import { profileCleared } from '@/store/slices/profile-slice';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
 
 type Mode = 'login' | 'registro';
+
+const MIN_PASSWORD_LENGTH = 8;
 
 function validarCorreo(correo: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
@@ -32,6 +44,15 @@ export default function AccederScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [camposInvalidos, setCamposInvalidos] = useState<Record<string, string>>({});
+  const [acepto, setAcepto] = useState(false);
+  const [resetNotice, setResetNotice] = useState<string | null>(null);
+  const [resetSending, setResetSending] = useState(false);
+  const [resendSending, setResendSending] = useState(false);
+
+  const nombreRef = useRef<TextFieldInput>(null);
+  const correoRef = useRef<TextFieldInput>(null);
+  const passwordRef = useRef<TextFieldInput>(null);
+  const confirmRef = useRef<TextFieldInput>(null);
 
   if (!perfil) return <Redirect href="/" />;
   if (authStatus === 'authenticated') {
@@ -43,6 +64,7 @@ export default function AccederScreen() {
   function cambiarModo(siguiente: Mode) {
     setMode(siguiente);
     setCamposInvalidos({});
+    setResetNotice(null);
     dispatch(authErrorCleared());
     dispatch(confirmationNoticeCleared());
   }
@@ -55,14 +77,73 @@ export default function AccederScreen() {
     if (!validarCorreo(correo)) {
       errores.correo = 'Escribe un correo válido';
     }
-    if (password.length < 6) {
-      errores.password = 'La contraseña debe tener al menos 6 caracteres';
+    // Al crear la cuenta se exige una contraseña de 8+ (datos de salud); al iniciar sesión solo que no esté
+    // vacía, para no dejar fuera a quien ya creó su cuenta con una más corta.
+    if (mode === 'registro' ? password.length < MIN_PASSWORD_LENGTH : password.length === 0) {
+      errores.password =
+        mode === 'registro'
+          ? `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`
+          : 'Escribe tu contraseña';
     }
     if (mode === 'registro' && confirmPassword !== password) {
       errores.confirmPassword = 'Las contraseñas no coinciden';
     }
+    if (mode === 'registro' && !acepto) {
+      errores.acepto = 'Para crear tu cuenta necesitamos que aceptes los términos y la autorización de datos';
+    }
     setCamposInvalidos(errores);
+
+    // Foco al primer campo con error: el lector de pantalla salta ahí y lee su etiqueta y el aviso.
+    const primero: [string, RefObject<TextFieldInput | null>][] = [
+      ['nombre', nombreRef],
+      ['correo', correoRef],
+      ['password', passwordRef],
+      ['confirmPassword', confirmRef],
+    ];
+    const conError = primero.find(([campo]) => errores[campo]);
+    conError?.[1].current?.focus();
+
     return Object.keys(errores).length === 0;
+  }
+
+  async function reenviarConfirmacion() {
+    const destino = pendingConfirmationEmail ?? correo;
+    setResetNotice(null);
+    if (!validarCorreo(destino)) {
+      setCamposInvalidos({ correo: 'Escribe tu correo para reenviarte la confirmación' });
+      correoRef.current?.focus();
+      return;
+    }
+    setCamposInvalidos({});
+    setResendSending(true);
+    try {
+      await resendConfirmationEmail(destino);
+      setResetNotice(`Te reenviamos el correo de confirmación a ${destino.trim()}. Revisa también el spam.`);
+    } catch (error) {
+      setCamposInvalidos({ correo: (error as AuthError).message });
+    } finally {
+      setResendSending(false);
+    }
+  }
+
+  async function recuperarContrasena() {
+    setResetNotice(null);
+    if (!validarCorreo(correo)) {
+      setCamposInvalidos({ correo: 'Escribe tu correo arriba y vuelve a tocar «¿Olvidaste tu contraseña?»' });
+      correoRef.current?.focus();
+      return;
+    }
+    setCamposInvalidos({});
+    setResetSending(true);
+    try {
+      await requestPasswordReset(correo);
+      setResetNotice(`Si ${correo.trim()} tiene una cuenta, te enviamos un correo para cambiar la contraseña.`);
+    } catch (error) {
+      setCamposInvalidos({ correo: (error as AuthError).message });
+      correoRef.current?.focus();
+    } finally {
+      setResetSending(false);
+    }
   }
 
   async function enviar() {
@@ -135,6 +216,19 @@ export default function AccederScreen() {
           </View>
         ) : null}
 
+        {resetNotice ? (
+          <View
+            style={[styles.confirmBanner, { backgroundColor: colors.secondaryContainer }]}
+            accessibilityRole="alert"
+            accessibilityLiveRegion="polite"
+            testID="acceder-reset-aviso">
+            <MaterialIcons name="mark-email-read" size={22} color={colors.primaryContainer} />
+            <ThemedText variant="bodySm" colorRole="onSecondaryContainer" style={styles.confirmText}>
+              {resetNotice}
+            </ThemedText>
+          </View>
+        ) : null}
+
         <View
           accessibilityRole="tablist"
           accessibilityLabel="Tipo de acceso"
@@ -174,6 +268,7 @@ export default function AccederScreen() {
               autoComplete="name"
               textContentType="name"
               errorText={camposInvalidos.nombre}
+              inputRef={nombreRef}
               testID="acceder-nombre"
             />
           ) : null}
@@ -187,6 +282,7 @@ export default function AccederScreen() {
             autoComplete="email"
             textContentType="emailAddress"
             errorText={camposInvalidos.correo ?? authError?.message}
+            inputRef={correoRef}
             testID="acceder-correo"
           />
           <TextField
@@ -199,6 +295,7 @@ export default function AccederScreen() {
             autoComplete={mode === 'login' ? 'password' : 'password-new'}
             textContentType={mode === 'login' ? 'password' : 'newPassword'}
             errorText={camposInvalidos.password}
+            inputRef={passwordRef}
             testID="acceder-password"
           />
           {mode === 'registro' ? (
@@ -212,20 +309,100 @@ export default function AccederScreen() {
               autoComplete="password-new"
               textContentType="newPassword"
               errorText={camposInvalidos.confirmPassword}
+              inputRef={confirmRef}
               testID="acceder-confirmar-password"
             />
           ) : null}
 
+          {mode === 'registro' ? (
+            <View style={styles.consent}>
+              <Pressable
+                onPress={() => {
+                  setAcepto((v) => !v);
+                  setCamposInvalidos((prev) => ({ ...prev, acepto: '' }));
+                }}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: acepto }}
+                accessibilityLabel="Acepto los términos de uso y autorizo el tratamiento de mis datos de salud"
+                style={styles.consentRow}
+                testID="acceder-consentimiento">
+                <View
+                  style={[
+                    styles.checkbox,
+                    {
+                      borderColor: camposInvalidos.acepto ? colors.tertiary : colors.primary,
+                      backgroundColor: acepto ? colors.primaryContainer : 'transparent',
+                    },
+                  ]}>
+                  {acepto ? <MaterialIcons name="check" size={20} color={colors.onPrimary} /> : null}
+                </View>
+                <ThemedText variant="bodySm" style={styles.consentText}>
+                  Acepto los términos de uso y autorizo el tratamiento de mis datos de salud para que la app funcione.
+                </ThemedText>
+              </Pressable>
+              <View style={styles.consentLinks}>
+                <Pressable
+                  onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc: 'terminos' } })}
+                  accessibilityRole="link"
+                  accessibilityLabel="Leer los términos de uso"
+                  style={styles.consentLink}
+                  testID="acceder-ver-terminos">
+                  <ThemedText variant="labelMd" colorRole="primary" style={styles.forgotText}>
+                    Leer términos
+                  </ThemedText>
+                </Pressable>
+                <Pressable
+                  onPress={() => router.push({ pathname: '/legal/[doc]', params: { doc: 'privacidad' } })}
+                  accessibilityRole="link"
+                  accessibilityLabel="Leer la política de privacidad y datos de salud"
+                  style={styles.consentLink}
+                  testID="acceder-ver-privacidad">
+                  <ThemedText variant="labelMd" colorRole="primary" style={styles.forgotText}>
+                    Leer privacidad
+                  </ThemedText>
+                </Pressable>
+              </View>
+              {camposInvalidos.acepto ? (
+                <View
+                  style={[styles.consentError, { backgroundColor: colors.tertiaryFixed }]}
+                  accessibilityRole="alert"
+                  accessibilityLiveRegion="assertive">
+                  <MaterialIcons name="error" size={20} color={colors.onTertiaryFixed} />
+                  <ThemedText variant="labelMd" colorRole="onTertiaryFixed" style={styles.consentText}>
+                    {camposInvalidos.acepto}
+                  </ThemedText>
+                </View>
+              ) : null}
+            </View>
+          ) : null}
+
+          {mode === 'login' && (pendingConfirmationEmail || authError?.authClass === 'correo-sin-confirmar') ? (
+            <Pressable
+              onPress={reenviarConfirmacion}
+              disabled={resendSending}
+              accessibilityRole="button"
+              accessibilityLabel="Reenviar el correo de confirmación"
+              accessibilityState={{ disabled: resendSending, busy: resendSending }}
+              style={styles.forgotLink}
+              testID="acceder-reenviar-confirmacion">
+              <ThemedText variant="labelMd" colorRole="primary" style={styles.forgotText}>
+                {resendSending ? 'Reenviando…' : 'Reenviar correo de confirmación'}
+              </ThemedText>
+            </Pressable>
+          ) : null}
+
           {mode === 'login' ? (
             <Pressable
+              onPress={recuperarContrasena}
+              disabled={resetSending}
               accessibilityRole="link"
               accessibilityLabel="¿Olvidaste tu contraseña?"
-              accessibilityHint="Función aún no disponible"
-              accessibilityState={{ disabled: true }}
-              disabled
-              style={styles.forgotLink}>
+              accessibilityHint="Te enviamos un correo para cambiarla"
+              accessibilityState={{ disabled: resetSending, busy: resetSending }}
+              style={styles.forgotLink}
+              testID="acceder-olvide-password">
               <ThemedText variant="labelMd" colorRole="primary" style={styles.forgotText}>
-                ¿Olvidaste tu contraseña?
+                {resetSending ? 'Enviando correo…' : '¿Olvidaste tu contraseña?'}
               </ThemedText>
             </Pressable>
           ) : null}
@@ -348,6 +525,43 @@ const styles = StyleSheet.create({
   },
   forgotText: {
     textDecorationLine: 'underline',
+  },
+  consent: {
+    gap: Spacing.xs,
+  },
+  consentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    minHeight: MinTouchSize,
+  },
+  checkbox: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  consentText: {
+    flex: 1,
+  },
+  consentLinks: {
+    flexDirection: 'row',
+    gap: Spacing.lg,
+    marginLeft: 28 + Spacing.sm,
+  },
+  consentLink: {
+    minHeight: MinTouchSize,
+    justifyContent: 'center',
+  },
+  consentError: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    borderRadius: Radius.default / 2,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
   },
   submit: {
     flexDirection: 'row',

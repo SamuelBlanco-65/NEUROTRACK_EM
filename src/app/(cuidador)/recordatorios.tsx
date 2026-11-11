@@ -32,9 +32,10 @@ function presetToISO(dayOffset: number, hour: number): string {
 export default function CuidadorRecordatoriosScreen() {
   const dispatch = useAppDispatch();
   const colors = useThemeColors();
-  const { myLinksAsCaregiver } = useAppSelector((state) => state.caregiver);
+  const { myLinksAsCaregiver, caregiverStatus } = useAppSelector((state) => state.caregiver);
   const { items, status, creating } = useAppSelector((state) => state.reminders);
   const [formOpen, setFormOpen] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<ReminderCategory>('medicacion');
   const [presetIndex, setPresetIndex] = useState(0);
@@ -55,7 +56,8 @@ export default function CuidadorRecordatoriosScreen() {
   async function crear() {
     if (!activeLink || title.trim().length === 0) return;
     const preset = TIME_PRESETS[presetIndex];
-    await dispatch(
+    setFormError(null);
+    const result = await dispatch(
       addReminder({
         patientId: activeLink.patientId,
         title: title.trim(),
@@ -63,13 +65,38 @@ export default function CuidadorRecordatoriosScreen() {
         scheduledAt: presetToISO(preset.dayOffset, preset.hour),
       })
     );
-    setTitle('');
-    setFormOpen(false);
+    if (addReminder.fulfilled.match(result)) {
+      setTitle('');
+      setFormOpen(false);
+    } else {
+      // El formulario se queda abierto con lo escrito para poder reintentar.
+      setFormError(result.payload?.message ?? 'No pudimos guardar el recordatorio. Inténtalo de nuevo.');
+    }
   }
 
   async function marcarHecho(reminderId: string) {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await dispatch(completeReminder(reminderId));
+  }
+
+  if (caregiverStatus === 'idle' || caregiverStatus === 'cargando') {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <ScreenState kind="cargando" title="Cargando…" testID="recordatorios-cargando-vinculo" />
+        </SafeAreaView>
+      </ThemedView>
+    );
+  }
+
+  if (caregiverStatus === 'error') {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <ScreenState kind="error" title="No pudimos cargar tu vínculo" testID="recordatorios-error-vinculo" />
+        </SafeAreaView>
+      </ThemedView>
+    );
   }
 
   if (!activeLink) {
@@ -225,6 +252,18 @@ export default function CuidadorRecordatoriosScreen() {
                     );
                   })}
                 </View>
+                {formError ? (
+                  <View
+                    style={[styles.formError, { backgroundColor: colors.tertiaryFixed }]}
+                    accessibilityRole="alert"
+                    accessibilityLiveRegion="assertive"
+                    testID="recordatorios-form-error">
+                    <MaterialIcons name="error" size={20} color={colors.onTertiaryFixed} />
+                    <ThemedText variant="labelMd" colorRole="onTertiaryFixed" style={styles.formErrorText}>
+                      {formError}
+                    </ThemedText>
+                  </View>
+                ) : null}
                 <Pressable
                   onPress={crear}
                   disabled={title.trim().length === 0 || creating}
@@ -336,6 +375,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.xs,
+  },
+  formError: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    borderRadius: Radius.default / 2,
+    padding: Spacing.sm,
+  },
+  formErrorText: {
+    flex: 1,
   },
   chip: {
     minHeight: MinTouchSize - 8,

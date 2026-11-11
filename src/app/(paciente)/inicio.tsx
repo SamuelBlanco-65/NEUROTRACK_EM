@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AccountButton } from '@/components/account-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { homeScript } from '@/features/audio/screen-scripts';
@@ -68,7 +69,11 @@ export default function PacienteInicioScreen() {
     });
   }, [dispatch, weekDays]);
 
-  const greetingName = session?.email ? capitalize(session.email.split('@')[0]) : null;
+  const greetingName = session?.name
+    ? session.name.split(' ')[0]
+    : session?.email
+      ? capitalize(session.email.split('@')[0])
+      : null;
   const dateLabel = capitalize(
     today.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })
   );
@@ -119,8 +124,9 @@ export default function PacienteInicioScreen() {
               hitSlop={8}
               style={[styles.profileButton, { backgroundColor: colors.primary }]}
               testID="paciente-inicio-cuidadores">
-              <MaterialIcons name="person" size={18} color={colors.onPrimary} />
+              <MaterialIcons name="group" size={18} color={colors.onPrimary} />
             </Pressable>
+            <AccountButton testID="paciente-inicio-cuenta" />
           </View>
         </View>
 

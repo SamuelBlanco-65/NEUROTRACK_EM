@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="robots" content="noindex" />
+  <title>Confirmar correo · Neurotrack EM</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main>
+    <p class="marca">Neurotrack EM</p>
+    <h1 id="titulo">Confirma tu correo</h1>
+    <p class="suave" id="texto">Toca el botón para terminar de crear tu cuenta.</p>
+
+    <div id="mensaje" role="status" aria-live="polite" hidden></div>
+
+    <button type="button" id="confirmar">Confirmar mi correo</button>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="/config.js"></script>
+  <script src="/auth.js"></script>
+  <script>
+    (function () {
+      var web = window.NeurotrackWeb;
+      var params = web.parametros();
+      var boton = document.getElementById('confirmar');
+      var mensaje = document.getElementById('mensaje');
+      var titulo = document.getElementById('titulo');
+      var texto = document.getElementById('texto');
+
+      if (!params.token_hash) {
+        boton.hidden = true;
+        titulo.textContent = 'Enlace incompleto';
+        texto.textContent = 'Abre el enlace desde el correo que te enviamos, o pide uno nuevo desde la app.';
+        return;
+      }
+
+      boton.addEventListener('click', function () {
+        boton.disabled = true;
+        boton.textContent = 'Confirmando…';
+        // La confirmación se hace al tocar el botón (no al abrir la página) para que los
+        // revisores automáticos de los correos no gasten el enlace.
+        web.cliente().auth.verifyOtp({ token_hash: params.token_hash, type: 'signup' }).then(function (res) {
+          if (res.error) {
+            boton.disabled = false;
+            boton.textContent = 'Confirmar mi correo';
+            web.mostrar(mensaje, 'error', web.traducir(res.error));
+            return;
+          }
+          boton.hidden = true;
+          titulo.textContent = '¡Correo confirmado!';
+          texto.textContent = 'Tu cuenta ya está lista. Abre la app de Neurotrack EM e inicia sesión.';
+          web.mostrar(mensaje, 'ok', 'Listo: puedes cerrar esta página.');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

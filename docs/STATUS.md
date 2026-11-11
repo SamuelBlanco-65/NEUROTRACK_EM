@@ -1,11 +1,10 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-09 (3ª sesión del día) · **Rama:** master · Último commit pusheado:
-`da06c9e` (feat(T6): accesibilidad ajustable, fidelidad visual y modo oscuro — incluye también
-el módulo de Apoyo y las pruebas jest-expo de T5/T6 que habían quedado sin commitear). **Sin
-cambios de código en esta 3ª sesión** — solo se respondió una pregunta de onboarding de una
-compañera (ver "Pendientes en paralelo"). Working tree: `docs/STATUS.md` y `docs/DECISIONES.md`
-modificados (de la 2ª sesión, sin commitear a propósito — ver diff antes de commitear).
+**Fecha:** 2026-11-10 · **Rama:** master · Último commit pusheado: `7133316`
+(feat(T7): dictado por voz y lectura en voz alta, REC-001/REC-002; con Co-Authored-By de Amelyn,
+Mariana y Claude). Antes: `e767792` (docs), `da06c9e` (T6). **Sin commitear:** solo
+`supabase/seed/demo_data_completo.sql` (seed de demostración, a propósito: sin revisar). Este
+cierre además modifica `docs/STATUS.md`, `docs/REQUISITOS.md` y `docs/ENTORNO.md`.
 
 ## ⚠️ Equipo y co-autoría Git (LEER ANTES DE CUALQUIER COMMIT)
 Proyecto en equipo de 3. **TODO commit debe atribuir a los tres.** El autor es Samuel
@@ -669,53 +668,55 @@ resuelta) y la amplió. Commit `da06c9e`, pusheado con `Co-Authored-By` de Amely
      se confirmó en Memoria y recordatorios. **No hecho** (no confirmado por texto en esta
      sesión).
 
-## T7 (parcial) — Voz: REC-001 y REC-002 implementados sin probar (2026-11-10)
-El equipo ya venía trabajando esto; se terminó y se documentó. El perfil del médico (REC-003)
-queda como idea, **decidido no hacerlo por ahora**. Detalle y razones: **D-013**.
+## T7 — Voz: REC-001 y REC-002 implementados y commiteados (2026-11-10)
+Perfil del médico (REC-003): **idea registrada, decidido NO hacerlo por ahora** (el usuario lo
+dejó en "contemplar, todavía no hacer"). Decisión y razones de la voz: **D-013**.
 - **REC-001 (dictado):** botón «Dictar con voz» en `registrar-sintoma/paso-3.tsx`
   (`features/audio/dictation-button.tsx`) enfoca la nota y guía a usar el micrófono del
-  teclado del sistema. No hay reconocedor propio.
+  teclado del sistema. No hay reconocedor propio (Expo SDK 58 no lo trae).
 - **REC-002 (versión auditiva):** `expo-speech` (`features/audio/`: `speech.ts`, `voice.ts`,
   `scripts.ts`, `screen-scripts.ts`, `speak-button.tsx`, `use-activity-narration.ts`).
   Interruptor «Lectura en voz alta» en `/accesibilidad` (`audioGuidance` en `settings-slice`,
   apagado por defecto) que **manda sobre todo**: `SpeakButton` no se pinta si está apagado.
   Encendido: botón «Escuchar» en actividades, `registrar-sintoma/paso-1..3`, inicio del
   paciente, calendario (detalle del día), progreso y `apoyo/[id]`; auto-lectura solo en
-  actividades. Corregido el 2026-11-10 tras probar: antes el botón sí sonaba con el interruptor
-  apagado (confuso).
-- Se arregló el typecheck de `paso-3.tsx` (tipo del ref del `TextInput`), se escribieron
-  `audio/__tests__/scripts-test.ts` y `voice-test.ts`. `tsc` 0 errores, `eslint` limpio sobre
-  los archivos tocados, **63 tests jest en verde** (antes 31).
-- **Sin probar en emulador/celular** (el usuario es quien lo corre): (a) en `/accesibilidad`
-  activar «Lectura en voz alta» y entrar a Memoria/Atención/Movimiento, que hable al cambiar de
-  momento sin repetirse con cada toque; (b) con el interruptor apagado no debe verse ningún
-  «Escuchar» en ninguna pantalla, y al apagarlo hablando debe callar; una guía larga de Apoyo
-  debe leerse completa;
-  (c) que el emulador tenga voz en español instalada (si no, `speak` calla); (d) en el paso 3
-  del síntoma, «Dictar con voz» abre el teclado y muestra la ayuda.
+  actividades. Textos largos partidos por frases (`splitForSpeech`).
+- **Cambio de diseño a mitad de sesión:** la 1ª versión dejaba el botón «Escuchar» activo con
+  el interruptor apagado; el usuario lo señaló como confuso y se cambió a "el interruptor manda".
+- **Verificación:**
+  - Código: `tsc` 0 errores, `eslint` limpio sobre los archivos tocados (no se corrió sobre todo
+    el repo), **63 tests jest en verde** (antes 31; +32 en `features/audio/__tests__/`).
+  - **Confirmado verbalmente por el usuario en su celular (Expo Go):** «Escuchar» funciona; con
+    TalkBack encendido, al tocar «Escuchar» mientras habla, la voz de la app se detiene y manda
+    TalkBack (arbitraje de audio de Android, es correcto y no hay que cambiarlo).
+  - **No hay captura en `artifacts/`** para REC-001 ni REC-002, y el usuario **no ha confirmado**
+    el dictado («Dictar con voz» abre el teclado y el micrófono del teclado escribe en la nota).
+    Por eso siguen «Implementado sin probar» en `REQUISITOS.md` (regla: Verificado solo con
+    prueba o captura).
 - `supabase/seed/demo_data_completo.sql` (sin commitear): datos de demostración para simular
-  actividad y consultar en la demo. Revisar que no tenga un correo real antes de commitear.
+  actividad. Antes de commitearlo, comprobar que no tenga un correo real (el repo es público).
 
 ## Siguiente acción concreta
-**Verificar en emulador TODO lo de la 2ª sesión del 2026-11-09 (ver sección "T6 (continuación)"
-arriba) — nada de eso se ha visto correr todavía, solo se revisó por código y contra capturas
-de Stitch.** En orden sugerido:
+**Cerrar T7 con evidencia (≈10 min, en el celular con Expo Go):** (1) en el paso 3 de registrar
+síntoma, tocar «Dictar con voz» y confirmar que abre el teclado y que el micrófono del teclado
+escribe en la nota; (2) con «Lectura en voz alta» encendida, tomar una captura de un botón
+«Escuchar» y otra del dictado, y guardarlas en `artifacts/t7/`. Con eso se suben REC-001 y
+REC-002 a Verificado en `REQUISITOS.md` y `STATUS.md`.
 
-1. `adb shell "cmd uimode night yes"` y recorrer la app: confirmar que las superficies ahora sí
-   se aclaran con la elevación y que **las tarjetas de "Tu plan de hoy" en inicio del paciente
-   ya se ven** (el bug concreto que el usuario reportó al cierre de esta sesión). Si sigue sin
-   notarse, la próxima palanca es `surfaceContainerHigh`/`surfaceContainerHighest` en
-   `src/theme/colors.ts` (ver D-012) — no volver a tocar las fijas (`primary`/`secondary`/
-   `tertiary`), que ya están validadas por contraste.
-2. Abrir `/accesibilidad` desde el ícono nuevo en el header de Inicio (paciente): probar los 4
-   toggles uno por uno, cerrar y reabrir la app para confirmar que la preferencia persiste
-   (`AsyncStorage`), y tocar "Restablecer configuración".
-3. Con eso confirmado, retomar el pendiente de la sesión anterior que quedó sin hacer (no se
-   tocó en esta sesión):
-   - Recorrido con TalkBack documentado (`artifacts/t6/talkback-notas.md`).
-   - Captura con fuente del sistema ampliada (`adb shell settings put system font_scale 1.3`).
-   - Confirmación verbal de que la háptica de Atención/Movimiento se siente.
-   - Con eso, subir RNF-001, 002, 003, 004, 007 y 009 a Verificado en `REQUISITOS.md`.
+**Después, por prioridad de rúbrica (entrega ~2026-11-12, hora sin confirmar):** ENT-003
+(`README.md`), ENT-002 (`docs/ENTREGA-FINAL.md`), RT-007 (`git shortlog -sne` con los 3) y
+ensayo de la demo (ENT-004); la defensa individual (ENT-005, 40%) pesa más que cualquier
+verificación visual pendiente. Si queda tiempo, la verificación de T6 de la sesión del 09-nov
+(nada de eso se ha visto correr; solo se revisó por código):
+1. `adb shell "cmd uimode night yes"` (o apariencia oscura en `/accesibilidad`) y recorrer la
+   app: que las superficies se aclaren con la elevación y que **las tarjetas de "Tu plan de
+   hoy" en inicio del paciente se vean**. Si no, la palanca es `surfaceContainerHigh`/
+   `surfaceContainerHighest` en `src/theme/colors.ts` (D-012); no tocar las fijas.
+2. `/accesibilidad`: probar los toggles, cerrar y reabrir la app para confirmar que persisten
+   (`AsyncStorage`) y «Restablecer configuración».
+3. Recorrido con TalkBack documentado (`artifacts/t6/talkback-notas.md`), captura con fuente
+   ampliada (`adb shell settings put system font_scale 1.3`) y confirmación de la háptica de
+   Atención/Movimiento; con eso subir RNF-001, 002, 003, 004, 007 y 009 a Verificado.
 
 Pendiente menor, no bloquea lo anterior:
 - RF-007 (selección de perfil) sigue sin marcar explícitamente en `REQUISITOS.md` aunque el
@@ -732,6 +733,24 @@ Pendientes en paralelo (no bloquean lo anterior):
   tablas de dominio.
 
 ## Ya intentado, no repetir
+- **En la herramienta Bash, NO crear archivos largos con heredocs (`cat <<'EOF'`, `python - <<'EOF'`)
+  si el contenido lleva comillas, apóstrofes o secuencias de escape (backslash + n, backslash + s).**
+  Falló tres veces con `unexpected EOF while looking for matching` y, una vez, una regex con
+  esas secuencias dentro del heredoc de Python quedó con un salto de línea real y rompió
+  `features/audio/voice.ts` en silencio. **Lo que sí funciona:** crear el archivo con la
+  herramienta `Write` (o editar con `Edit`) y, si hace falta un script, escribirlo con `Write` y
+  ejecutarlo aparte; reservar `python - <<'EOF'` para reemplazos cortos sin regex ni escapes (y
+  comprobar con `grep -n`/`cat -A` lo escrito).
+- **No dejar el botón «Escuchar» funcionando con el interruptor «Lectura en voz alta» apagado.**
+  Se hizo así primero (para que "siempre se pueda pedir a mano") y el usuario lo rechazó por
+  confuso: el interruptor no hacía lo que decía. Ahora `SpeakButton` no se pinta si está apagado
+  (D-013). No volver a la versión de "dos niveles".
+- **No intentar arreglar que TalkBack "pise" la voz de la app.** Con TalkBack activo, Android da
+  prioridad a TalkBack y corta `expo-speech`; el usuario lo confirmó y lo aceptó como correcto.
+  El texto del interruptor ya avisa que con TalkBack no hace falta.
+- **Levantar Expo para el celular desde un proceso en segundo plano no muestra QR** (no hay
+  terminal visible). Dar al usuario la URL `exp://<IP-LAN>:8081` para «Enter URL manually» en Expo
+  Go. Este equipo tiene varios adaptadores (VMware, Tailscale): la IP útil era `192.168.40.71`.
 - **No asumas que todos los exports de "modo oscuro" de Stitch en `artifacts/modo-oscuro-stitch/`
   tienen el mismo formato.** Al extraer la paleta real (2026-11-09, 2ª sesión) se encontró que
   las ~35 carpetas vienen de generaciones distintas: unas traen la config Tailwind completa
@@ -802,11 +821,15 @@ Pendientes en paralelo (no bloquean lo anterior):
 - **Borrar repos con `gh repo delete`: falla** con HTTP 403 "needs delete_repo scope". El token
   de `gh` tiene scopes `gist, read:org, repo` (sin `delete_repo`). Para borrar: `gh auth refresh
   -h github.com -s delete_repo` (interactivo, lo corre el usuario) o borrar por la web.
-- **No usar la cuenta `Samuelsss-oss`** (correo `samuelsblancog@gmail.com`) para commits del
+- **No usar la cuenta vieja `Samuelsss-oss`** para commits del
   proyecto: es una cuenta vieja de Samuel. La de la materia es `SamuelBlanco-65`. El Git local
   del repo ya está configurado correcto; no revertir.
 
 ## Errores conocidos
+- **`supabase/seed/demo_data_completo.sql` sin commitear ni revisar** (puede tener un correo real;
+  el repo es público). No lo subas sin abrirlo.
+- **Sin captura ni confirmación del dictado (REC-001) y sin capturas de REC-002** — ver
+  "Siguiente acción concreta".
 - ~~`package.json` no tiene script `test`~~ **RESUELTO (T6):** `"test": "jest"` con preset
   `jest-expo`, 31 tests en verde (`npx jest`).
 - ~~El scaffold por defecto NO compila ni pasa lint~~ **RESUELTO (2026-11-03, 2ª sesión).**
@@ -858,7 +881,7 @@ haya algo funcionando. Obligatorio primero; recomendados al final.)_
 - [x] **T5. Apoyo/Info** — contenidos de apoyo; subtítulos si hay audiovisual. (RF-009, RF-010)
   Verificado en emulador para ambos perfiles — ver sección "T5 — Apoyo/Info" arriba.
 - [ ] **T6. Accesibilidad + pruebas** — pase de accesibilidad y pruebas jest-expo de la lógica. (RNF-*, pruebas)
-- [~] **T7. Extensiones** — voz/dictado y versión auditiva implementados sin probar (REC-001, REC-002, D-013); perfil médico (REC-003) aplazado por decisión del equipo.
+- [~] **T7. Extensiones** — voz/dictado y versión auditiva commiteados en `7133316` (REC-001, REC-002, D-013); falta confirmar el dictado y capturas para Verificado; perfil médico (REC-003) aplazado por decisión del equipo ("contemplar, todavía no hacer").
 - [ ] **T8. Documento Final** — `docs/ENTREGA-FINAL.md`: 5 secciones, matriz competitiva (Fase 1),
   diagrama de arquitectura E2E, **matriz trazable de accesibilidad** (mejora → archivo → prueba),
   pruebas y conclusiones; refs IEEE/APA. (ENT-002, EVA-001)

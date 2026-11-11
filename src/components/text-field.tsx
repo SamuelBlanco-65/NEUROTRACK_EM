@@ -1,9 +1,12 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useState } from 'react';
+import { useState, type ComponentRef, type Ref } from 'react';
 import { Pressable, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
+
+/** Instancia del `TextInput` de un `TextField` (para `useRef` y `.focus()`). */
+export type TextFieldInput = ComponentRef<typeof TextInput>;
 
 type TextFieldProps = Pick<
   TextInputProps,
@@ -14,6 +17,8 @@ type TextFieldProps = Pick<
   secureEntry?: boolean;
   errorText?: string;
   testID?: string;
+  /** Para mover el foco (y con él el lector de pantalla) al primer campo inválido. */
+  inputRef?: Ref<TextFieldInput>;
 };
 
 /** Campo de texto con icono, estado de error doble-codificado (RNF-006) y alternar contraseña. */
@@ -29,6 +34,7 @@ export function TextField({
   autoComplete,
   textContentType,
   testID,
+  inputRef,
 }: TextFieldProps) {
   const colors = useThemeColors();
   const [hidden, setHidden] = useState(secureEntry);
@@ -49,6 +55,7 @@ export function TextField({
         ]}>
         <MaterialIcons name={icon} size={22} color={hasError ? colors.tertiary : colors.outline} />
         <TextInput
+          ref={inputRef}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}

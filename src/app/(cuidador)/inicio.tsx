@@ -4,6 +4,7 @@ import { useEffect, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AccountButton } from '@/components/account-button';
 import { ScreenState } from '@/components/screen-state';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -46,6 +47,9 @@ export default function CuidadorInicioScreen() {
     return (
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <View style={styles.accountBar}>
+            <AccountButton testID="cuidador-inicio-cuenta" />
+          </View>
           <ScreenState
             kind="error"
             title="No pudimos cargar tu vínculo"
@@ -71,6 +75,9 @@ export default function CuidadorInicioScreen() {
     return (
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <View style={styles.accountBar}>
+            <AccountButton testID="cuidador-inicio-cuenta" />
+          </View>
           <View style={styles.centerContainer}>
             <View style={[styles.icon, { backgroundColor: colors.secondaryContainer }]}>
               <MaterialIcons name="handshake" size={36} color={colors.primary} />
@@ -101,6 +108,9 @@ export default function CuidadorInicioScreen() {
     return (
       <ThemedView style={styles.container}>
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <View style={styles.accountBar}>
+            <AccountButton testID="cuidador-inicio-cuenta" />
+          </View>
           <View style={styles.centerContainer} testID="cuidador-inicio-solicitud-pendiente">
             <View style={[styles.icon, { backgroundColor: colors.secondaryContainer }]}>
               <MaterialIcons name="hourglass-top" size={36} color={colors.primary} />
@@ -132,9 +142,7 @@ export default function CuidadorInicioScreen() {
               Inicio
             </ThemedText>
           </View>
-          <View style={[styles.avatarBadge, { backgroundColor: colors.primary }]}>
-            <MaterialIcons name="person" size={18} color={colors.onPrimary} />
-          </View>
+          <AccountButton testID="cuidador-inicio-cuenta" />
         </View>
 
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -270,12 +278,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.xs,
   },
-  avatarBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+  accountBar: {
+    alignItems: 'flex-end',
+    paddingHorizontal: Spacing.margin,
+    paddingTop: Spacing.sm,
   },
   scroll: {
     paddingHorizontal: Spacing.margin,

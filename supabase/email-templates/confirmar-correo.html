@@ -1,0 +1,26 @@
+<!-- Supabase > Authentication > Emails > "Confirm signup".
+     Asunto sugerido: Confirma tu correo en Neurotrack EM -->
+<div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #1c1b18; line-height: 1.5;">
+  <h1 style="font-size: 22px; margin: 0 0 16px;">Te damos la bienvenida a Neurotrack EM</h1>
+  <p style="font-size: 16px; margin: 0 0 16px;">
+    Para terminar de crear tu cuenta, confirma tu correo tocando el botón. Puedes hacerlo desde cualquier
+    dispositivo; después inicia sesión en la app.
+  </p>
+  <p style="margin: 24px 0;">
+    <a href="{{ .SiteURL }}/confirmar?token_hash={{ .TokenHash }}&type=signup"
+       style="display: inline-block; background: #00424d; color: #ffffff; text-decoration: none; font-size: 18px; font-weight: bold; padding: 16px 28px; border-radius: 28px;">
+      Confirmar mi correo
+    </a>
+  </p>
+  <p style="font-size: 14px; color: #4a4741; margin: 0 0 8px;">
+    Si el botón no funciona, copia y pega este enlace en tu navegador:
+  </p>
+  <p style="font-size: 13px; color: #4a4741; word-break: break-all; margin: 0 0 24px;">{{ .SiteURL }}/confirmar?token_hash={{ .TokenHash }}&type=signup</p>
+  <p style="font-size: 14px; color: #4a4741; margin: 0;">
+    Si no creaste esta cuenta, puedes ignorar este mensaje: nadie podrá entrar sin confirmar el correo.
+  </p>
+  <hr style="border: none; border-top: 1px solid #d8d4cc; margin: 24px 0;" />
+  <p style="font-size: 12px; color: #6b665d; margin: 0;">
+    Neurotrack EM es un apoyo para el seguimiento y el acompañamiento. No reemplaza a tu equipo médico.
+  </p>
+</div>

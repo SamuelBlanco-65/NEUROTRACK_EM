@@ -169,11 +169,10 @@ export const claimPatientInviteCode = createAsyncThunk<
   string,
   { state: RootState; rejectValue: CaregiverError }
 >('caregiver/claimCode', async (code, { getState, rejectWithValue }) => {
-  const session = getState().auth.session;
-  if (!session) return rejectWithValue({ errorClass: 'inesperado', message: 'No hay sesión activa' });
+  if (!getState().auth.session) return rejectWithValue({ errorClass: 'inesperado', message: 'No hay sesión activa' });
 
   try {
-    return await claimInviteCode(code, { id: session.userId, email: session.email, name: null });
+    return await claimInviteCode(code);
   } catch (error) {
     return rejectWithValue(error as CaregiverError);
   }

@@ -25,6 +25,12 @@ function toCaregiverError(error: unknown): CaregiverError {
     if (error.code === 'PGRST116') {
       return { errorClass: 'codigo-invalido', message: 'Ese código no es válido o ya fue usado' };
     }
+    if (error.code === 'P0003') {
+      return { errorClass: 'validacion', message: 'Demasiados intentos. Espera unos minutos y vuelve a probar' };
+    }
+    if (error.code === '42501') {
+      return { errorClass: 'validacion', message: 'No tienes permiso para hacer ese cambio' };
+    }
     if (error.code === 'PGRST205') {
       return {
         errorClass: 'servidor',
@@ -83,10 +89,13 @@ function toCaregiverLink(row: CaregiverLinkRow): CaregiverLink {
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sin 0/O ni 1/I: se confunden al transcribir a mano
 
+/** Aleatoriedad criptográfica (polyfill importado en `@/lib/supabase`); 256 es múltiplo de 32, sin sesgo. */
 function generateInviteCode(): string {
+  const bytes = new Uint8Array(6);
+  crypto.getRandomValues(bytes);
   let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+  for (let i = 0; i < bytes.length; i++) {
+    code += CODE_ALPHABET[bytes[i] % CODE_ALPHABET.length];
   }
   return code;
 }
@@ -178,27 +187,20 @@ export async function revokeCaregiverAccess(linkId: string): Promise<CaregiverLi
   return toCaregiverLink(data as CaregiverLinkRow);
 }
 
-/** El cuidador "reclama" el código del paciente: queda en `solicitado` hasta que el paciente acepte. */
-export async function claimInviteCode(
-  code: string,
-  caregiver: { id: string; email: string | null; name: string | null }
-): Promise<CaregiverLink> {
-  const { data, error } = await supabase
-    .from('caregiver_links')
-    .update({
-      caregiver_id: caregiver.id,
-      caregiver_email: caregiver.email,
-      caregiver_name: caregiver.name,
-      status: 'solicitado',
-    })
-    .eq('invite_code', code.toUpperCase())
-    .eq('status', 'pendiente')
-    .is('caregiver_id', null)
-    .select(LINK_COLUMNS)
-    .single();
+/**
+ * El cuidador "reclama" el código del paciente: queda en `solicitado` hasta que el paciente acepte.
+ * Lo hace la función `claim_invite` del servidor (security definer): fija quién es el cuidador
+ * (id, nombre y correo salen de su sesión, no del cliente) y limita los intentos fallidos.
+ */
+export async function claimInviteCode(code: string): Promise<CaregiverLink> {
+  const { data, error } = await supabase.rpc('claim_invite', { p_code: code });
 
   if (error) throw toCaregiverError(error);
-  return toCaregiverLink(data as CaregiverLinkRow);
+  const rows = (data ?? []) as CaregiverLinkRow[];
+  if (rows.length === 0) {
+    throw { errorClass: 'codigo-invalido', message: 'Ese código no es válido o ya fue usado' } satisfies CaregiverError;
+  }
+  return toCaregiverLink(rows[0]);
 }
 
 /** Vínculos del cuidador (como quien acompaña), el más reciente primero. */

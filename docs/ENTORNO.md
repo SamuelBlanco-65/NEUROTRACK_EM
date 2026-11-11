@@ -42,6 +42,20 @@ Comprobar con `adb devices`: debe aparecer un `emulator-*`.
 - Alternativa que siempre funciona:
   `adb exec-out screencap -p > artifacts/<nombre>.png`
 
+## Probar en un celular físico (Expo Go)
+- Celular y equipo en la **misma red Wi-Fi**. Levantar con `npx expo start --go --port 8081`.
+- Si Expo corre en segundo plano no hay QR visible: en Expo Go usar «Enter URL manually» con
+  `exp://<IP-LAN>:8081`. Este equipo tiene adaptadores extra (VMware VMnet, Tailscale); la IP
+  correcta es la de la red local (`ipconfig`; no la `100.x` de Tailscale ni las `192.168.72.x` /
+  `192.168.255.x` de VMware). Última vez: `192.168.40.71`.
+- Si no conecta: permitir Node en el Firewall de Windows (redes privadas) o usar `--tunnel`
+  (pide `@expo/ngrok`, más lento).
+- Antes de levantar, `netstat -ano | grep 8081`: un Metro viejo en el mismo puerto da errores raros.
+
+## Bash tool y archivos largos
+- No escribir archivos con heredocs que lleven comillas, apóstrofes o secuencias de escape:
+  fallan con `unexpected EOF` o corrompen el contenido en silencio. Usar `Write`/`Edit`.
+
 ## Pruebas con jest-expo
 Si un test falla con "Must use import to load ES Module", es porque el paquete se resuelve
 como ESM. La solución es ampliar `transformIgnorePatterns` en la configuración de jest

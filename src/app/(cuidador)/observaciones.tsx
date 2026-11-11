@@ -53,9 +53,8 @@ function groupByDay(observations: CaregiverObservation[]): { label: string; item
 export default function CuidadorObservacionesScreen() {
   const dispatch = useAppDispatch();
   const colors = useThemeColors();
-  const { myObservations, observationsStatus, observationsError, myLinksAsCaregiver } = useAppSelector(
-    (state) => state.caregiver
-  );
+  const { myObservations, observationsStatus, observationsError, myLinksAsCaregiver, caregiverStatus } =
+    useAppSelector((state) => state.caregiver);
 
   const activeLink = useMemo(
     () => myLinksAsCaregiver.find((link) => link.status === 'aceptado') ?? null,
@@ -89,6 +88,26 @@ export default function CuidadorObservacionesScreen() {
       ]),
     ];
     await Share.share({ message: lineas.join('\n') });
+  }
+
+  if (caregiverStatus === 'idle' || caregiverStatus === 'cargando') {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <ScreenState kind="cargando" title="Cargando…" testID="observaciones-cargando-vinculo" />
+        </SafeAreaView>
+      </ThemedView>
+    );
+  }
+
+  if (caregiverStatus === 'error') {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <ScreenState kind="error" title="No pudimos cargar tu vínculo" testID="observaciones-error-vinculo" />
+        </SafeAreaView>
+      </ThemedView>
+    );
   }
 
   if (!activeLink) {

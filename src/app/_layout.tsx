@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { Provider as StoreProvider } from 'react-redux';
 
 import { supabase } from '@/lib/supabase';
+import { resetAll } from '@/store/actions';
 import { bootstrapSession, sessionEnded } from '@/store/slices/auth-slice';
 import { hydrateSettings } from '@/store/slices/settings-slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -33,6 +34,7 @@ function AppShell() {
     const { data: subscription } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         dispatch(sessionEnded());
+        dispatch(resetAll());
       }
     });
 
