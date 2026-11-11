@@ -7,14 +7,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenState } from '@/components/screen-state';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { AreaTile, LockedAreaTile } from '@/features/activities/area-tile';
-import { AREA_META, MAX_LEVEL } from '@/features/activities/constants';
-import type { ActivityArea } from '@/features/activities/types';
+import { AreaTile } from '@/features/activities/area-tile';
+import { ACTIVITY_AREAS, AREA_META, MAX_LEVEL } from '@/features/activities/constants';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchAreaProgress } from '@/store/slices/activities-slice';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
 
-const AREAS: ActivityArea[] = ['memoria', 'atencion', 'movimiento'];
+const AREAS = ACTIVITY_AREAS;
 
 export default function PacienteActividadesScreen() {
   const dispatch = useAppDispatch();
@@ -43,8 +42,6 @@ export default function PacienteActividadesScreen() {
   }
 
   const nextArea = [...AREAS].sort((a, b) => progress[a] - progress[b])[0];
-  const logicaUnlockLevel = 3;
-  const logicaUnlocked = progress.memoria >= logicaUnlockLevel;
 
   return (
     <ThemedView style={styles.container} testID="paciente-actividades-screen">
@@ -75,7 +72,7 @@ export default function PacienteActividadesScreen() {
             <ThemedText variant="bodySm" colorRole="onSecondaryContainer">
               Nivel {progress[nextArea]} de {MAX_LEVEL[nextArea]} · 3 a 5 minutos
             </ThemedText>
-            <View style={[styles.heroButton, { backgroundColor: colors.primaryContainer }]}>
+            <View style={[styles.heroButton, { backgroundColor: colors.primary }]}>
               <ThemedText variant="labelLg" colorRole="onPrimary">
                 Empezar sesión
               </ThemedText>
@@ -99,18 +96,10 @@ export default function PacienteActividadesScreen() {
                 testID={`actividades-tile-${area}`}
               />
             ))}
-            <LockedAreaTile
-              title="Lógica"
-              unlockHint={
-                logicaUnlocked
-                  ? 'Próximamente'
-                  : `Se abre al llegar al nivel ${logicaUnlockLevel} de Memoria.`
-              }
-            />
           </View>
 
           <View style={[styles.footerCard, { backgroundColor: colors.surfaceContainer }]}>
-            <MaterialIcons name="spa" size={20} color={colors.primaryContainer} />
+            <MaterialIcons name="spa" size={20} color={colors.primary} />
             <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.footerText}>
               Puedes salir de cualquier ejercicio cuando lo necesites.
             </ThemedText>

@@ -33,14 +33,14 @@ export function ShapeButton({ shape, label, feedback, onPress, disabled, testID 
       style={({ pressed }) => [
         styles.button,
         { backgroundColor: colors.surfaceContainerLowest, opacity: pressed ? 0.9 : 1 },
-        feedback === 'correcto' ? { borderColor: colors.primaryContainer } : null,
+        feedback === 'correcto' ? { borderColor: colors.primary } : null,
         feedback === 'incorrecto' ? { borderColor: colors.error } : null,
       ]}>
       {feedback ? (
         <View
           style={[
             styles.badge,
-            { backgroundColor: feedback === 'correcto' ? colors.primaryContainer : colors.error },
+            { backgroundColor: feedback === 'correcto' ? colors.primary : colors.error },
           ]}>
           <MaterialIcons
             name={feedback === 'correcto' ? 'check' : 'close'}
@@ -50,7 +50,7 @@ export function ShapeButton({ shape, label, feedback, onPress, disabled, testID 
         </View>
       ) : null}
       <View style={[styles.iconCircle, { backgroundColor: colors.secondaryContainer }]}>
-        <MaterialIcons name={meta.icon} size={36} color={colors.primaryContainer} />
+        <MaterialIcons name={meta.icon} size={36} color={colors.primary} />
       </View>
       <ThemedText variant="labelLg" colorRole={feedback === 'correcto' ? 'primary' : 'onSurface'}>
         {meta.label}
@@ -68,7 +68,7 @@ export function ShapeSequenceItem({ shape, order }: { shape: ShapeId; order: num
     <View
       style={[styles.sequenceItem, { backgroundColor: colors.surfaceContainerLowest }]}
       accessibilityLabel={`Paso ${order}: ${meta.label}`}>
-      <MaterialIcons name={meta.icon} size={26} color={colors.primaryContainer} />
+      <MaterialIcons name={meta.icon} size={26} color={colors.primary} />
     </View>
   );
 }

@@ -158,7 +158,7 @@ export default function CuidadorRecordatoriosScreen() {
                 return (
                   <View key={reminder.id} style={[styles.card, { backgroundColor: colors.surfaceContainerLowest }]}>
                     <View style={[styles.cardIcon, { backgroundColor: colors.secondaryContainer }]}>
-                      <MaterialIcons name={CATEGORY_META[reminder.category].icon} size={22} color={colors.primaryContainer} />
+                      <MaterialIcons name={CATEGORY_META[reminder.category].icon} size={22} color={colors.primary} />
                     </View>
                     <View style={styles.cardBody}>
                       <View style={styles.cardTitleRow}>
@@ -224,7 +224,7 @@ export default function CuidadorRecordatoriosScreen() {
                         accessibilityRole="radio"
                         accessibilityState={{ checked: selected }}
                         accessibilityLabel={CATEGORY_META[key].label}
-                        style={[styles.chip, { backgroundColor: selected ? colors.primaryContainer : colors.surfaceContainerLow }]}
+                        style={[styles.chip, { backgroundColor: selected ? colors.primary : colors.surfaceContainerLow }]}
                         testID={`recordatorios-form-categoria-${key}`}>
                         <ThemedText variant="labelMd" colorRole={selected ? 'onPrimary' : 'onSurfaceVariant'}>
                           {CATEGORY_META[key].label}
@@ -243,7 +243,7 @@ export default function CuidadorRecordatoriosScreen() {
                         accessibilityRole="radio"
                         accessibilityState={{ checked: selected }}
                         accessibilityLabel={preset.label}
-                        style={[styles.chip, { backgroundColor: selected ? colors.primaryContainer : colors.surfaceContainerLow }]}
+                        style={[styles.chip, { backgroundColor: selected ? colors.primary : colors.surfaceContainerLow }]}
                         testID={`recordatorios-form-hora-${index}`}>
                         <ThemedText variant="labelMd" colorRole={selected ? 'onPrimary' : 'onSurfaceVariant'}>
                           {preset.label}
@@ -269,7 +269,7 @@ export default function CuidadorRecordatoriosScreen() {
                   disabled={title.trim().length === 0 || creating}
                   accessibilityRole="button"
                   accessibilityLabel="Guardar recordatorio"
-                  style={[styles.saveButton, { backgroundColor: colors.primaryContainer, opacity: title.trim().length === 0 ? 0.5 : 1 }]}
+                  style={[styles.saveButton, { backgroundColor: colors.primary, opacity: title.trim().length === 0 ? 0.5 : 1 }]}
                   testID="recordatorios-form-guardar">
                   <ThemedText variant="labelLg" colorRole="onPrimary">
                     {creating ? 'Guardando…' : 'Guardar recordatorio'}
@@ -285,7 +285,7 @@ export default function CuidadorRecordatoriosScreen() {
             onPress={() => setFormOpen(true)}
             accessibilityRole="button"
             accessibilityLabel="Nuevo recordatorio"
-            style={[styles.fab, { backgroundColor: colors.primaryContainer }]}
+            style={[styles.fab, { backgroundColor: colors.primary }]}
             testID="recordatorios-nuevo-fab">
             <MaterialIcons name="add" size={24} color={colors.onPrimary} />
             <ThemedText variant="labelLg" colorRole="onPrimary">

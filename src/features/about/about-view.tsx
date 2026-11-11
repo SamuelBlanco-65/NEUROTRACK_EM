@@ -113,7 +113,7 @@ export function AboutView() {
       <Section title="Cómo empezar">
         {ABOUT_STEPS.map((step, index) => (
           <View key={step} style={styles.stepRow} accessible accessibilityLabel={`Paso ${index + 1}: ${step}`}>
-            <View style={[styles.stepNumber, { backgroundColor: colors.primaryContainer }]}>
+            <View style={[styles.stepNumber, { backgroundColor: colors.primary }]}>
               <ThemedText variant="labelLg" colorRole="onPrimary">
                 {index + 1}
               </ThemedText>

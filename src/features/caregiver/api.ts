@@ -58,6 +58,7 @@ type CaregiverLinkRow = {
   caregiver_id: string | null;
   caregiver_email: string | null;
   caregiver_name: string | null;
+  patient_name: string | null;
   invite_code: string;
   status: CaregiverLink['status'];
   share_sintomas: boolean;
@@ -68,7 +69,7 @@ type CaregiverLinkRow = {
 };
 
 const LINK_COLUMNS =
-  'id, patient_id, caregiver_id, caregiver_email, caregiver_name, invite_code, status, share_sintomas, share_progreso, share_recordatorios, created_at, responded_at';
+  'id, patient_id, caregiver_id, caregiver_email, caregiver_name, patient_name, invite_code, status, share_sintomas, share_progreso, share_recordatorios, created_at, responded_at';
 
 function toCaregiverLink(row: CaregiverLinkRow): CaregiverLink {
   return {
@@ -77,6 +78,7 @@ function toCaregiverLink(row: CaregiverLinkRow): CaregiverLink {
     caregiverId: row.caregiver_id,
     caregiverEmail: row.caregiver_email,
     caregiverName: row.caregiver_name,
+    patientName: row.patient_name,
     inviteCode: row.invite_code,
     status: row.status,
     shareSintomas: row.share_sintomas,

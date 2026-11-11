@@ -1,4 +1,4 @@
-export type ActivityArea = 'memoria' | 'atencion' | 'movimiento';
+export type ActivityArea = 'memoria' | 'atencion' | 'logica' | 'movimiento';
 
 export type AreaProgress = {
   area: ActivityArea;
@@ -23,6 +23,18 @@ export type MemoriaRound = {
 export type AtencionRound = {
   shape: ShapeId;
   options: { id: string; shape: ShapeId; isOdd: boolean }[];
+};
+
+/**
+ * Una ronda de lógica: una serie de números con una regla oculta; hay que elegir el que sigue.
+ * `rule` se muestra después de responder, para que cada ronda enseñe algo (sin presión).
+ */
+export type LogicaRound = {
+  /** Términos visibles de la serie; el siguiente es `answer`. */
+  sequence: number[];
+  options: number[];
+  answer: number;
+  rule: string;
 };
 
 /** Una ronda de movimiento: lista de pasos guiados a completar. */

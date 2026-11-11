@@ -119,7 +119,7 @@ export default function PermisosScreen() {
                     onPress={compartirCodigo}
                     accessibilityRole="button"
                     accessibilityLabel="Compartir código"
-                    style={[styles.pillButton, { backgroundColor: colors.primaryContainer }]}
+                    style={[styles.pillButton, { backgroundColor: colors.primary }]}
                     testID="permisos-compartir-codigo">
                     <MaterialIcons name="share" size={20} color={colors.onPrimary} />
                     <ThemedText variant="labelMd" colorRole="onPrimary">
@@ -188,7 +188,7 @@ export default function PermisosScreen() {
                       />
 
                       <View style={[styles.trustNote, { backgroundColor: colors.surfaceContainerLow }]}>
-                        <MaterialIcons name="shield" size={18} color={colors.primaryContainer} />
+                        <MaterialIcons name="shield" size={18} color={colors.primary} />
                         <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.trustNoteText}>
                           Los cuidadores solo tienen acceso de lectura; nunca podrán modificar tus registros.
                         </ThemedText>
@@ -199,7 +199,7 @@ export default function PermisosScreen() {
                           onPress={() => dispatch(respondToIncomingRequest({ linkId: link.id, accept: true, permissions }))}
                           accessibilityRole="button"
                           accessibilityLabel="Aceptar y compartir"
-                          style={[styles.primaryButton, { backgroundColor: colors.primaryContainer }]}
+                          style={[styles.primaryButton, { backgroundColor: colors.primary }]}
                           testID={`permisos-aceptar-${link.id}`}>
                           <MaterialIcons name="check" size={20} color={colors.onPrimary} />
                           <ThemedText variant="labelLg" colorRole="onPrimary">
@@ -296,7 +296,7 @@ function PermissionRow({
         <Switch
           value={value}
           onValueChange={onChange}
-          trackColor={{ false: colors.surfaceContainerHigh, true: colors.primaryContainer }}
+          trackColor={{ false: colors.surfaceContainerHigh, true: colors.primary }}
           thumbColor={colors.surfaceContainerLowest}
           accessibilityLabel={label}
           testID={testID}

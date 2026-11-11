@@ -216,7 +216,7 @@ function Boton({
       accessibilityRole="button"
       accessibilityLabel={etiqueta}
       accessibilityState={{ disabled: ocupado, busy: ocupado }}
-      style={[styles.button, { backgroundColor: colors.primaryContainer, opacity: ocupado ? 0.8 : 1 }]}
+      style={[styles.button, { backgroundColor: colors.primary, opacity: ocupado ? 0.8 : 1 }]}
       testID={testID}>
       {ocupado ? <ActivityIndicator color={colors.onPrimary} /> : null}
       <ThemedText variant="labelLg" colorRole="onPrimary">

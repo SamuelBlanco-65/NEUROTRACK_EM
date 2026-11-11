@@ -4,7 +4,9 @@ import { listAreaProgress, logActivitySession, saveAreaLevel } from '@/features/
 import { MAX_LEVEL, ROUNDS_PER_SESSION } from '@/features/activities/constants';
 import {
   checkAtencionAnswer,
+  checkLogicaAnswer,
   generateAtencionRound,
+  generateLogicaRound,
   generateMemoriaRound,
   generateMovimientoRound,
   nextLevel,
@@ -13,6 +15,7 @@ import type {
   ActivitiesError,
   ActivityArea,
   AtencionRound,
+  LogicaRound,
   MemoriaRound,
   MovimientoRound,
   RoundResult,
@@ -30,6 +33,7 @@ export type SessionState = {
   phase: SessionPhase;
   memoriaRound: MemoriaRound | null;
   atencionRound: AtencionRound | null;
+  logicaRound: LogicaRound | null;
   movimientoRound: MovimientoRound | null;
   memoriaAnswer: ShapeId[];
   completedStepIndices: number[];
@@ -46,7 +50,7 @@ type ActivitiesState = {
 };
 
 const initialState: ActivitiesState = {
-  progress: { memoria: 1, atencion: 1, movimiento: 1 },
+  progress: { memoria: 1, atencion: 1, logica: 1, movimiento: 1 },
   progressStatus: 'idle',
   progressError: null,
   session: null,
@@ -62,7 +66,7 @@ export const fetchAreaProgress = createAsyncThunk<
   if (!patientId) return rejectWithValue({ errorClass: 'inesperado', message: 'No hay sesión activa' });
   try {
     const rows = await listAreaProgress(patientId);
-    const progress: Record<ActivityArea, number> = { memoria: 1, atencion: 1, movimiento: 1 };
+    const progress: Record<ActivityArea, number> = { memoria: 1, atencion: 1, logica: 1, movimiento: 1 };
     rows.forEach((row) => {
       progress[row.area] = row.level;
     });
@@ -70,6 +74,10 @@ export const fetchAreaProgress = createAsyncThunk<
   } catch (error) {
     return rejectWithValue(error as ActivitiesError);
   }
+}, {
+  // Al cerrar sesión el store se reinicia con la pestaña aún montada: sin esta condición la carga
+  // se lanzaba sin sesión y dejaba un error fijo («No hay sesión activa») para la cuenta siguiente.
+  condition: (_, { getState }) => Boolean(getState().auth.session),
 });
 
 export const persistAreaLevel = createAsyncThunk<
@@ -107,6 +115,7 @@ function buildRoundState(area: ActivityArea, level: number) {
   return {
     memoriaRound: area === 'memoria' ? generateMemoriaRound(level) : null,
     atencionRound: area === 'atencion' ? generateAtencionRound(level) : null,
+    logicaRound: area === 'logica' ? generateLogicaRound(level) : null,
     movimientoRound: area === 'movimiento' ? generateMovimientoRound(level) : null,
   };
 }
@@ -167,6 +176,14 @@ const activitiesSlice = createSlice({
       const session = state.session;
       if (!session || session.area !== 'atencion' || session.phase !== 'responder' || !session.atencionRound) return;
       const correct = checkAtencionAnswer(session.atencionRound, action.payload);
+      session.lastResult = correct ? 'correcto' : 'incorrecto';
+      if (correct) session.roundsCorrect += 1;
+      session.phase = 'resultado';
+    },
+    logicaOptionTapped(state, action: PayloadAction<number>) {
+      const session = state.session;
+      if (!session || session.area !== 'logica' || session.phase !== 'responder' || !session.logicaRound) return;
+      const correct = checkLogicaAnswer(session.logicaRound, action.payload);
       session.lastResult = correct ? 'correcto' : 'incorrecto';
       if (correct) session.roundsCorrect += 1;
       session.phase = 'resultado';
@@ -236,6 +253,7 @@ export const {
   memorizeReplayRequested,
   memoriaShapeTapped,
   atencionOptionTapped,
+  logicaOptionTapped,
   movimientoStepToggled,
   movimientoSessionFinished,
   roundContinued,

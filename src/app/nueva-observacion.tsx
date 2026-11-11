@@ -80,7 +80,7 @@ export default function NuevaObservacionScreen() {
                   accessibilityLabel={item.label}
                   style={[
                     styles.chip,
-                    { backgroundColor: selected ? colors.primaryContainer : colors.surfaceContainerLow },
+                    { backgroundColor: selected ? colors.primary : colors.surfaceContainerLow },
                   ]}
                   testID={`nueva-observacion-categoria-${item.id}`}>
                   <MaterialIcons name={item.icon} size={20} color={selected ? colors.onPrimary : colors.onSurfaceVariant} />
@@ -99,7 +99,7 @@ export default function NuevaObservacionScreen() {
             value={note}
             onChangeText={setNote}
             placeholder="Describe lo que observaste (comportamiento, equilibrio, energía…)"
-            placeholderTextColor={colors.outline}
+            placeholderTextColor={colors.onSurfaceVariant}
             multiline
             numberOfLines={4}
             maxLength={1000}
@@ -136,7 +136,7 @@ export default function NuevaObservacionScreen() {
             accessibilityState={{ disabled: note.trim().length === 0 || savingObservation }}
             style={[
               styles.saveButton,
-              { backgroundColor: colors.primaryContainer, opacity: note.trim().length === 0 ? 0.5 : 1 },
+              { backgroundColor: colors.primary, opacity: note.trim().length === 0 ? 0.5 : 1 },
             ]}
             testID="nueva-observacion-guardar">
             <MaterialIcons name="check-circle" size={22} color={colors.onPrimary} />

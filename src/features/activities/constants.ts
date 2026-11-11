@@ -3,8 +3,12 @@ import type { ActivityArea, ShapeId } from './types';
 export const MAX_LEVEL: Record<ActivityArea, number> = {
   memoria: 5,
   atencion: 5,
+  logica: 5,
   movimiento: 4,
 };
+
+/** Orden en que se muestran las áreas. */
+export const ACTIVITY_AREAS: ActivityArea[] = ['memoria', 'atencion', 'logica', 'movimiento'];
 
 export const ROUNDS_PER_SESSION = 3;
 // Con 2 de 3 rondas correctas se sube de nivel (RF-003: la precisión manda, no la velocidad).
@@ -12,7 +16,7 @@ export const ROUNDS_TO_LEVEL_UP = 2;
 
 export const AREA_META: Record<
   ActivityArea,
-  { title: string; icon: 'psychology' | 'auto-awesome' | 'pan-tool-alt'; description: string }
+  { title: string; icon: 'psychology' | 'auto-awesome' | 'functions' | 'pan-tool-alt'; description: string }
 > = {
   memoria: {
     title: 'Memoria',
@@ -23,6 +27,11 @@ export const AREA_META: Record<
     title: 'Atención',
     icon: 'auto-awesome',
     description: 'Encuentra la figura distinta, sin cronómetro.',
+  },
+  logica: {
+    title: 'Lógica',
+    icon: 'functions',
+    description: 'Descubre qué número sigue en la serie, sin cronómetro.',
   },
   movimiento: {
     title: 'Movimiento',

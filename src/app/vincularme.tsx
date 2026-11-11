@@ -46,7 +46,7 @@ export default function VincularmeScreen() {
               onPress={() => router.replace('/(cuidador)/inicio')}
               accessibilityRole="button"
               accessibilityLabel="Ir a Inicio"
-              style={[styles.primaryButton, { backgroundColor: colors.primaryContainer }]}
+              style={[styles.primaryButton, { backgroundColor: colors.primary }]}
               testID="vincularme-ir-a-inicio">
               <ThemedText variant="labelLg" colorRole="onPrimary">
                 Ir a Inicio
@@ -123,7 +123,7 @@ export default function VincularmeScreen() {
             accessibilityState={{ disabled: code.trim().length < 6 || claimStatus === 'enviando' }}
             style={[
               styles.primaryButton,
-              { backgroundColor: colors.primaryContainer, opacity: code.trim().length < 6 ? 0.5 : 1 },
+              { backgroundColor: colors.primary, opacity: code.trim().length < 6 ? 0.5 : 1 },
             ]}
             testID="vincularme-enviar-solicitud">
             <ThemedText variant="labelLg" colorRole="onPrimary">

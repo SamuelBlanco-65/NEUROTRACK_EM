@@ -120,7 +120,7 @@ export default function CuentaScreen() {
           </View>
 
           <View style={[styles.notice, { backgroundColor: colors.surfaceContainerLow }]}>
-            <MaterialIcons name="info" size={20} color={colors.primaryContainer} />
+            <MaterialIcons name="info" size={20} color={colors.primary} />
             <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.flex}>
               Neurotrack EM es un apoyo, no reemplaza a tu equipo médico ni sirve para diagnosticar. Ante una urgencia llama al 123.
             </ThemedText>
@@ -132,7 +132,7 @@ export default function CuentaScreen() {
             accessibilityRole="button"
             accessibilityLabel="Cerrar sesión"
             accessibilityState={{ disabled: working, busy: busy === 'logout' }}
-            style={[styles.primaryButton, { backgroundColor: colors.primaryContainer, opacity: working ? 0.7 : 1 }]}
+            style={[styles.primaryButton, { backgroundColor: colors.primary, opacity: working ? 0.7 : 1 }]}
             testID="cuenta-cerrar-sesion">
             {busy === 'logout' ? (
               <ActivityIndicator color={colors.onPrimary} />

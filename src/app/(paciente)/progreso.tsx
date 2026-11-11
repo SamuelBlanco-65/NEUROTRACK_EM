@@ -1,6 +1,6 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -257,6 +257,19 @@ function insightIconBackground(icon: string, colors: ThemeColors): string {
   return colors.surfaceContainerLowest;
 }
 
+type SeriesId = 'sintomas' | 'actividades';
+type SelectedBar = { bucketId: string; series: SeriesId } | null;
+
+const SERIES_LABEL: Record<SeriesId, string> = {
+  sintomas: 'Días con síntomas',
+  actividades: 'Actividades hechas',
+};
+
+function describeBar(bucket: ProgressBucket, series: SeriesId): string {
+  const value = series === 'sintomas' ? bucket.symptomDays : bucket.activities;
+  return `${SERIES_LABEL[series]}, ${bucket.label}: ${value}`;
+}
+
 function ProgressChart({
   buckets,
   maxValue,
@@ -267,6 +280,45 @@ function ProgressChart({
   colors: ThemeColors;
 }) {
   const barMaxHeight = 96;
+  const [selected, setSelected] = useState<SelectedBar>(null);
+  const selectedBucket = selected ? buckets.find((bucket) => bucket.id === selected.bucketId) : undefined;
+
+  function toggle(bucketId: string, series: SeriesId) {
+    setSelected((current) =>
+      current && current.bucketId === bucketId && current.series === series ? null : { bucketId, series }
+    );
+  }
+
+  function renderBar(bucket: ProgressBucket, series: SeriesId) {
+    const value = series === 'sintomas' ? bucket.symptomDays : bucket.activities;
+    const color = series === 'sintomas' ? colors.primary : colors.tertiary;
+    const isSelected = selected?.bucketId === bucket.id && selected.series === series;
+    return (
+      <Pressable
+        onPress={() => toggle(bucket.id, series)}
+        accessibilityRole="button"
+        accessibilityLabel={describeBar(bucket, series)}
+        accessibilityHint={isSelected ? 'Toca de nuevo para ocultar el detalle' : 'Muestra el detalle de esta barra'}
+        accessibilityState={{ selected: isSelected }}
+        hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+        style={styles.barWrap}
+        testID={`progreso-barra-${series}-${bucket.id}`}>
+        <ThemedText variant="labelSm">{value}</ThemedText>
+        <View
+          style={[
+            styles.bar,
+            {
+              height: Math.max(4, (value / maxValue) * barMaxHeight),
+              backgroundColor: color,
+              borderWidth: isSelected ? 2 : 0,
+              borderColor: colors.onSurface,
+            },
+          ]}
+        />
+      </Pressable>
+    );
+  }
+
   return (
     <View testID="progreso-grafico">
       <View style={styles.legendRow}>
@@ -287,30 +339,29 @@ function ProgressChart({
         {buckets.map((bucket) => (
           <View key={bucket.id} style={styles.chartColumn}>
             <View style={styles.barsRow}>
-              <View style={styles.barWrap}>
-                <ThemedText variant="labelSm">{bucket.symptomDays}</ThemedText>
-                <View
-                  style={[
-                    styles.bar,
-                    { height: Math.max(4, (bucket.symptomDays / maxValue) * barMaxHeight), backgroundColor: colors.primary },
-                  ]}
-                />
-              </View>
-              <View style={styles.barWrap}>
-                <ThemedText variant="labelSm">{bucket.activities}</ThemedText>
-                <View
-                  style={[
-                    styles.bar,
-                    { height: Math.max(4, (bucket.activities / maxValue) * barMaxHeight), backgroundColor: colors.tertiary },
-                  ]}
-                />
-              </View>
+              {renderBar(bucket, 'sintomas')}
+              {renderBar(bucket, 'actividades')}
             </View>
             <ThemedText variant="labelSm" colorRole="secondary" style={styles.chartColumnLabel}>
               {bucket.label}
             </ThemedText>
           </View>
         ))}
+      </View>
+      <View
+        style={[styles.barDetail, { backgroundColor: colors.surfaceContainerLow }]}
+        accessibilityLiveRegion="polite"
+        testID="progreso-barra-detalle">
+        <MaterialIcons
+          name={selected ? (selected.series === 'sintomas' ? 'circle' : 'change-history') : 'touch-app'}
+          size={16}
+          color={colors.onSurfaceVariant}
+        />
+        <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.barDetailText}>
+          {selected && selectedBucket
+            ? describeBar(selectedBucket, selected.series)
+            : 'Toca una barra para ver su detalle.'}
+        </ThemedText>
       </View>
     </View>
   );
@@ -497,6 +548,18 @@ const styles = StyleSheet.create({
   bar: {
     width: 12,
     borderRadius: Radius.default / 2,
+  },
+  barDetail: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    marginTop: Spacing.sm,
+    padding: Spacing.sm,
+    borderRadius: Radius.default,
+    minHeight: MinTouchSize - 8,
+  },
+  barDetailText: {
+    flex: 1,
   },
   chartColumnLabel: {
     marginTop: Spacing.xs,

@@ -51,7 +51,7 @@ export function WizardActions({
         style={({ pressed }) => [
           styles.primaryButton,
           {
-            backgroundColor: colors.primaryContainer,
+            backgroundColor: colors.primary,
             opacity: primaryDisabled ? 0.5 : pressed ? 0.9 : 1,
           },
         ]}>

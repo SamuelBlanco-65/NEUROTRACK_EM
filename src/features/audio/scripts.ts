@@ -27,6 +27,10 @@ export function atencionScript(optionsCount: number): string {
   return `Encuentra la figura distinta. Hay ${optionsCount} opciones. Tómate tu tiempo, sin prisas.`;
 }
 
+export function logicaScript(sequence: number[]): string {
+  return `Descubre qué número sigue en la serie. ${sequence.join(', ')}, y luego, ¿cuál sigue? Tómate tu tiempo, sin prisas.`;
+}
+
 export function resultScript(result: RoundResult): string {
   return result === 'correcto' ? '¡Bien hecho!' : 'Esta vez no, pero vas avanzando.';
 }
@@ -70,6 +74,7 @@ export function narrationFor(session: {
   lastResult: RoundResult | null;
   memoriaRound: { sequence: ShapeId[] } | null;
   atencionRound: { options: unknown[] } | null;
+  logicaRound: { sequence: number[] } | null;
   movimientoRound: { steps: string[] } | null;
   completedStepIndices: number[];
 }): Narration | null {
@@ -102,6 +107,9 @@ export function narrationFor(session: {
     if (area === 'memoria') return { key: `responder-${roundIndex}`, text: MEMORIA_RESPONDER_SCRIPT };
     if (area === 'atencion' && session.atencionRound) {
       return { key: `responder-${roundIndex}`, text: atencionScript(session.atencionRound.options.length) };
+    }
+    if (area === 'logica' && session.logicaRound) {
+      return { key: `responder-${roundIndex}`, text: logicaScript(session.logicaRound.sequence) };
     }
   }
   return null;

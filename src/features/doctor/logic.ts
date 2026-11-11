@@ -1,5 +1,5 @@
-import { AREA_META } from '@/features/activities/constants';
-import type { ActivityArea, ActivitySession, AreaProgress } from '@/features/activities/types';
+import { ACTIVITY_AREAS, AREA_META } from '@/features/activities/constants';
+import type { ActivitySession, AreaProgress } from '@/features/activities/types';
 import { MONTH_NAMES_SHORT } from '@/features/progress/constants';
 import type { PeriodRange } from '@/features/progress/logic';
 import type { ProgressPeriod } from '@/features/progress/types';
@@ -16,7 +16,6 @@ import type {
   SymptomNote,
 } from './types';
 
-const AREAS: ActivityArea[] = ['memoria', 'atencion', 'movimiento'];
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -237,7 +236,7 @@ export function summarizeActivities(
   progress: AreaProgress[],
   range: PeriodRange
 ): ActivityAreaSummary[] {
-  return AREAS.map((area) => ({
+  return ACTIVITY_AREAS.map((area) => ({
     area,
     sessions: sessions.filter((session) => session.area === area && inRange(session.completedAt, range)).length,
     level: progress.find((item) => item.area === area)?.level ?? null,

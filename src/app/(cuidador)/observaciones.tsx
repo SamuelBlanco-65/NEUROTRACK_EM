@@ -185,7 +185,7 @@ export default function CuidadorObservacionesScreen() {
                   {group.items.map((obs) => (
                     <View key={obs.id} style={[styles.card, { backgroundColor: colors.surfaceContainerLow }]}>
                       <View style={[styles.categoryIcon, { backgroundColor: colors.secondaryContainer }]}>
-                        <MaterialIcons name={CATEGORY_ICON[obs.category]} size={22} color={colors.primaryContainer} />
+                        <MaterialIcons name={CATEGORY_ICON[obs.category]} size={22} color={colors.primary} />
                       </View>
                       <View style={styles.cardBody}>
                         <View style={styles.cardHeaderRow}>
@@ -219,7 +219,7 @@ export default function CuidadorObservacionesScreen() {
           onPress={() => router.push('/nueva-observacion')}
           accessibilityRole="button"
           accessibilityLabel="Registrar nueva observación"
-          style={[styles.fab, { backgroundColor: colors.primaryContainer }]}
+          style={[styles.fab, { backgroundColor: colors.primary }]}
           testID="observaciones-nueva-fab">
           <MaterialIcons name="add" size={24} color={colors.onPrimary} />
           <ThemedText variant="labelLg" colorRole="onPrimary">

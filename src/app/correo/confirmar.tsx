@@ -86,7 +86,7 @@ export default function ConfirmarCorreoScreen() {
               onPress={exito ? continuar : irAlInicio}
               accessibilityRole="button"
               accessibilityLabel={exito ? 'Continuar' : 'Ir a iniciar sesión'}
-              style={[styles.button, { backgroundColor: colors.primaryContainer }]}
+              style={[styles.button, { backgroundColor: colors.primary }]}
               testID={exito ? 'confirmar-continuar' : 'confirmar-ir-acceso'}>
               <ThemedText variant="labelLg" colorRole="onPrimary">
                 {exito ? 'Continuar' : 'Ir a iniciar sesión'}

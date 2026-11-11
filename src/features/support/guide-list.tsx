@@ -52,7 +52,7 @@ export function GuideList({ guides, testID }: { guides: SupportGuide[]; testID: 
               accessibilityLabel={item.label}
               style={[
                 styles.filterChip,
-                { backgroundColor: selected ? colors.primaryContainer : colors.surfaceContainerLow },
+                { backgroundColor: selected ? colors.primary : colors.surfaceContainerLow },
               ]}
               testID={`apoyo-filtro-${item.id}`}>
               <ThemedText variant="labelMd" colorRole={selected ? 'onPrimary' : 'onSurfaceVariant'}>

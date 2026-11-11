@@ -41,7 +41,7 @@ export default function AcercaScreen() {
             onPress={cerrar}
             accessibilityRole="button"
             accessibilityLabel="Entendido, volver"
-            style={[styles.button, { backgroundColor: colors.primaryContainer }]}
+            style={[styles.button, { backgroundColor: colors.primary }]}
             testID="acerca-entendido">
             <ThemedText variant="labelLg" colorRole="onPrimary">
               Entendido

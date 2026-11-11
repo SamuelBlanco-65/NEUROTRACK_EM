@@ -59,7 +59,7 @@ export function TextField({
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor={colors.outline}
+          placeholderTextColor={colors.onSurfaceVariant}
           secureTextEntry={hidden}
           keyboardType={keyboardType}
           autoComplete={autoComplete}

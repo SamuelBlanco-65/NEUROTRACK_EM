@@ -7,15 +7,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { ALL_SHAPES, AREA_META, MAX_LEVEL, ROUNDS_PER_SESSION, SHAPE_META } from '@/features/activities/constants';
+import { ACTIVITY_AREAS, ALL_SHAPES, AREA_META, MAX_LEVEL, ROUNDS_PER_SESSION, SHAPE_META } from '@/features/activities/constants';
 import { FeedbackBadge } from '@/features/activities/feedback-badge';
 import { SessionHeader } from '@/features/activities/session-header';
 import { ShapeButton, ShapeSequenceItem } from '@/features/activities/shape-button';
-import type { ActivityArea, MovimientoRound, RoundResult, ShapeId } from '@/features/activities/types';
+import type { ActivityArea, LogicaRound, MovimientoRound, RoundResult, ShapeId } from '@/features/activities/types';
 import {
   MEMORIA_RESPONDER_SCRIPT,
   atencionScript,
   completedScript,
+  logicaScript,
   movimientoIntroScript,
   sequenceScript,
 } from '@/features/audio/scripts';
@@ -24,6 +25,7 @@ import { useActivityNarration } from '@/features/audio/use-activity-narration';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   atencionOptionTapped,
+  logicaOptionTapped,
   memorizeConfirmed,
   memorizeReplayRequested,
   memoriaShapeTapped,
@@ -38,7 +40,7 @@ import {
 } from '@/store/slices/activities-slice';
 import { MinTouchSize, Radius, Spacing, useReduceMotion, useThemeColors } from '@/theme';
 
-const VALID_AREAS: ActivityArea[] = ['memoria', 'atencion', 'movimiento'];
+const VALID_AREAS: ActivityArea[] = ACTIVITY_AREAS;
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>['name'];
 
@@ -134,7 +136,7 @@ export default function ActividadSesionScreen() {
                 accessibilityLabel="Listo, continuar"
                 style={({ pressed }) => [
                   styles.primaryButton,
-                  { backgroundColor: colors.primaryContainer, opacity: pressed ? 0.9 : 1 },
+                  { backgroundColor: colors.primary, opacity: pressed ? 0.9 : 1 },
                 ]}>
                 <ThemedText variant="labelLg" colorRole="onPrimary">
                   Listo, continuar
@@ -185,6 +187,20 @@ export default function ActividadSesionScreen() {
             </View>
           ) : null}
 
+          {session.phase === 'responder' && area === 'logica' && session.logicaRound ? (
+            <LogicaResponderBlock
+              round={session.logicaRound}
+              onPick={(option) => {
+                Haptics.notificationAsync(
+                  option === session.logicaRound?.answer
+                    ? Haptics.NotificationFeedbackType.Success
+                    : Haptics.NotificationFeedbackType.Error
+                );
+                dispatch(logicaOptionTapped(option));
+              }}
+            />
+          ) : null}
+
           {area === 'movimiento' && session.movimientoRound && session.phase !== 'completada' ? (
             <MovimientoBlock
               round={session.movimientoRound}
@@ -200,9 +216,10 @@ export default function ActividadSesionScreen() {
             />
           ) : null}
 
-          {session.phase === 'resultado' && area === 'atencion' && session.lastResult ? (
+          {session.phase === 'resultado' && (area === 'atencion' || area === 'logica') && session.lastResult ? (
             <View style={styles.block} testID="actividad-resultado">
               <FeedbackBadge result={session.lastResult} testID="actividad-feedback-badge" />
+              {area === 'logica' && session.logicaRound ? <LogicaRuleCard round={session.logicaRound} /> : null}
               <Pressable
                 onPress={() => dispatch(roundContinued())}
                 testID="actividad-continuar"
@@ -210,7 +227,7 @@ export default function ActividadSesionScreen() {
                 accessibilityLabel="Continuar"
                 style={({ pressed }) => [
                   styles.primaryButton,
-                  { backgroundColor: colors.primaryContainer, opacity: pressed ? 0.9 : 1 },
+                  { backgroundColor: colors.primary, opacity: pressed ? 0.9 : 1 },
                 ]}>
                 <ThemedText variant="labelLg" colorRole="onPrimary">
                   Continuar
@@ -300,13 +317,13 @@ function InstructionCard({
   return (
     <View style={[styles.instructionCard, { backgroundColor: colors.surfaceContainerLowest }]}>
       <View style={[styles.instructionIconCircle, { backgroundColor: colors.secondaryContainer }]}>
-        <MaterialIcons name={icon} size={24} color={colors.primaryContainer} />
+        <MaterialIcons name={icon} size={24} color={colors.primary} />
       </View>
       <ThemedText variant="headlineSm" accessibilityRole="header" style={styles.instructionHeadline}>
         {headline}
       </ThemedText>
       <View style={[styles.instructionChip, { backgroundColor: colors.surfaceContainerLow }]}>
-        <MaterialIcons name={hintIcon} size={18} color={colors.primaryContainer} />
+        <MaterialIcons name={hintIcon} size={18} color={colors.primary} />
         <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
           {hint}
         </ThemedText>
@@ -430,7 +447,7 @@ function MemoriaResponderBlock({
           accessibilityLabel="Continuar"
           style={({ pressed }) => [
             styles.primaryButton,
-            { backgroundColor: colors.primaryContainer, opacity: pressed ? 0.9 : 1 },
+            { backgroundColor: colors.primary, opacity: pressed ? 0.9 : 1 },
           ]}>
           <ThemedText variant="labelLg" colorRole="onPrimary">
             Continuar
@@ -452,6 +469,83 @@ function MemoriaResponderBlock({
           Ver la secuencia otra vez
         </ThemedText>
       </Pressable>
+    </View>
+  );
+}
+
+function LogicaSequence({ round }: { round: LogicaRound }) {
+  const colors = useThemeColors();
+  return (
+    <View
+      style={styles.numberRow}
+      accessible
+      accessibilityLabel={`Serie: ${round.sequence.join(', ')}, y falta el siguiente número`}
+      testID="actividad-logica-serie">
+      {round.sequence.map((value, index) => (
+        <View
+          key={`${value}-${index}`}
+          style={[styles.numberChip, { backgroundColor: colors.surfaceContainerLowest }]}>
+          <ThemedText variant="headlineSm">{value}</ThemedText>
+        </View>
+      ))}
+      <View style={[styles.numberChip, styles.numberChipMissing, { backgroundColor: colors.secondaryContainer, borderColor: colors.primary }]}>
+        <ThemedText variant="headlineSm" colorRole="primary">
+          ?
+        </ThemedText>
+      </View>
+    </View>
+  );
+}
+
+function LogicaResponderBlock({ round, onPick }: { round: LogicaRound; onPick: (option: number) => void }) {
+  const colors = useThemeColors();
+  return (
+    <View style={styles.block} testID="actividad-logica-responder">
+      <InstructionCard
+        icon="functions"
+        headline="¿Qué número sigue en la serie?"
+        hint="Tómate tu tiempo. Sin límites ni prisas."
+        hintIcon="spa"
+        speakText={logicaScript(round.sequence)}
+      />
+      <LogicaSequence round={round} />
+      <View style={styles.grid}>
+        {round.options.map((option, index) => (
+          <Pressable
+            key={option}
+            onPress={() => onPick(option)}
+            accessibilityRole="button"
+            accessibilityLabel={`Opción ${index + 1}: ${option}`}
+            hitSlop={4}
+            style={({ pressed }) => [
+              styles.numberOption,
+              { backgroundColor: colors.surfaceContainerLowest, borderColor: colors.outlineVariant, opacity: pressed ? 0.9 : 1 },
+            ]}
+            testID={`actividad-logica-opcion-${index}`}>
+            <ThemedText variant="headlineMd">{option}</ThemedText>
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+/** Tras responder: la regla y la respuesta, para que cada ronda enseñe algo sin presión. */
+function LogicaRuleCard({ round }: { round: LogicaRound }) {
+  const colors = useThemeColors();
+  return (
+    <View
+      style={[styles.ruleCard, { backgroundColor: colors.surfaceContainerLow }]}
+      accessible
+      accessibilityLabel={`La respuesta era ${round.answer}. ${round.rule}`}
+      testID="actividad-logica-regla">
+      <MaterialIcons name="lightbulb" size={22} color={colors.primary} />
+      <View style={styles.liveFeedbackText}>
+        <ThemedText variant="labelLg">La respuesta era {round.answer}</ThemedText>
+        <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
+          {round.rule}
+        </ThemedText>
+      </View>
     </View>
   );
 }
@@ -515,7 +609,7 @@ function MovimientoBlock({
         accessibilityState={{ disabled: !allStepsDone }}
         style={({ pressed }) => [
           styles.primaryButton,
-          { backgroundColor: colors.primaryContainer, opacity: !allStepsDone ? 0.5 : pressed ? 0.9 : 1 },
+          { backgroundColor: colors.primary, opacity: !allStepsDone ? 0.5 : pressed ? 0.9 : 1 },
         ]}>
         <ThemedText variant="labelLg" colorRole="onPrimary">
           Terminé esta sesión
@@ -550,7 +644,7 @@ function SesionCompletada({
     <View style={styles.block} testID="actividad-sesion-completada">
       <View style={styles.completedHeader}>
         <View style={[styles.completedIconCircle, { backgroundColor: colors.surfaceContainer }]}>
-          <MaterialIcons name="eco" size={36} color={colors.primaryContainer} />
+          <MaterialIcons name="eco" size={36} color={colors.primary} />
         </View>
         <ThemedText variant="headlineMd" accessibilityRole="header" style={styles.completedTitle}>
           Sesión completada
@@ -614,7 +708,7 @@ function SesionCompletada({
         style={({ pressed }) => [
           styles.primaryButton,
           styles.primaryButtonRow,
-          { backgroundColor: colors.primaryContainer, opacity: pressed ? 0.9 : 1 },
+          { backgroundColor: colors.primary, opacity: pressed ? 0.9 : 1 },
         ]}>
         <MaterialIcons name="grid-view" size={20} color={colors.onPrimary} />
         <ThemedText variant="labelLg" colorRole="onPrimary">
@@ -722,6 +816,40 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     minHeight: MinTouchSize,
     borderRadius: Radius.full,
+  },
+  numberRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.xs,
+    justifyContent: 'center',
+  },
+  numberChip: {
+    minWidth: 52,
+    minHeight: 56,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: Radius.default,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  numberChipMissing: {
+    borderWidth: 2,
+    borderStyle: 'dashed',
+  },
+  numberOption: {
+    flexBasis: '47%',
+    flexGrow: 1,
+    minHeight: 80,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ruleCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    padding: Spacing.md,
+    borderRadius: Radius.default,
   },
   stepsList: {
     gap: Spacing.sm,

@@ -6,8 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenState } from '@/components/screen-state';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { AREA_META, MAX_LEVEL } from '@/features/activities/constants';
-import type { ActivityArea } from '@/features/activities/types';
+import { ACTIVITY_AREAS, AREA_META, MAX_LEVEL } from '@/features/activities/constants';
 import { SYMPTOM_TYPE_ICON, symptomTypeLabel } from '@/features/symptoms/constants';
 import { distinctSymptomDays, symptomDaysByType } from '@/features/symptoms/summary';
 import {
@@ -25,7 +24,7 @@ const CHEER_MESSAGES = [
   '💛 Cada paso cuenta muchísimo',
 ];
 
-const AREAS: ActivityArea[] = ['memoria', 'atencion', 'movimiento'];
+const AREAS = ACTIVITY_AREAS;
 
 export default function CuidadorAcompanarScreen() {
   const dispatch = useAppDispatch();
@@ -175,7 +174,7 @@ export default function CuidadorAcompanarScreen() {
                 onPress={() => setCheerOpen((v) => !v)}
                 accessibilityRole="button"
                 accessibilityLabel="Enviarle un mensaje de ánimo"
-                style={[styles.cheerButton, { backgroundColor: colors.primaryContainer }]}
+                style={[styles.cheerButton, { backgroundColor: colors.primary }]}
                 testID="acompanar-animo-btn">
                 <MaterialIcons name="favorite" size={20} color={colors.onPrimary} />
                 <ThemedText variant="labelLg" colorRole="onPrimary">
@@ -253,7 +252,7 @@ export default function CuidadorAcompanarScreen() {
                     <View style={styles.areaHeaderRow}>
                       <View style={styles.areaTitleGroup}>
                         <View style={[styles.areaIcon, { backgroundColor: colors.secondaryContainer }]}>
-                          <MaterialIcons name={AREA_META[area].icon} size={22} color={colors.primaryContainer} />
+                          <MaterialIcons name={AREA_META[area].icon} size={22} color={colors.primary} />
                         </View>
                         <ThemedText variant="labelLg">{AREA_META[area].title}</ThemedText>
                       </View>
@@ -271,7 +270,7 @@ export default function CuidadorAcompanarScreen() {
                           key={index}
                           style={[
                             styles.progressSegment,
-                            { backgroundColor: index < level ? colors.primaryContainer : colors.surfaceContainerHigh },
+                            { backgroundColor: index < level ? colors.primary : colors.surfaceContainerHigh },
                           ]}
                         />
                       ))}
@@ -287,7 +286,7 @@ export default function CuidadorAcompanarScreen() {
             </View>
 
             <View style={[styles.respectCard, { backgroundColor: colors.surfaceContainerLow }]}>
-              <MaterialIcons name="shield" size={20} color={colors.primaryContainer} />
+              <MaterialIcons name="shield" size={20} color={colors.primary} />
               <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.respectText}>
                 Los ejercicios y su ritmo son personales. Tu acompañamiento fortalece su motivación sin generar presión.
               </ThemedText>

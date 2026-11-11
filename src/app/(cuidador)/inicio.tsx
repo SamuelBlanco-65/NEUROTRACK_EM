@@ -92,7 +92,7 @@ export default function CuidadorInicioScreen() {
               onPress={() => router.push('/vincularme')}
               accessibilityRole="button"
               accessibilityLabel="Vincularme con un código"
-              style={[styles.primaryButton, { backgroundColor: colors.primaryContainer }]}
+              style={[styles.primaryButton, { backgroundColor: colors.primary }]}
               testID="cuidador-inicio-vincularme">
               <ThemedText variant="labelLg" colorRole="onPrimary">
                 Vincularme
@@ -153,7 +153,7 @@ export default function CuidadorInicioScreen() {
           <View style={[styles.linkChip, { backgroundColor: colors.surfaceContainer }]} testID="cuidador-inicio-vinculado">
             <MaterialIcons name="favorite" size={16} color={colors.primary} />
             <ThemedText variant="labelMd" style={styles.linkChipText}>
-              Acompañas a la persona que acompañas
+              {activeLink?.patientName ? `Acompañas a ${activeLink.patientName}` : 'Acompañas a tu persona vinculada'}
             </ThemedText>
           </View>
 
@@ -177,7 +177,7 @@ export default function CuidadorInicioScreen() {
                       ? 'Cargando…'
                       : viewedWeekSessionCount === 0
                         ? 'Sin práctica esta semana'
-                        : `${viewedWeekSessionCount} sesión${viewedWeekSessionCount === 1 ? '' : 'es'} esta semana`}
+                        : `${viewedWeekSessionCount} ${viewedWeekSessionCount === 1 ? 'sesión' : 'sesiones'} esta semana`}
                   </ThemedText>
                 </View>
               </View>
@@ -200,7 +200,7 @@ export default function CuidadorInicioScreen() {
                       </ThemedText>
                     </View>
                     {reminder.status === 'hecho' ? (
-                      <MaterialIcons name="check-circle" size={22} color={colors.primaryContainer} />
+                      <MaterialIcons name="check-circle" size={22} color={colors.primary} />
                     ) : null}
                   </View>
                 ))}
@@ -220,7 +220,7 @@ export default function CuidadorInicioScreen() {
               onPress={() => router.push('/nueva-observacion')}
               accessibilityRole="button"
               accessibilityLabel="Anotar una observación"
-              style={[styles.observationButton, { backgroundColor: colors.primaryContainer }]}
+              style={[styles.observationButton, { backgroundColor: colors.primary }]}
               testID="cuidador-inicio-anotar-observacion">
               <MaterialIcons name="edit-note" size={22} color={colors.onPrimary} />
               <ThemedText variant="labelLg" colorRole="onPrimary">

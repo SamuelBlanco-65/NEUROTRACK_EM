@@ -31,7 +31,7 @@ export function AreaTile({ area, level, onPress, testID }: AreaTileProps) {
       ]}>
       <View style={styles.top}>
         <View style={[styles.iconWrap, { backgroundColor: colors.secondaryContainer }]}>
-          <MaterialIcons name={meta.icon} size={24} color={colors.primaryContainer} />
+          <MaterialIcons name={meta.icon} size={24} color={colors.primary} />
         </View>
         <View>
           <ThemedText variant="labelLg">{meta.title}</ThemedText>
@@ -50,40 +50,12 @@ export function AreaTile({ area, level, onPress, testID }: AreaTileProps) {
             key={index}
             style={[
               styles.segment,
-              { backgroundColor: index < level ? colors.primaryContainer : colors.surfaceContainerHighest },
+              { backgroundColor: index < level ? colors.primary : colors.surfaceContainerHighest },
             ]}
           />
         ))}
       </View>
     </Pressable>
-  );
-}
-
-type LockedAreaTileProps = {
-  title: string;
-  unlockHint: string;
-};
-
-export function LockedAreaTile({ title, unlockHint }: LockedAreaTileProps) {
-  const colors = useThemeColors();
-
-  return (
-    <View
-      style={[styles.tile, { backgroundColor: colors.surfaceContainerLow, opacity: 0.8 }]}
-      accessible
-      accessibilityLabel={`Área ${title}, bloqueada. ${unlockHint}`}>
-      <View style={styles.top}>
-        <View style={[styles.iconWrap, { backgroundColor: colors.surfaceContainerHighest }]}>
-          <MaterialIcons name="lock" size={22} color={colors.outline} />
-        </View>
-        <ThemedText variant="labelLg" colorRole="secondary">
-          {title}
-        </ThemedText>
-      </View>
-      <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.hint}>
-        {unlockHint}
-      </ThemedText>
-    </View>
   );
 }
 

@@ -98,7 +98,7 @@ export default function AccesibilidadScreen() {
                     accessibilityLabel={option.label}
                     style={[
                       styles.optionCard,
-                      { backgroundColor: selected ? colors.primaryContainer : colors.surfaceContainerLowest },
+                      { backgroundColor: selected ? colors.primary : colors.surfaceContainerLowest },
                     ]}
                     testID={`accesibilidad-esquema-${option.id}`}>
                     <MaterialIcons
@@ -132,7 +132,7 @@ export default function AccesibilidadScreen() {
                     accessibilityLabel={option.label}
                     style={[
                       styles.optionCard,
-                      { backgroundColor: selected ? colors.primaryContainer : colors.surfaceContainerLowest },
+                      { backgroundColor: selected ? colors.primary : colors.surfaceContainerLowest },
                     ]}
                     testID={`accesibilidad-texto-${option.id}`}>
                     <ThemedText variant="labelMd" colorRole={selected ? 'onPrimary' : 'onSurface'}>
@@ -242,7 +242,7 @@ function ToggleRow({
         <Switch
           value={value}
           onValueChange={onChange}
-          trackColor={{ false: colors.surfaceContainerHigh, true: colors.primaryContainer }}
+          trackColor={{ false: colors.surfaceContainerHigh, true: colors.primary }}
           thumbColor={colors.surfaceContainerLowest}
           accessibilityLabel={title}
           accessibilityHint={description}

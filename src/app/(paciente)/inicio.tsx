@@ -207,7 +207,7 @@ export default function PacienteInicioScreen() {
               onPress={() => registrarSintoma()}
               accessibilityRole="button"
               accessibilityLabel="Registrar cómo me siento"
-              style={[styles.checkinButton, { backgroundColor: colors.primaryContainer }]}
+              style={[styles.checkinButton, { backgroundColor: colors.primary }]}
               testID="paciente-inicio-registrar">
               <MaterialIcons name="favorite" size={22} color={colors.onPrimary} />
               <ThemedText variant="labelLg" style={{ color: colors.onPrimary }}>
@@ -245,7 +245,7 @@ export default function PacienteInicioScreen() {
                   </View>
                   {reminder.status === 'hecho' ? (
                     <View style={[styles.doneChip, { backgroundColor: colors.surfaceContainerLow }]}>
-                      <MaterialIcons name="check-circle" size={18} color={colors.primaryContainer} />
+                      <MaterialIcons name="check-circle" size={18} color={colors.primary} />
                       <ThemedText variant="labelSm" colorRole="primary">
                         Hecho
                       </ThemedText>
@@ -291,7 +291,7 @@ export default function PacienteInicioScreen() {
                           backgroundColor: isToday
                             ? colors.secondaryContainer
                             : logged
-                              ? colors.primaryContainer
+                              ? colors.primary
                               : colors.surfaceContainerHigh,
                         },
                       ]}>

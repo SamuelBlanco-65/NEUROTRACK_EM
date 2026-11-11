@@ -21,7 +21,7 @@ export function CrisisSection({ contacts, lead }: { contacts: CrisisContact[]; l
       </ThemedText>
 
       {contacts.map((contact) => {
-        const buttonColor = contact.variant === 'error' ? colors.error : colors.primaryContainer;
+        const buttonColor = contact.variant === 'error' ? colors.error : colors.primary;
         const onButtonColor = contact.variant === 'error' ? colors.onError : colors.onPrimary;
         return (
           <View key={contact.id} style={[styles.card, { backgroundColor: colors.surfaceContainerLowest }]}>

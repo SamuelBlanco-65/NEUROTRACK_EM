@@ -214,6 +214,7 @@ describe('summarizeActivities', () => {
     expect(result).toEqual([
       { area: 'memoria', sessions: 2, level: 3 },
       { area: 'atencion', sessions: 0, level: null },
+      { area: 'logica', sessions: 0, level: null },
       { area: 'movimiento', sessions: 1, level: null },
     ]);
   });

@@ -52,7 +52,7 @@ export function WizardHeader({ step, onClose }: WizardHeaderProps) {
             key={index}
             style={[
               styles.progressSegment,
-              { backgroundColor: index < step ? colors.primaryContainer : colors.surfaceContainerHighest },
+              { backgroundColor: index < step ? colors.primary : colors.surfaceContainerHighest },
             ]}
           />
         ))}

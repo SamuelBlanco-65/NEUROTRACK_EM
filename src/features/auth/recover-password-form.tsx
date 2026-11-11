@@ -73,7 +73,7 @@ export function RecoverPasswordForm({ initialEmail }: { initialEmail: string }) 
           onPress={volverAlAcceso}
           accessibilityRole="button"
           accessibilityLabel="Volver a iniciar sesión"
-          style={[styles.button, { backgroundColor: colors.primaryContainer }]}
+          style={[styles.button, { backgroundColor: colors.primary }]}
           testID="recuperar-volver">
           <ThemedText variant="labelLg" colorRole="onPrimary">
             Volver a iniciar sesión
@@ -143,7 +143,7 @@ export function RecoverPasswordForm({ initialEmail }: { initialEmail: string }) 
         accessibilityRole="button"
         accessibilityLabel="Enviar correo de recuperación"
         accessibilityState={{ disabled: enviando, busy: enviando }}
-        style={[styles.button, { backgroundColor: colors.primaryContainer, opacity: enviando ? 0.8 : 1 }]}
+        style={[styles.button, { backgroundColor: colors.primary, opacity: enviando ? 0.8 : 1 }]}
         testID="recuperar-enviar">
         {enviando ? <ActivityIndicator color={colors.onPrimary} /> : null}
         <ThemedText variant="labelLg" colorRole="onPrimary">

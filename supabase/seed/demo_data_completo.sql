@@ -1,4 +1,4 @@
--- Datos de DEMO completos para paciente + cuidador (no es una migración).
+-- Datos de DEMO completos para paciente + cuidador + médico (no es una migración).
 -- Llena TODAS las pantallas con historia suficiente para que se vean completas:
 --   * symptom_logs      ~5 meses (2026-06-01 hasta hoy): calendario + Progreso Semana/Mes/3 meses,
 --                       con tendencia de mejora (menos fatiga y menos severidad con el tiempo).
@@ -9,10 +9,18 @@
 --   * caregiver_observations (bitácora del cuidador), caregiver_cheers (mensajes de ánimo,
 --                       el último sin leer para que salga el banner en Inicio del paciente).
 --   * reminders         historial de la última semana + hoy + próximos días + uno vencido.
+--   * doctor_links      (opcional) vínculo ACEPTADO con el médico: síntomas, notas y progreso
+--                       compartidos, sin fecha de fin. Si no hay cuenta de médico, se omite.
+--   * Lógica            sesiones y nivel de la actividad Lógica. REQUIERE haber corrido antes
+--                       supabase/migrations/20261116000000_activity_area_logica.sql.
+--
+-- Los niveles quedan a la mitad (memoria 3, atención 3, lógica 2, movimiento 2) para que en la
+-- grabación todavía se puedan hacer las actividades y se vea subir de nivel.
 --
 -- CÓMO USAR (SQL Editor de Supabase, que corre como postgres e ignora RLS):
---   1. Crea (o usa) DOS cuentas ya registradas y confirmadas en la app: una de paciente y otra
---      de cuidador. Reemplaza los dos correos de abajo.
+--   1. Crea (o usa) TRES cuentas ya registradas y confirmadas en la app: paciente, cuidador y
+--      médico (el médico se registra eligiendo el perfil «Médico»). Reemplaza los tres correos
+--      de abajo. Si no tienes cuenta de médico, deja el correo como está: se omite esa parte.
 --   2. Pega el archivo completo y ejecútalo UNA vez.
 --   3. Si lo vuelves a correr, v_limpiar = true borra antes los datos de ESTE paciente
 --      (síntomas, sesiones, recordatorios, observaciones, mensajes) y los regenera, así no se
@@ -30,6 +38,7 @@ do $$
 declare
   v_patient_email   constant text    := 'PACIENTE@EJEMPLO.COM';
   v_caregiver_email constant text    := 'CUIDADOR@EJEMPLO.COM';
+  v_doctor_email    constant text    := 'MEDICO@EJEMPLO.COM';
   v_limpiar         constant boolean := true;
 
   v_start   constant date := date '2026-06-01';
@@ -37,11 +46,13 @@ declare
   v_span    int;
   v_patient uuid;
   v_caregiver uuid;
+  v_doctor  uuid;
   v_link    uuid;
   n_sym int; n_act int; n_obs int; n_cheer int; n_rem int;
 begin
   select id into v_patient   from auth.users where lower(email) = lower(v_patient_email);
   select id into v_caregiver from auth.users where lower(email) = lower(v_caregiver_email);
+  select id into v_doctor    from auth.users where lower(email) = lower(v_doctor_email);
   if v_patient is null then
     raise exception 'No existe un usuario con el correo de paciente %', v_patient_email;
   end if;
@@ -60,6 +71,7 @@ begin
     delete from public.reminders              where patient_id = v_patient;
     delete from public.activity_sessions      where patient_id = v_patient;
     delete from public.symptom_logs           where patient_id = v_patient;
+    delete from public.doctor_links           where patient_id = v_patient;
   end if;
 
   -- ---------------------------------------------------------------- vínculo cuidador
@@ -143,8 +155,10 @@ begin
   ),
   final as (
     select s.*,
-      ((s.day::timestamp + make_interval(hours => 7 + (s.rh % 15), mins => s.rm % 60))
-         at time zone 'America/Bogota') as occurred_at
+      -- least(...): si la hora del día de hoy cae después de "ahora", se adelanta a hace 10 min;
+      -- si no, el registro de hoy se descartaba y la vista Semana quedaba en 9 de 10 días.
+      least(((s.day::timestamp + make_interval(hours => 7 + (s.rh % 15), mins => s.rm % 60))
+         at time zone 'America/Bogota'), now() - interval '10 minutes') as occurred_at
     from slots s
   )
   insert into public.symptom_logs (patient_id, symptom_type, severity, note, occurred_at)
@@ -186,19 +200,19 @@ begin
   ),
   slots as (
     select day,
-      case when rt1 < 40 then 'memoria' when rt1 < 75 then 'atencion' else 'movimiento' end as area,
+      case when rt1 < 30 then 'memoria' when rt1 < 55 then 'atencion' when rt1 < 75 then 'logica' else 'movimiento' end as area,
       rh1 as rh, rm1 as rm
       from base where act1
     union all
     select day,
-      case when rt2 < 40 then 'memoria' when rt2 < 75 then 'atencion' else 'movimiento' end,
+      case when rt2 < 30 then 'memoria' when rt2 < 55 then 'atencion' when rt2 < 75 then 'logica' else 'movimiento' end,
       rh2, rm2
       from base where act1 and rb < 20
   ),
   final as (
     select s.*,
-      ((s.day::timestamp + make_interval(hours => 8 + (s.rh % 13), mins => s.rm % 60))
-         at time zone 'America/Bogota') as completed_at
+      least(((s.day::timestamp + make_interval(hours => 8 + (s.rh % 13), mins => s.rm % 60))
+         at time zone 'America/Bogota'), now() - interval '10 minutes') as completed_at
     from slots s
   )
   insert into public.activity_sessions (patient_id, area, completed_at)
@@ -207,9 +221,10 @@ begin
 
   -- ---------------------------------------------------------------- nivel actual por área
   insert into public.activity_progress (patient_id, area, level, updated_at) values
-    (v_patient, 'memoria',    4, now()),
+    (v_patient, 'memoria',    3, now()),
     (v_patient, 'atencion',   3, now()),
-    (v_patient, 'movimiento', 3, now())
+    (v_patient, 'logica',     2, now()),
+    (v_patient, 'movimiento', 2, now())
   on conflict (patient_id, area) do update set level = excluded.level, updated_at = excluded.updated_at;
 
   -- ---------------------------------------------------------------- observaciones del cuidador
@@ -285,6 +300,26 @@ begin
     (v_patient, v_caregiver, 'Examen de laboratorio (en ayunas)', 'cita',
        ((v_today + 4 + time '07:30') at time zone 'America/Bogota'), 'pendiente', null);
   select count(*) into n_rem from public.reminders where patient_id = v_patient;
+
+  -- ---------------------------------------------------------------- médico tratante (opcional)
+  if v_doctor is null then
+    raise notice 'No hay cuenta de médico con el correo %: se omite el vínculo con el médico.', v_doctor_email;
+  elsif v_doctor = v_patient or v_doctor = v_caregiver then
+    raise notice 'La cuenta de médico debe ser distinta de la del paciente y la del cuidador: se omite.';
+  else
+    insert into public.doctor_links
+      (patient_id, doctor_id, patient_name, doctor_name, doctor_email, professional_id,
+       invite_code, status, share_sintomas, share_notas, share_progreso, expires_at,
+       created_at, responded_at)
+    select v_patient, v_doctor,
+           nullif(trim(coalesce(pu.raw_user_meta_data ->> 'full_name', '')), ''),
+           coalesce(nullif(trim(coalesce(du.raw_user_meta_data ->> 'full_name', '')), ''), 'Médico de prueba'),
+           lower(v_doctor_email), 'RM 12345',
+           upper(substr(md5(v_patient::text || 'demo-medico'), 1, 8)), 'aceptado',
+           true, true, true, null, now() - interval '20 days', now() - interval '20 days'
+      from auth.users pu, auth.users du
+     where pu.id = v_patient and du.id = v_doctor;
+  end if;
 
   raise notice 'Demo cargada para % (cuidador %): % síntomas, % sesiones, % observaciones, % mensajes, % recordatorios.',
     v_patient_email, v_caregiver_email, n_sym, n_act, n_obs, n_cheer, n_rem;

@@ -46,7 +46,7 @@ export function SessionHeader({ title, step, total, unit = 'Ronda', onExit, test
           accessibilityLabel={`${unit} ${step} de ${total}`}
           accessibilityValue={{ min: 1, max: total, now: step }}>
           <View style={[styles.stepPill, { backgroundColor: colors.surfaceContainerHigh }]}>
-            <View style={[styles.stepDot, { backgroundColor: colors.primaryContainer }]} />
+            <View style={[styles.stepDot, { backgroundColor: colors.primary }]} />
             <ThemedText variant="labelMd" colorRole="primary">
               {unit} {step} de {total}
             </ThemedText>
@@ -57,7 +57,7 @@ export function SessionHeader({ title, step, total, unit = 'Ronda', onExit, test
                 key={index}
                 style={[
                   styles.progressSegment,
-                  { backgroundColor: index < (step as number) ? colors.primaryContainer : colors.surfaceContainerHigh },
+                  { backgroundColor: index < (step as number) ? colors.primary : colors.surfaceContainerHigh },
                 ]}
               />
             ))}

@@ -167,7 +167,7 @@ export default function AccederScreen() {
             <MaterialIcons name="arrow-back" size={24} color={colors.onSurface} />
           </Pressable>
           <View style={[styles.profileChip, { backgroundColor: colors.secondaryContainer }]}>
-            <MaterialIcons name="person" size={20} color={colors.primaryContainer} />
+            <MaterialIcons name="person" size={20} color={colors.primary} />
             <ThemedText variant="labelSm" colorRole="onSecondaryContainer">
               Perfil: {PROFILE_LABEL[perfil]}
             </ThemedText>
@@ -193,7 +193,7 @@ export default function AccederScreen() {
             style={[styles.confirmBanner, { backgroundColor: colors.secondaryContainer }]}
             accessibilityRole="alert"
             accessibilityLiveRegion="polite">
-            <MaterialIcons name="mark-email-unread" size={22} color={colors.primaryContainer} />
+            <MaterialIcons name="mark-email-unread" size={22} color={colors.primary} />
             <ThemedText variant="bodySm" colorRole="onSecondaryContainer" style={styles.confirmText}>
               Cuenta creada. Confirma {pendingConfirmationEmail} desde tu correo antes de iniciar sesión.
             </ThemedText>
@@ -206,7 +206,7 @@ export default function AccederScreen() {
             accessibilityRole="alert"
             accessibilityLiveRegion="polite"
             testID="acceder-reset-aviso">
-            <MaterialIcons name="mark-email-read" size={22} color={colors.primaryContainer} />
+            <MaterialIcons name="mark-email-read" size={22} color={colors.primary} />
             <ThemedText variant="bodySm" colorRole="onSecondaryContainer" style={styles.confirmText}>
               {resetNotice}
             </ThemedText>
@@ -221,7 +221,7 @@ export default function AccederScreen() {
             onPress={() => cambiarModo('login')}
             accessibilityRole="tab"
             accessibilityState={{ selected: mode === 'login' }}
-            style={[styles.tab, mode === 'login' && { backgroundColor: colors.primaryContainer }]}>
+            style={[styles.tab, mode === 'login' && { backgroundColor: colors.primary }]}>
             <ThemedText
               variant="labelMd"
               colorRole={mode === 'login' ? 'onPrimary' : 'onSurfaceVariant'}>
@@ -232,7 +232,7 @@ export default function AccederScreen() {
             onPress={() => cambiarModo('registro')}
             accessibilityRole="tab"
             accessibilityState={{ selected: mode === 'registro' }}
-            style={[styles.tab, mode === 'registro' && { backgroundColor: colors.primaryContainer }]}>
+            style={[styles.tab, mode === 'registro' && { backgroundColor: colors.primary }]}>
             <ThemedText
               variant="labelMd"
               colorRole={mode === 'registro' ? 'onPrimary' : 'onSurfaceVariant'}>
@@ -315,7 +315,7 @@ export default function AccederScreen() {
                     styles.checkbox,
                     {
                       borderColor: camposInvalidos.acepto ? colors.tertiary : colors.primary,
-                      backgroundColor: acepto ? colors.primaryContainer : 'transparent',
+                      backgroundColor: acepto ? colors.primary : 'transparent',
                     },
                   ]}>
                   {acepto ? <MaterialIcons name="check" size={20} color={colors.onPrimary} /> : null}
@@ -397,7 +397,7 @@ export default function AccederScreen() {
             accessibilityRole="button"
             accessibilityLabel={mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
             accessibilityState={{ disabled: enviando, busy: enviando }}
-            style={[styles.submit, { backgroundColor: colors.primaryContainer, opacity: enviando ? 0.8 : 1 }]}
+            style={[styles.submit, { backgroundColor: colors.primary, opacity: enviando ? 0.8 : 1 }]}
             testID="acceder-enviar">
             {enviando ? (
               <>
@@ -434,7 +434,7 @@ export default function AccederScreen() {
         ) : null}
 
         <View style={[styles.privacy, { backgroundColor: colors.surfaceContainerLow }]}>
-          <MaterialIcons name="verified-user" size={22} color={colors.primaryContainer} />
+          <MaterialIcons name="verified-user" size={22} color={colors.primary} />
           <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.privacyText}>
             Tus datos de salud se guardan cifrados y solo tú decides quién los ve.
           </ThemedText>

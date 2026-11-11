@@ -91,7 +91,7 @@ const initialState: CaregiverState = {
   cheerStatus: 'idle',
   viewedProgress: [],
   viewedWeekSessionCount: 0,
-  viewedLastPracticeByArea: { memoria: null, atencion: null, movimiento: null },
+  viewedLastPracticeByArea: { memoria: null, atencion: null, logica: null, movimiento: null },
   viewStatus: 'idle',
   viewedSymptoms: [],
   symptomsStatus: 'idle',
@@ -270,6 +270,7 @@ export const fetchCaregiverPatientActivity = createAsyncThunk<
     const lastPracticeByArea: Record<ActivityArea, string | null> = {
       memoria: null,
       atencion: null,
+      logica: null,
       movimiento: null,
     };
     for (const session of sessions) {

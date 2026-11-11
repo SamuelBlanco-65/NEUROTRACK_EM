@@ -12,6 +12,8 @@ export type CaregiverLink = CaregiverPermissions & {
   caregiverId: string | null;
   caregiverEmail: string | null;
   caregiverName: string | null;
+  /** Nombre del paciente; solo viene con el vínculo aceptado (lo copia un trigger de la base). */
+  patientName: string | null;
   inviteCode: string;
   status: CaregiverLinkStatus;
   createdAt: string;

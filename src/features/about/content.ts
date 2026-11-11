@@ -38,7 +38,7 @@ export const ABOUT_FEATURES: AboutItem[] = [
     id: 'actividades',
     icon: 'psychology',
     title: 'Actividades para mente y cuerpo',
-    text: 'Memoria, atención y movimiento guiado. Sin límite de tiempo y sin presión.',
+    text: 'Memoria, atención, lógica y movimiento guiado. Sin límite de tiempo y sin presión.',
   },
   {
     id: 'progreso',

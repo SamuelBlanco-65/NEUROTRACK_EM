@@ -2,6 +2,7 @@ import {
   MEMORIA_RESPONDER_SCRIPT,
   atencionScript,
   completedScript,
+  logicaScript,
   movimientoIntroScript,
   movimientoProgressScript,
   narrationFor,
@@ -21,6 +22,7 @@ function session(overrides: Partial<NarrationInput>): NarrationInput {
     lastResult: null,
     memoriaRound: null,
     atencionRound: null,
+    logicaRound: null,
     movimientoRound: null,
     completedStepIndices: [],
     ...overrides,
@@ -141,5 +143,21 @@ describe('narrationFor', () => {
 
   it('completada sin nivel calculado aún no narra', () => {
     expect(narrationFor(session({ phase: 'completada', newLevel: null }))).toBeNull();
+  });
+});
+
+describe('Lógica (REC-002)', () => {
+  it('logicaScript lee la serie completa y pide el siguiente número', () => {
+    expect(logicaScript([2, 4, 6, 8])).toBe(
+      'Descubre qué número sigue en la serie. 2, 4, 6, 8, y luego, ¿cuál sigue? Tómate tu tiempo, sin prisas.'
+    );
+  });
+
+  it('narra la serie al responder y cambia de momento por ronda', () => {
+    const narration = narrationFor(
+      session({ area: 'logica', phase: 'responder', roundIndex: 1, logicaRound: { sequence: [1, 2, 3, 4] } })
+    );
+    expect(narration?.key).toBe('responder-1');
+    expect(narration?.text).toContain('1, 2, 3, 4');
   });
 });
