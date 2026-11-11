@@ -1,8 +1,9 @@
 # Estado — Neurotrack EM
 
-**Fecha:** 2026-11-11 · **Rama:** master · Ver «Hecho el 2026-11-11» y «T10 — Perfil del médico» más abajo.
-Commits del día (todos con Co-Authored-By de Amelyn, Mariana y Claude): `f5fd565`, `eeadd52`, `4266cd8`,
-`345e723`, `f06d957` y los del perfil médico (T10). Consultar `git log` para los hashes.
+**Fecha:** 2026-11-11 (cierre de la 2ª sesión del día) · **Rama:** master · **Último commit pusheado:** `7266344`
+(docs(entrega): quita los marcadores de pendiente del documento final). Todos los commits del día llevan
+Co-Authored-By de Amelyn, Mariana y Claude. **Sin commitear:** solo este cierre (`docs/STATUS.md`, `docs/ENTORNO.md`).
+Ver «Hecho en esta sesión (2026-11-11, 2ª)» y «T10 — Perfil del médico» más abajo.
 Nota: el seed `supabase/seed/demo_data_completo.sql` ya se revisó y se subió (solo placeholders
 `PACIENTE@EJEMPLO.COM` / `CUIDADOR@EJEMPLO.COM`, sin correos reales).
 
@@ -20,14 +21,8 @@ Repo: https://github.com/SamuelBlanco-65/NEUROTRACK_EM (público, `origin` confi
 Verificado en esta sesión con un commit de prueba: los 3 avatares enlazaron en GitHub.
 
 ## Objetivo en curso
-**Construir la app E2E contra la rúbrica REAL de Fase 3.** Ya NO hay bloqueadores:
-- Llegó el **enunciado oficial de Fase 3** (`docs/enunciado/Course Project Phase 3...pdf`):
-  trae rúbrica, entregables y formato. Dudas 1,2,4,5,6 RESUELTAS; abiertas solo la 3 (fecha) y 7.
-- Llegó el **export de Stitch** (`docs/diseno/stitch-export/`, 56 pantallas con code.html + PNG).
-- Decisiones nuevas: **Redux Toolkit** (D-005), documento final en **Markdown** (D-006),
-  autoría Git con **Co-Authored-By + reparto de módulos** (D-007), **IA libre** sin declaración (D-008).
-- `REQUISITOS.md` actualizado con la rúbrica real (EVA-001..004) y requisitos nuevos
-  (ENT-001..005, RT-006, RT-007, accesibilidad ampliada en RNF-002/004/005).
+**Cerrar la entrega de Fase 3 (~2026-11-12, hora sin confirmar):** la app, el README y el documento final ya están;
+falta la evidencia (capturas de T10, recorrido TalkBack), el ensayo de la demo en vivo y preparar la defensa individual.
 
 Rúbrica: Documento 20% · Funcionalidad+Repo 30% · Presentación 10% · **Defensa individual 40%**.
 Implicación clave: cada integrante debe escribir y ENTENDER su parte (30% + 40% lo exigen).
@@ -729,6 +724,24 @@ se vio aún en pantalla del celular salvo el flujo de correo (ver abajo).
   celular recuperar contraseña, «¿Qué es?», la primera pantalla con la imagen nueva y la casilla de consentimiento.
 - Metro quedó corriendo en segundo plano (`exp://192.168.40.71:8081`); cerrarlo si estorba.
 
+## Hecho en esta sesión (2026-11-11, 2ª)
+- **RT-003, RT-004, RT-005 → Verificado** (`REQUISITOS.md`). RT-003 y RT-004 con `grep` sobre `src/`, `package.json` y
+  `app.json` (sin sensores; sin lógica de diagnóstico, solo avisos «no diagnostica»). RT-005 solo en lo comprobable:
+  SDK `~58.0.23` y `npx expo install --check` sin desalineaciones; `expo-doctor` hoy no corre (ver «Ya intentado»).
+- **Perfil del médico (T10, REC-003)** completo, ver sección T10. Commits `1767e3c` y `d443fc9`. **Sin probar**: el
+  usuario dijo que lo probó con dos cuentas, pero no hay capturas.
+- **`README.md` (ENT-003)** reescrito (antes era la plantilla de Expo). Commit `89ca918`. **Sin probar**: falta que
+  alguien lo siga desde cero en un equipo limpio.
+- **`docs/ENTREGA-FINAL.md` (ENT-002)** escrito con las 5 secciones del enunciado de Fase 3 §2, 4 diagramas Mermaid,
+  matriz trazable de 16 mejoras de §V, 111 pruebas listadas, casos en dispositivo con su evidencia, limitaciones,
+  *roadmap* y 12 referencias IEEE. Commits `5aff35a` y `7266344`. **Sin probar** contra el profesor; los únicos
+  pendientes que declara son las capturas de `artifacts/t10/` y el recorrido TalkBack documentado.
+- **Comparación con Stitch** (`artifacts/stitch-medico/`, 15 pantallas, ya commiteadas): se combinó lo objetivo
+  (detalle en D-016, «Diseño»). Verificado solo que compila y que el bundle carga en el emulador (selección de perfil
+  con las 3 opciones); las pantallas del médico no se vieron en pantalla.
+- **Emulador:** estaba `offline` en adb; se arregló con *Cold Boot*. Ver `docs/ENTORNO.md`.
+- `REQUISITOS.md` actualizado: RT-006 y RNF-012 tenían texto desactualizado (ya hay thunks y RLS en todas las tablas).
+
 ## T10 — Perfil del médico tratante (REC-003): implementado; el usuario lo probó, sin capturas (2026-11-11)
 Extra (el enunciado de Fase 3 no lo exige). Decisión y razones: **D-016**. Es una **ayuda, no un sustituto**: el médico
 solo **lee** un resumen que el paciente autoriza; sin chat, sin alertas, sin diagnóstico (RT-004).
@@ -756,51 +769,45 @@ solo **lee** un resumen que el paciente autoriza; sin chat, sin alertas, sin dia
   oscuro; (4) ~~comparar con Stitch~~ hecho el 2026-11-11 (D-016, «Diseño»); falta verlo en pantalla con dos cuentas.
 
 ## Siguiente acción concreta
-**`README.md` (ENT-003) y `docs/ENTREGA-FINAL.md` (ENT-002) ya están escritos y pusheados.** El documento tiene las
-5 secciones del enunciado §2, 4 diagramas Mermaid, la matriz trazable (16 mejoras de §V) y 12 referencias IEEE, con
-los pendientes declarados en texto (capturas de T10 y recorrido TalkBack). **Siguiente acción:** tomar las capturas de T10 (lista de 21 en la
-conversación del 2026-11-11, nombres `01-…` a `23-…` en `artifacts/t10/`), el recorrido TalkBack documentado y las
-capturas con fuente al 130 % y modo oscuro; luego **repasar `ENTREGA-FINAL.md`** quitando los marcadores y ajustando la
-Tabla 4 y la Tabla 5. Después: comparar el perfil médico con los exports de Stitch, el ensayo de la demo (ENT-004) y la
-defensa individual (ENT-005). Riesgo de RT-007: `git shortlog -sne` solo cuenta a Samuel
-(Amelyn y Mariana van como Co-Authored-By); ver D-007.
+**Tomar las capturas de T10 en el emulador y guardarlas en `artifacts/t10/`** con los nombres `01-seleccion-perfil.png`
+… `21-cuidador-sintomas-no.png` (+ opcionales `22-resumen-oscuro.png`, `23-resumen-texto-grande.png`). La lista
+completa con cómo llegar a cada una: selección de perfil → médico (pacientes vacío, vincular, error, enviado,
+pendiente) → paciente («Mi médico»: código, solicitud, notas en No, con acceso) → médico (lista, resumen arriba,
+intensidad/semana, actividades y notas no compartidas, 3 meses, pocos datos) → paciente quita acceso → resumen con
+notas → acceso vencido (SQL: `update public.doctor_links set expires_at = now() - interval '1 day' where status =
+'aceptado';`) → cuidador con y sin «Síntomas». Captura: `adb exec-out screencap -p > artifacts/t10/NOMBRE.png`.
+Al terminar: REC-003 a Verificado en `REQUISITOS.md` y, en `ENTREGA-FINAL.md`, cambiar «capturas en
+`artifacts/t10/` pendientes» por las rutas (Tabla 5, fila 12, y la fila «Fuente del sistema al 130 % y modo oscuro»).
 
-**Antes o junto al README, ≈10 min en el celular (lista de «Pendiente de verificar» de «Hecho el 2026-11-11»):**
-ejecutar la migración `20261114…` en Supabase, probar recuperar contraseña, «¿Qué es?», la primera pantalla con
-la imagen y la casilla de consentimiento. Y cerrar T7 con evidencia: en el paso 3 de registrar síntoma tocar
-«Dictar con voz» y confirmar que el micrófono del teclado escribe en la nota; con «Lectura en voz alta» encendida,
-capturar un botón «Escuchar» y el dictado en `artifacts/t7/`. Con eso REC-001 y REC-002 suben a Verificado.
-
-**Después, por prioridad de rúbrica (entrega ~2026-11-12, hora sin confirmar):** ENT-002
-(`docs/ENTREGA-FINAL.md`), RT-007 (`git shortlog -sne` con los 3) y
-ensayo de la demo (ENT-004); la defensa individual (ENT-005, 40%) pesa más que cualquier
-verificación visual pendiente. Si queda tiempo, la verificación de T6 de la sesión del 09-nov
-(nada de eso se ha visto correr; solo se revisó por código):
-1. `adb shell "cmd uimode night yes"` (o apariencia oscura en `/accesibilidad`) y recorrer la
-   app: que las superficies se aclaren con la elevación y que **las tarjetas de "Tu plan de
-   hoy" en inicio del paciente se vean**. Si no, la palanca es `surfaceContainerHigh`/
-   `surfaceContainerHighest` en `src/theme/colors.ts` (D-012); no tocar las fijas.
-2. `/accesibilidad`: probar los toggles, cerrar y reabrir la app para confirmar que persisten
-   (`AsyncStorage`) y «Restablecer configuración».
-3. Recorrido con TalkBack documentado (`artifacts/t6/talkback-notas.md`), captura con fuente
-   ampliada (`adb shell settings put system font_scale 1.3`) y confirmación de la háptica de
-   Atención/Movimiento; con eso subir RNF-001, 002, 003, 004, 007 y 009 a Verificado.
-
-Pendiente menor, no bloquea lo anterior:
-- ~~RF-007 sin marcar~~ **Ya está Verificado** en `REQUISITOS.md` (capturas `artifacts/t0/`). Solo la primera
-  pantalla cambió después (imagen nueva `perfil-hero.jpg`): una captura nueva en `artifacts/` la dejaría al día.
-
-Pendientes en paralelo (no bloquean lo anterior):
-- Confirmar la **hora exacta** de entrega con el profesor (la fecha ya es ~2026-11-12).
-- ~~Que Amelyn y Mariana acepten la invitación~~ **Resuelto** (usuario, 2026-11-10): ya están
-  en el repo; aparecen como coautoras en los commits.
-- ~~Una compañera no puede correr el proyecto localmente~~ **Resuelto** (usuario, 2026-11-10):
-  ya puede correr la app con su propio `.env`.
-- Borrar el repo de prueba temporal `coauthor-test` (requiere scope `delete_repo` o hacerlo por web).
-- Más adelante: `docs/ENTREGA-FINAL.md` (ENT-002), `README.md` (ENT-003), RLS cuando existan
-  tablas de dominio.
+**Después, por peso en la rúbrica:**
+1. **Defensa individual (40 %)**: cada integrante repasa su módulo (Samuel = síntomas/datos/auth, Amelyn = cuidador,
+   Mariana = actividades/progreso; el perfil médico no tiene dueño asignado). Saber explicar `accessibilityRole`,
+   `lineHeight`, `Pressable`, thunks, RLS.
+2. **RT-007**: `git shortlog -sne` solo cuenta a Samuel. Que Amelyn y Mariana hagan al menos un commit propio desde su
+   equipo en su módulo (sin falsear `--author`, D-007).
+3. **Demo en vivo (ENT-004, 10 %)**: ensayar el flujo paciente → cuidador → médico y mostrar TalkBack, modo oscuro y
+   texto grande.
+4. Si hay tiempo: recorrido TalkBack documentado en `artifacts/t6/talkback-notas.md`; capturas de T7 (dictado y
+   «Escuchar») en `artifacts/t7/`; verificación de T6 en oscuro (tarjetas de «Tu plan de hoy») y de los toggles de
+   `/accesibilidad`; confirmar la hora exacta de entrega con el profesor; borrar el repo de prueba `coauthor-test` (por web).
 
 ## Ya intentado, no repetir
+- **`npx expo-doctor` falla en este equipo** con `Cannot find module '@expo/env'` (caché de `npx`), también con
+  `npx --yes expo-doctor@latest`; `npx expo doctor` lo rechaza el CLI local. No insistir: usar `npx expo install --check`
+  para la alineación de dependencias, o limpiar la caché de npx si de verdad hace falta el 20/20.
+- **Emulador `offline` en `adb devices`:** reiniciar el servidor (`adb kill-server`/`start-server`) y `adb reconnect
+  offline` **no** lo arreglan; el emulador queda colgado. Lo que funciona: **Cold Boot Now** en Android Studio (Device
+  Manager). Tras el arranque en frío puede salir «System UI isn't responding»: tocar «Wait».
+- **«Port 8081 is unavailable»:** había un Metro viejo de otra terminal (proceso `node.exe`). No hace falta matarlo:
+  usar `--port 8082` y abrir `exp://10.0.2.2:8082` en el emulador. Ojo: ese Metro viejo puede seguir apareciendo como
+  proceso aunque ya no escuche (estado `CLOSED` en `netstat`).
+- **No copiar a ciegas lo que genera Stitch:** en el perfil médico inventó edad, diagnóstico, «nivel de energía»,
+  número de expediente y minutos de sesión (datos que la app no recoge), usó tono clínico («Panel clínico», «PDF para
+  historia clínica»), mostró al médico notas privadas del cuidador y afirmó «cifrado de extremo a extremo». Revisar cada
+  pantalla contra RT-004, D-010 y los datos reales antes de adoptarla (D-016).
+- **No dejar que el cliente elija el código de invitación** con una política de insert: el índice único responde «ya
+  existe» y permite adivinar códigos fuera del límite de intentos. En el médico el código lo genera el servidor
+  (`create_doctor_invite`); el cuidador aún tiene el problema (ver «Errores conocidos»).
 - **Correo cuyo enlace redirige a la app (`{{ .ConfirmationURL }}` con `redirectTo = Linking.createURL(...)`) NO sirve
   en este proyecto.** El usuario veía una ventana negra al tocar el botón. Causas: (1) PKCE guarda el verificador en
   el dispositivo que pidió el correo, así que abrir el enlace en otro dispositivo o en el computador falla;
@@ -919,6 +926,15 @@ Pendientes en paralelo (no bloquean lo anterior):
   del repo ya está configurado correcto; no revertir.
 
 ## Errores conocidos
+- **Contraste del botón principal en modo oscuro:** `onPrimary` (`#00363f`) sobre `primaryContainer` (`#223a40`) da ~1,1:1
+  en ~30 archivos de pantallas anteriores al médico (las del médico ya usan `primary`, 6,7:1). No se tocó porque D-012
+  dice no cambiar la paleta sin decisión del equipo. Arreglo: usar `colors.primary` como fondo de esos botones. Está
+  declarado como limitación en `ENTREGA-FINAL.md` §5.2.
+- **Vinculación del cuidador:** el código lo genera el cliente (oráculo para adivinar códigos) y el límite de intentos de
+  `claim_invite` no es atómico. Arreglo: replicar `create_doctor_invite` y el `pg_advisory_xact_lock` de
+  `20261115000000_doctor_links.sql` en una migración nueva para `caregiver_links`.
+- **Placeholder de `TextField`** usa `outline`: 4,1:1 en oscuro. Arreglo: `onSurfaceVariant`.
+- **Metro en segundo plano en el puerto 8082** (arrancado por Claude en esta sesión); puede seguir vivo o haberse cerrado.
 - **Sin captura ni confirmación en celular de lo hecho el 2026-11-11** salvo el flujo de correo de punta a punta
   (confirmado verbalmente por el usuario, sin captura): pantalla «Recuperar contraseña», «¿Qué es Neurotrack EM?»,
   imagen en la primera pantalla, casilla de consentimiento. Capturas pendientes en `artifacts/`.
@@ -988,11 +1004,11 @@ haya algo funcionando. Obligatorio primero; recomendados al final.)_
 - [x] **T5. Apoyo/Info** — contenidos de apoyo; subtítulos si hay audiovisual. (RF-009, RF-010)
   Verificado en emulador para ambos perfiles — ver sección "T5 — Apoyo/Info" arriba.
 - [ ] **T6. Accesibilidad + pruebas** — pase de accesibilidad y pruebas jest-expo de la lógica. (RNF-*, pruebas)
-- [~] **T7. Extensiones** — voz/dictado y versión auditiva commiteados en `7133316` (REC-001, REC-002, D-013); falta confirmar el dictado y capturas para Verificado; perfil médico (REC-003): **decidido hacerlo en la próxima sesión** (2026-11-11), ver sección «Siguiente objetivo».
-- [ ] **T8. Documento Final** — `docs/ENTREGA-FINAL.md`: 5 secciones, matriz competitiva (Fase 1),
+- [~] **T7. Extensiones** — voz/dictado y versión auditiva commiteados en `7133316` (REC-001, REC-002, D-013); falta confirmar el dictado y capturas para Verificado; perfil médico (REC-003): hecho como T10 (2026-11-11).
+- [x] **T8. Documento Final** (2026-11-11, `docs/ENTREGA-FINAL.md`; faltan solo las rutas de las capturas de T10) — `docs/ENTREGA-FINAL.md`: 5 secciones, matriz competitiva (Fase 1),
   diagrama de arquitectura E2E, **matriz trazable de accesibilidad** (mejora → archivo → prueba),
   pruebas y conclusiones; refs IEEE/APA. (ENT-002, EVA-001)
-- [ ] **T9. README + entrega** — `README.md` (instalación, env vars, arquitectura, ejecución,
+- [~] **T9. README + entrega** (README hecho 2026-11-11; faltan demo y RT-007) — `README.md` (instalación, env vars, arquitectura, ejecución,
   accesibilidad); guion de demo en vivo; verificar commits equitativos de los 3. (ENT-003, ENT-004, RT-007)
 - [x] **T7b. Correos reales + recuperar contraseña + legal + «¿Qué es?»** (2026-11-11) — RF-011 ampliado, D-014,
   D-015. Correo de punta a punta probado por el usuario (sin captura); pantallas nuevas sin ver en celular.

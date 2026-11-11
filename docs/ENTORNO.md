@@ -41,6 +41,13 @@ Comprobar con `adb devices`: debe aparecer un `emulator-*`.
   (pedir permiso antes de matar el proceso) o usar la alternativa de abajo.
 - Alternativa que siempre funciona:
   `adb exec-out screencap -p > artifacts/<nombre>.png`
+- **Emulador `offline` en `adb devices`** (Expo no puede abrir la app): reiniciar adb (`adb kill-server`,
+  `adb start-server`, `adb reconnect offline`) **no** lo arregla. Hacer **Cold Boot Now** desde Android Studio
+  (Device Manager → ⋮ del AVD), o `emulator -avd Pixel_8 -no-snapshot-load`. Esperar a que
+  `adb shell getprop sys.boot_completed` devuelva `1`. Si aparece «System UI isn't responding», tocar «Wait».
+- **Abrir la app en Expo Go del emulador sin QR:**
+  `adb shell am start -a android.intent.action.VIEW -d "exp://10.0.2.2:<puerto>" host.exp.exponent`
+  (`10.0.2.2` es el computador visto desde el emulador).
 
 ## Probar en un celular físico (Expo Go)
 - Celular y equipo en la **misma red Wi-Fi**. Levantar con `npx expo start --go --port 8081`.
@@ -51,6 +58,10 @@ Comprobar con `adb devices`: debe aparecer un `emulator-*`.
 - Si no conecta: permitir Node en el Firewall de Windows (redes privadas) o usar `--tunnel`
   (pide `@expo/ngrok`, más lento).
 - Antes de levantar, `netstat -ano | grep 8081`: un Metro viejo en el mismo puerto da errores raros.
+  Si `npx expo start` dice «Port 8081 is unavailable» y no quieres cerrar esa terminal, usa otro puerto:
+  `npx expo start --go --port 8082` (y `exp://<IP>:8082`).
+- `npx expo-doctor` puede fallar con `Cannot find module '@expo/env'` por la caché de `npx` (visto el 2026-11-11, también
+  con `@latest`). Para revisar versiones basta `npx expo install --check`.
 
 ## Bash tool y archivos largos
 - No escribir archivos con heredocs que lleven comillas, apóstrofes o secuencias de escape:
