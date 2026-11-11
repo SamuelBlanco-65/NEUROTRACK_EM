@@ -4,6 +4,8 @@ import { loadSettings } from '@/features/settings/persistence';
 
 export type ColorSchemePreference = 'auto' | 'light' | 'dark';
 export type TextScalePreference = 'normal' | 'grande' | 'extra-grande';
+/** Brillo de la pantalla SOLO mientras la app está abierta; `sistema` respeta el del teléfono (V-D4). */
+export type BrightnessPreference = 'sistema' | 'bajo' | 'muy-bajo';
 
 /** Forma persistida en disco (ver `features/settings/persistence.ts`); no incluye `_hydrated`. */
 export type SettingsState = {
@@ -13,6 +15,7 @@ export type SettingsState = {
   textScale: TextScalePreference;
   /** Lectura automática en voz alta de las instrucciones de las actividades (REC-002). */
   audioGuidance: boolean;
+  brightness: BrightnessPreference;
 };
 
 type SettingsSliceState = SettingsState & { _hydrated: boolean };
@@ -23,6 +26,14 @@ export const DEFAULT_SETTINGS: SettingsState = {
   reduceMotion: false,
   textScale: 'normal',
   audioGuidance: false,
+  brightness: 'sistema',
+};
+
+/** Nivel de brillo (0 a 1) de cada opción; `sistema` no fija ninguno. */
+export const BRIGHTNESS_LEVEL: Record<BrightnessPreference, number | null> = {
+  sistema: null,
+  bajo: 0.5,
+  'muy-bajo': 0.25,
 };
 
 export const TEXT_SCALE_MULTIPLIER: Record<TextScalePreference, number> = {
@@ -57,6 +68,9 @@ const settingsSlice = createSlice({
     audioGuidanceToggled(state) {
       state.audioGuidance = !state.audioGuidance;
     },
+    brightnessChanged(state, action: PayloadAction<BrightnessPreference>) {
+      state.brightness = action.payload;
+    },
     settingsReset(state) {
       Object.assign(state, DEFAULT_SETTINGS);
     },
@@ -79,6 +93,7 @@ export const {
   reduceMotionToggled,
   textScaleChanged,
   audioGuidanceToggled,
+  brightnessChanged,
   settingsReset,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

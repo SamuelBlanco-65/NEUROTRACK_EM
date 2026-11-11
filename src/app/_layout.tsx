@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { Provider as StoreProvider } from 'react-redux';
 
+import { applyBrightness } from '@/features/settings/brightness';
 import { supabase } from '@/lib/supabase';
 import { resetAll } from '@/store/actions';
 import { bootstrapSession, sessionEnded } from '@/store/slices/auth-slice';
@@ -21,6 +22,7 @@ function AppShell() {
   const dispatch = useAppDispatch();
   const authStatus = useAppSelector((state) => state.auth.status);
   const settingsStatus = useAppSelector((state) => state.settings._hydrated);
+  const brightness = useAppSelector((state) => state.settings.brightness);
   const [fontsLoaded] = useFonts({
     AtkinsonHyperlegibleNext_400Regular,
     AtkinsonHyperlegibleNext_700Bold,
@@ -46,6 +48,11 @@ function AppShell() {
       SplashScreen.hide();
     }
   }, [ready]);
+
+  // Brillo propio de la app: se aplica al abrir (ya hidratada la preferencia) y cada vez que cambia.
+  useEffect(() => {
+    if (settingsStatus) applyBrightness(brightness);
+  }, [settingsStatus, brightness]);
 
   if (!ready) {
     return null;

@@ -8,11 +8,13 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import {
   audioGuidanceToggled,
+  brightnessChanged,
   colorSchemeChanged,
   highContrastToggled,
   reduceMotionToggled,
   settingsReset,
   textScaleChanged,
+  type BrightnessPreference,
   type ColorSchemePreference,
   type TextScalePreference,
 } from '@/store/slices/settings-slice';
@@ -23,6 +25,12 @@ const COLOR_SCHEME_OPTIONS: { id: ColorSchemePreference; label: string; icon: ke
   { id: 'light', label: 'Claro', icon: 'light-mode' },
   { id: 'dark', label: 'Oscuro', icon: 'dark-mode' },
   { id: 'auto', label: 'Automático', icon: 'brightness-auto' },
+];
+
+const BRIGHTNESS_OPTIONS: { id: BrightnessPreference; label: string; icon: keyof typeof MaterialIcons.glyphMap }[] = [
+  { id: 'sistema', label: 'Del teléfono', icon: 'brightness-auto' },
+  { id: 'bajo', label: 'Bajo', icon: 'brightness-medium' },
+  { id: 'muy-bajo', label: 'Muy bajo', icon: 'brightness-low' },
 ];
 
 const TEXT_SCALE_OPTIONS: { id: TextScalePreference; label: string }[] = [
@@ -39,7 +47,7 @@ export default function AccesibilidadScreen() {
   function confirmarRestablecer() {
     Alert.alert(
       'Restablecer configuración',
-      'Esto vuelve la apariencia, el contraste, el tamaño de texto, las animaciones y la lectura en voz alta a sus valores originales.',
+      'Esto vuelve la apariencia, el brillo, el contraste, el tamaño de texto, las animaciones y la lectura en voz alta a sus valores originales.',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -101,6 +109,41 @@ export default function AccesibilidadScreen() {
                       { backgroundColor: selected ? colors.primary : colors.surfaceContainerLowest },
                     ]}
                     testID={`accesibilidad-esquema-${option.id}`}>
+                    <MaterialIcons
+                      name={option.icon}
+                      size={22}
+                      color={selected ? colors.onPrimary : colors.onSurfaceVariant}
+                    />
+                    <ThemedText variant="labelMd" colorRole={selected ? 'onPrimary' : 'onSurface'}>
+                      {option.label}
+                    </ThemedText>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <ThemedText variant="headlineSm">Brillo de la app</ThemedText>
+            <ThemedText variant="bodySm" colorRole="secondary">
+              Baja el brillo solo mientras usas Neurotrack EM, sin cambiar el del resto del teléfono. Útil si
+              la luz te molesta.
+            </ThemedText>
+            <View accessibilityRole="radiogroup" accessibilityLabel="Brillo de la app" style={styles.optionsRow}>
+              {BRIGHTNESS_OPTIONS.map((option) => {
+                const selected = option.id === settings.brightness;
+                return (
+                  <Pressable
+                    key={option.id}
+                    onPress={() => dispatch(brightnessChanged(option.id))}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: selected }}
+                    accessibilityLabel={option.label}
+                    style={[
+                      styles.optionCard,
+                      { backgroundColor: selected ? colors.primary : colors.surfaceContainerLowest },
+                    ]}
+                    testID={`accesibilidad-brillo-${option.id}`}>
                     <MaterialIcons
                       name={option.icon}
                       size={22}
