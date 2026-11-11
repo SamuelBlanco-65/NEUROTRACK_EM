@@ -758,7 +758,7 @@ solo **lee** un resumen que el paciente autoriza; sin chat, sin alertas, sin dia
 ## Siguiente acción concreta
 **`README.md` (ENT-003) y `docs/ENTREGA-FINAL.md` (ENT-002) ya están escritos y pusheados.** El documento tiene las
 5 secciones del enunciado §2, 4 diagramas Mermaid, la matriz trazable (16 mejoras de §V) y 12 referencias IEEE, con
-marcadores `[PENDIENTE: …]` donde falta evidencia. **Siguiente acción:** tomar las capturas de T10 (lista de 21 en la
+los pendientes declarados en texto (capturas de T10 y recorrido TalkBack). **Siguiente acción:** tomar las capturas de T10 (lista de 21 en la
 conversación del 2026-11-11, nombres `01-…` a `23-…` en `artifacts/t10/`), el recorrido TalkBack documentado y las
 capturas con fuente al 130 % y modo oscuro; luego **repasar `ENTREGA-FINAL.md`** quitando los marcadores y ajustando la
 Tabla 4 y la Tabla 5. Después: comparar el perfil médico con los exports de Stitch, el ensayo de la demo (ENT-004) y la

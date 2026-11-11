@@ -409,7 +409,7 @@ en celular con Expo Go.
 | 9 | Observaciones privadas y recordatorio marcado «hecho» | Happy path | OK con háptica | `artifacts/t4/t4-observaciones.png`, `t4-recordatorios.png` |
 | 10 | Apoyo: llamada a líneas de crisis y guía con transcripción | Happy path | OK en ambos perfiles | `artifacts/t5/*.png` |
 | 11 | Confirmar correo y recuperar contraseña desde otro dispositivo | Happy path | OK | Confirmación verbal del usuario, sin captura |
-| 12 | Perfil médico con dos cuentas: vincular, aceptar con permisos, resumen, revocar | Happy path + permisos | OK | Confirmación verbal del usuario; [PENDIENTE: capturas en `artifacts/t10/`] |
+| 12 | Perfil médico con dos cuentas: vincular, aceptar con permisos, resumen, revocar | Happy path + permisos | OK | Confirmación verbal del usuario; capturas en `artifacts/t10/` pendientes |
 | 13 | Errores de red | Error | Mensaje «Revisa tu conexión» por clase de error | Revisión de código; sin captura dedicada |
 
 **Defectos encontrados al probar en dispositivo** (ninguno se habría detectado solo leyendo el código):
@@ -433,8 +433,8 @@ Los siete están corregidos (detalle en `docs/STATUS.md`).
 | Código completo (2026-11-09) | `accessibility-reviewer`: revisión de propiedades y cálculo de contraste WCAG sobre ~29 pares | 2 defectos reales corregidos (`lineHeight` sin escalar; contraste en oscuro) y 2 áreas táctiles bajo el mínimo corregidas |
 | Perfil médico (2026-11-11) | `accessibility-reviewer` | Filas de permiso fragmentadas, controles a 40 dp, etiquetas repetidas entre médicos y datos de otro período durante la carga: todo corregido |
 | Seguridad del perfil médico (2026-11-11) | `security-reviewer` | Oráculo de códigos, límite de intentos no atómico y columnas del vínculo escribibles: corregidos antes de ejecutar la migración |
-| TalkBack en emulador | Lector de pantalla de Android | Primera pasada manual del usuario. Verificado que, con TalkBack activo, la voz de la app cede la prioridad a TalkBack (comportamiento correcto). [PENDIENTE: recorrido documentado pantalla por pantalla en `artifacts/t6/talkback-notas.md`] |
-| Fuente del sistema al 130 % y modo oscuro | Emulador | [PENDIENTE: capturas `artifacts/t10/22-resumen-oscuro.png`, `23-resumen-texto-grande.png`] |
+| TalkBack en emulador | Lector de pantalla de Android | Primera pasada manual del usuario. Verificado que, con TalkBack activo, la voz de la app cede la prioridad a TalkBack (comportamiento correcto). El recorrido pantalla por pantalla no quedó documentado (ver limitación 2 en 5.2) |
+| Fuente del sistema al 130 % y modo oscuro | Emulador | El usuario probó el modo oscuro en emulador (2026-11-09); las capturas del resumen del médico en oscuro y con fuente ampliada quedan pendientes junto con las de `artifacts/t10/` |
 
 ---
 
