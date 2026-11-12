@@ -17,10 +17,12 @@ import {
   atencionScript,
   completedScript,
   logicaScript,
+  memoriaTapScript,
   movimientoIntroScript,
   sequenceScript,
 } from '@/features/audio/scripts';
 import { SpeakButton } from '@/features/audio/speak-button';
+import { speakForAudioMode } from '@/features/audio/speech';
 import { useActivityNarration } from '@/features/audio/use-activity-narration';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -49,6 +51,7 @@ export default function ActividadSesionScreen() {
   const dispatch = useAppDispatch();
   const colors = useThemeColors();
   const session = useAppSelector((state) => state.activities.session);
+  const audioOnly = useAppSelector((state) => state.settings.audioOnly);
 
   const area = VALID_AREAS.includes(params.area as ActivityArea) ? (params.area as ActivityArea) : null;
 
@@ -124,11 +127,18 @@ export default function ActividadSesionScreen() {
                 hintIcon="spa"
                 speakText={sequenceScript(session.memoriaRound.sequence)}
               />
-              <View style={styles.sequenceRow}>
-                {session.memoriaRound.sequence.map((shape, index) => (
-                  <ShapeSequenceItem key={`${shape}-${index}`} shape={shape} order={index + 1} />
-                ))}
-              </View>
+              {audioOnly ? (
+                <AudioOnlyNotice
+                  text="Escucha la secuencia con el botón «Escuchar». Puedes repetirla las veces que quieras."
+                  label="Solo audio: la secuencia no se muestra. Escúchala con el botón Escuchar."
+                />
+              ) : (
+                <View style={styles.sequenceRow}>
+                  {session.memoriaRound.sequence.map((shape, index) => (
+                    <ShapeSequenceItem key={`${shape}-${index}`} shape={shape} order={index + 1} />
+                  ))}
+                </View>
+              )}
               <Pressable
                 onPress={() => dispatch(memorizeConfirmed())}
                 testID="actividad-memoria-listo"
@@ -151,9 +161,13 @@ export default function ActividadSesionScreen() {
               answer={session.memoriaAnswer}
               phase={session.phase}
               lastResult={session.lastResult}
+              audioOnly={audioOnly}
               onTapShape={(shape) => dispatch(memoriaShapeTapped(shape))}
               onContinue={() => dispatch(roundContinued())}
-              onReplay={() => dispatch(memorizeReplayRequested())}
+              onReplay={() => {
+                dispatch(memorizeReplayRequested());
+                if (audioOnly && session.memoriaRound) speakForAudioMode(sequenceScript(session.memoriaRound.sequence));
+              }}
             />
           ) : null}
 
@@ -190,6 +204,7 @@ export default function ActividadSesionScreen() {
           {session.phase === 'responder' && area === 'logica' && session.logicaRound ? (
             <LogicaResponderBlock
               round={session.logicaRound}
+              audioOnly={audioOnly}
               onPick={(option) => {
                 Haptics.notificationAsync(
                   option === session.logicaRound?.answer
@@ -340,6 +355,7 @@ function MemoriaResponderBlock({
   answer,
   phase,
   lastResult,
+  audioOnly,
   onTapShape,
   onContinue,
   onReplay,
@@ -348,6 +364,7 @@ function MemoriaResponderBlock({
   answer: ShapeId[];
   phase: 'responder' | 'resultado';
   lastResult: RoundResult | null;
+  audioOnly: boolean;
   onTapShape: (shape: ShapeId) => void;
   onContinue: () => void;
   onReplay: () => void;
@@ -382,6 +399,9 @@ function MemoriaResponderBlock({
       correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error
     );
     onTapShape(shape);
+    // Versión auditiva: al acertar una figura que no cierra la ronda se confirma en voz alta. Si la ronda
+    // termina (acierto final o error), lo dice la narración del resultado, que no debe pisarse.
+    if (audioOnly && correct && !roundEnds) speakForAudioMode(memoriaTapScript(shape));
     if (!roundEnds && !reduceMotion) {
       flashTimeoutRef.current = setTimeout(() => setFlash(null), 900);
     }
@@ -459,16 +479,33 @@ function MemoriaResponderBlock({
         onPress={onReplay}
         testID="actividad-memoria-replay"
         accessibilityRole="button"
-        accessibilityLabel="Ver la secuencia otra vez"
+        accessibilityLabel={audioOnly ? 'Escuchar la secuencia otra vez' : 'Ver la secuencia otra vez'}
         style={({ pressed }) => [
           styles.replayButton,
           { backgroundColor: colors.surfaceContainerHigh, opacity: pressed ? 0.85 : 1 },
         ]}>
         <MaterialIcons name="replay" size={20} color={colors.secondary} />
         <ThemedText variant="labelMd" colorRole="secondary">
-          Ver la secuencia otra vez
+          {audioOnly ? 'Escuchar la secuencia otra vez' : 'Ver la secuencia otra vez'}
         </ThemedText>
       </Pressable>
+    </View>
+  );
+}
+
+/** Aviso de la versión auditiva (V-D5): en lugar de la secuencia o la serie, se explica cómo escucharla. */
+function AudioOnlyNotice({ text, label }: { text: string; label: string }) {
+  const colors = useThemeColors();
+  return (
+    <View
+      style={[styles.audioOnlyCard, { backgroundColor: colors.surfaceContainerLow }]}
+      accessible
+      accessibilityLabel={label}
+      testID="actividad-solo-audio">
+      <MaterialIcons name="hearing" size={24} color={colors.primary} />
+      <ThemedText variant="bodyMd" style={styles.audioOnlyText}>
+        {text}
+      </ThemedText>
     </View>
   );
 }
@@ -497,7 +534,15 @@ function LogicaSequence({ round }: { round: LogicaRound }) {
   );
 }
 
-function LogicaResponderBlock({ round, onPick }: { round: LogicaRound; onPick: (option: number) => void }) {
+function LogicaResponderBlock({
+  round,
+  audioOnly,
+  onPick,
+}: {
+  round: LogicaRound;
+  audioOnly: boolean;
+  onPick: (option: number) => void;
+}) {
   const colors = useThemeColors();
   return (
     <View style={styles.block} testID="actividad-logica-responder">
@@ -506,9 +551,16 @@ function LogicaResponderBlock({ round, onPick }: { round: LogicaRound; onPick: (
         headline="¿Qué número sigue en la serie?"
         hint="Tómate tu tiempo. Sin límites ni prisas."
         hintIcon="spa"
-        speakText={logicaScript(round.sequence)}
+        speakText={logicaScript(round.sequence, audioOnly ? round.options : undefined)}
       />
-      <LogicaSequence round={round} />
+      {audioOnly ? (
+        <AudioOnlyNotice
+          text="Escucha la serie con el botón «Escuchar» y elige el número que sigue. Puedes repetirla las veces que quieras."
+          label="Solo audio: la serie no se muestra. Escúchala con el botón Escuchar y elige el número que sigue."
+        />
+      ) : (
+        <LogicaSequence round={round} />
+      )}
       <View style={styles.grid}>
         {round.options.map((option, index) => (
           <Pressable
@@ -808,6 +860,16 @@ const styles = StyleSheet.create({
   liveFeedbackText: {
     flexShrink: 1,
     gap: 2,
+  },
+  audioOnlyCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    borderRadius: Radius.default,
+    padding: Spacing.md,
+  },
+  audioOnlyText: {
+    flex: 1,
   },
   replayButton: {
     flexDirection: 'row',

@@ -15,6 +15,11 @@ export type SettingsState = {
   textScale: TextScalePreference;
   /** Lectura automática en voz alta de las instrucciones de las actividades (REC-002). */
   audioGuidance: boolean;
+  /**
+   * Versión auditiva de las actividades (V-D5): en Memoria y Lógica no se muestra la secuencia ni la serie,
+   * se dicen en voz alta. Requiere «Lectura en voz alta», así que activarla enciende también esa.
+   */
+  audioOnly: boolean;
   brightness: BrightnessPreference;
 };
 
@@ -26,6 +31,7 @@ export const DEFAULT_SETTINGS: SettingsState = {
   reduceMotion: false,
   textScale: 'normal',
   audioGuidance: false,
+  audioOnly: false,
   brightness: 'sistema',
 };
 
@@ -67,6 +73,12 @@ const settingsSlice = createSlice({
     },
     audioGuidanceToggled(state) {
       state.audioGuidance = !state.audioGuidance;
+      // Sin lectura en voz alta no hay audio que sustituya a lo visual.
+      if (!state.audioGuidance) state.audioOnly = false;
+    },
+    audioOnlyToggled(state) {
+      state.audioOnly = !state.audioOnly;
+      if (state.audioOnly) state.audioGuidance = true;
     },
     brightnessChanged(state, action: PayloadAction<BrightnessPreference>) {
       state.brightness = action.payload;
@@ -93,6 +105,7 @@ export const {
   reduceMotionToggled,
   textScaleChanged,
   audioGuidanceToggled,
+  audioOnlyToggled,
   brightnessChanged,
   settingsReset,
 } = settingsSlice.actions;

@@ -1,13 +1,14 @@
 import { Redirect, router } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ProfileOption } from '@/components/profile-option';
-import { PROFILE_HOME } from '@/features/profile/constants';
-import { profileSelected } from '@/store/slices/profile-slice';
+import { PROFILE_HOME, PROFILE_LABEL } from '@/features/profile/constants';
+import { logout } from '@/store/slices/auth-slice';
+import { profileSelected, type ProfileKind } from '@/store/slices/profile-slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
 
@@ -15,10 +16,34 @@ export default function SeleccionDePerfilScreen() {
   const dispatch = useAppDispatch();
   const selected = useAppSelector((state) => state.profile.selected);
   const authStatus = useAppSelector((state) => state.auth.status);
+  const session = useAppSelector((state) => state.auth.session);
   const colors = useThemeColors();
 
   if (selected && authStatus !== 'authenticated') return <Redirect href="/(auth)/acceder" />;
   if (selected) return <Redirect href={PROFILE_HOME[selected]} />;
+
+  const accountLabel = session ? (session.name ?? session.email) : null;
+
+  /**
+   * El perfil es una vista, no un permiso: lo que se ve lo deciden los vínculos y RLS. Con una sesión ya
+   * abierta no se pide la contraseña otra vez, pero se deja claro con qué cuenta se entra y se ofrece usar otra.
+   */
+  function choose(profile: ProfileKind) {
+    if (!session) {
+      dispatch(profileSelected(profile));
+      return;
+    }
+    Alert.alert(
+      `Entrar como ${PROFILE_LABEL[profile].toLowerCase()}`,
+      `Vas a usar la cuenta ${session.email} con el perfil de ${PROFILE_LABEL[profile].toLowerCase()}. ` +
+        'Si acompañas a otra persona o eres su médico, usa otra cuenta.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Usar otra cuenta', onPress: () => dispatch(logout()) },
+        { text: 'Continuar', onPress: () => dispatch(profileSelected(profile)) },
+      ]
+    );
+  }
 
   return (
     <ThemedView style={styles.container}>
@@ -31,12 +56,31 @@ export default function SeleccionDePerfilScreen() {
               NEUROTRACK EM
             </ThemedText>
           </View>
-          <View style={[styles.stepPill, { backgroundColor: colors.surfaceContainer }]}>
-            <ThemedText variant="labelSm" colorRole="onSurfaceVariant">
-              Paso 1 de 2
-            </ThemedText>
-          </View>
         </View>
+
+        {session ? (
+          <View style={[styles.accountCard, { backgroundColor: colors.surfaceContainerLow }]} testID="inicio-cuenta-activa">
+            <View style={styles.accountTextGroup} accessible accessibilityLabel={`Sesión iniciada como ${accountLabel}`}>
+              <ThemedText variant="labelSm" colorRole="secondary">
+                Sesión iniciada como
+              </ThemedText>
+              <ThemedText variant="labelLg" numberOfLines={2}>
+                {accountLabel}
+              </ThemedText>
+            </View>
+            <Pressable
+              onPress={() => dispatch(logout())}
+              accessibilityRole="button"
+              accessibilityLabel="Usar otra cuenta"
+              accessibilityHint="Cierra la sesión actual para entrar con otra cuenta"
+              hitSlop={8}
+              style={[styles.accountButton, { backgroundColor: colors.surfaceContainerHigh }]}
+              testID="inicio-usar-otra-cuenta">
+              <MaterialIcons name="switch-account" size={20} color={colors.onSurface} />
+              <ThemedText variant="labelMd">Usar otra cuenta</ThemedText>
+            </Pressable>
+          </View>
+        ) : null}
 
         <View style={[styles.hero, { backgroundColor: colors.surfaceContainerLow }]}>
           <Image
@@ -62,7 +106,7 @@ export default function SeleccionDePerfilScreen() {
             title="Soy paciente"
             description="Registra cómo te sientes y haz tus actividades"
             selected={selected === 'paciente'}
-            onPress={() => dispatch(profileSelected('paciente'))}
+            onPress={() => choose('paciente')}
             icon="person"
             iconBackgroundColor={colors.secondaryContainer}
             iconColor={colors.primary}
@@ -72,32 +116,22 @@ export default function SeleccionDePerfilScreen() {
             title="Acompaño a alguien"
             description="Familiar, pareja o cuidador"
             selected={selected === 'cuidador'}
-            onPress={() => dispatch(profileSelected('cuidador'))}
+            onPress={() => choose('cuidador')}
             icon="groups"
             iconBackgroundColor={colors.tertiaryFixed}
             iconColor={colors.tertiary}
             testID="profile-option-cuidador"
           />
-          <ThemedText variant="labelSm" colorRole="secondary" style={styles.optionalLabel}>
-            Opcional
-          </ThemedText>
           <ProfileOption
             title="Soy médico tratante"
             description="Revisa el resumen que tu paciente decide compartir contigo"
             selected={selected === 'medico'}
-            onPress={() => dispatch(profileSelected('medico'))}
+            onPress={() => choose('medico')}
             icon="medical-services"
             iconBackgroundColor={colors.surfaceContainerHigh}
             iconColor={colors.primary}
             testID="profile-option-medico"
           />
-        </View>
-
-        <View style={styles.noteRow}>
-          <MaterialIcons name="spa" size={18} color={colors.primary} />
-          <ThemedText variant="bodySm" colorRole="secondary" style={styles.noteText}>
-            Puedes ajustar esta preferencia en cualquier momento
-          </ThemedText>
         </View>
 
         <Pressable
@@ -135,7 +169,7 @@ const styles = StyleSheet.create({
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   brandLabel: {
     flexDirection: 'row',
@@ -150,10 +184,24 @@ const styles = StyleSheet.create({
   brandText: {
     letterSpacing: 1,
   },
-  stepPill: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
+  accountCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    borderRadius: Radius.default,
+    padding: Spacing.md,
+  },
+  accountTextGroup: {
+    flex: 1,
+    gap: 2,
+  },
+  accountButton: {
+    minHeight: MinTouchSize,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
     borderRadius: Radius.full,
+    paddingHorizontal: Spacing.md,
   },
   hero: {
     width: '100%',
@@ -170,18 +218,6 @@ const styles = StyleSheet.create({
   },
   options: {
     gap: Spacing.sm,
-  },
-  optionalLabel: {
-    textAlign: 'center',
-  },
-  noteRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.xs,
-  },
-  noteText: {
-    textAlign: 'center',
   },
   infoLink: {
     minHeight: MinTouchSize,

@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-nat
 import { ThemedText } from '@/components/themed-text';
 import { useAppSelector } from '@/store/hooks';
 import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
-import { speak, stopSpeaking } from './speech';
+import { speak, speakForAudioMode, stopSpeaking } from './speech';
 
 type SpeakButtonProps = {
   /** Texto que se lee en voz alta al tocar. */
@@ -16,6 +16,11 @@ type SpeakButtonProps = {
   /** Para alinear el botón en su contenedor (p. ej. `{ alignSelf: 'flex-start' }`). */
   style?: StyleProp<ViewStyle>;
   testID?: string;
+  /**
+   * Muestra el botón aunque «Lectura en voz alta» esté apagada. Solo para contenido cuyo formato ES el audio
+   * (las guías «Escuchar»), donde no tener el botón dejaría sin cumplir lo que la guía promete.
+   */
+  always?: boolean;
 };
 
 /**
@@ -25,17 +30,18 @@ type SpeakButtonProps = {
  * ícono con etiqueta accesible, y mide al menos 48dp (RNF-005). Al salir de la pantalla corta
  * la lectura en curso.
  */
-export function SpeakButton({ text, label, accessibilityLabel, style, testID }: SpeakButtonProps) {
+export function SpeakButton({ text, label, accessibilityLabel, style, testID, always }: SpeakButtonProps) {
   const colors = useThemeColors();
   const enabled = useAppSelector((state) => state.settings.audioGuidance);
+  const audioOnly = useAppSelector((state) => state.settings.audioOnly);
 
   useEffect(() => stopSpeaking, []);
 
-  if (!enabled) return null;
+  if (!enabled && !always) return null;
 
   return (
     <Pressable
-      onPress={() => speak(text)}
+      onPress={() => (audioOnly ? speakForAudioMode(text) : speak(text))}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label ?? 'Escuchar en voz alta'}
       hitSlop={4}

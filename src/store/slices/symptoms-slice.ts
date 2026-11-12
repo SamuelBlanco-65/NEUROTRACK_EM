@@ -1,7 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { createSymptomLog, listSymptomLogsForMonth } from '@/features/symptoms/api';
-import type { Severity, SymptomLog, SymptomsError, SymptomType } from '@/features/symptoms/types';
+import {
+  CUSTOM_LABEL_MAX_LENGTH,
+  type Severity,
+  type SymptomLog,
+  type SymptomsError,
+  type SymptomType,
+} from '@/features/symptoms/types';
 import type { RootState } from '@/store/store';
 
 type MonthKey = string; // `${year}-${month}`, month 0-indexado
@@ -15,6 +21,8 @@ type MonthEntry = {
 type SymptomsState = {
   draft: {
     symptomType: SymptomType | null;
+    /** Nombre propio, solo se usa si el tipo es «otro». */
+    customLabel: string;
     severity: Severity | null;
     note: string;
   };
@@ -24,7 +32,7 @@ type SymptomsState = {
 };
 
 const initialState: SymptomsState = {
-  draft: { symptomType: null, severity: null, note: '' },
+  draft: { symptomType: null, customLabel: '', severity: null, note: '' },
   submitStatus: 'idle',
   submitError: null,
   monthsByKey: {},
@@ -61,6 +69,11 @@ export const submitSymptomLog = createAsyncThunk<SymptomLog, void, { state: Root
     try {
       return await createSymptomLog(patientId, {
         symptomType: draft.symptomType,
+        // Solo un síntoma «otro» lleva nombre propio; si no lo escribió, queda como «Otro».
+        customLabel:
+          draft.symptomType === 'otro' && draft.customLabel.trim().length > 0
+            ? draft.customLabel.trim().slice(0, CUSTOM_LABEL_MAX_LENGTH)
+            : null,
         severity: draft.severity,
         note: draft.note.trim().length > 0 ? draft.note.trim() : null,
       });
@@ -77,6 +90,9 @@ const symptomsSlice = createSlice({
     draftSymptomTypeSet(state, action: { payload: SymptomType }) {
       state.draft.symptomType = action.payload;
     },
+    draftCustomLabelSet(state, action: { payload: string }) {
+      state.draft.customLabel = action.payload;
+    },
     draftSeveritySet(state, action: { payload: Severity }) {
       state.draft.severity = action.payload;
     },
@@ -84,7 +100,7 @@ const symptomsSlice = createSlice({
       state.draft.note = action.payload;
     },
     draftReset(state) {
-      state.draft = { symptomType: null, severity: null, note: '' };
+      state.draft = { symptomType: null, customLabel: '', severity: null, note: '' };
       state.submitStatus = 'idle';
       state.submitError = null;
     },
@@ -124,5 +140,6 @@ const symptomsSlice = createSlice({
   },
 });
 
-export const { draftSymptomTypeSet, draftSeveritySet, draftNoteSet, draftReset } = symptomsSlice.actions;
+export const { draftSymptomTypeSet, draftCustomLabelSet, draftSeveritySet, draftNoteSet, draftReset } =
+  symptomsSlice.actions;
 export default symptomsSlice.reducer;

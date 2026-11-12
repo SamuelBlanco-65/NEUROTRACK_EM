@@ -9,7 +9,7 @@ import { ThemedView } from '@/components/themed-view';
 import { screenIntroScript } from '@/features/audio/screen-scripts';
 import { SpeakButton } from '@/features/audio/speak-button';
 import type { Severity } from '@/features/symptoms/types';
-import { symptomTypeLabel, SEVERITY_OPTIONS } from '@/features/symptoms/constants';
+import { symptomDisplayLabel, SEVERITY_OPTIONS } from '@/features/symptoms/constants';
 import { WizardActions } from '@/features/symptoms/wizard-actions';
 import { WizardHeader } from '@/features/symptoms/wizard-header';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -23,6 +23,7 @@ export default function RegistrarSintomaPaso2Screen() {
   const colors = useThemeColors();
   const symptomType = useAppSelector((state) => state.symptoms.draft.symptomType);
   const severity = useAppSelector((state) => state.symptoms.draft.severity);
+  const customLabel = useAppSelector((state) => state.symptoms.draft.customLabel);
 
   if (!symptomType) return <Redirect href="/registrar-sintoma/paso-1" />;
 
@@ -39,14 +40,14 @@ export default function RegistrarSintomaPaso2Screen() {
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <View style={styles.heading}>
             <ThemedText variant="headlineLg" accessibilityRole="header">
-              ¿Qué tan fuerte es {symptomTypeLabel(symptomType).toLowerCase()}?
+              ¿Qué tan fuerte es {symptomDisplayLabel(symptomType, customLabel).toLowerCase()}?
             </ThemedText>
             <ThemedText variant="bodyMd" colorRole="secondary">
               Selecciona cómo lo sientes ahora.
             </ThemedText>
             <SpeakButton
               text={screenIntroScript(
-                `¿Qué tan fuerte es ${symptomTypeLabel(symptomType).toLowerCase()}?`,
+                `¿Qué tan fuerte es ${symptomDisplayLabel(symptomType, customLabel).toLowerCase()}?`,
                 'Selecciona cómo lo sientes ahora.',
                 SEVERITY_OPTIONS
               )}

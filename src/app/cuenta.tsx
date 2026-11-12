@@ -112,6 +112,9 @@ export default function CuentaScreen() {
 
           <View style={styles.group}>
             {profile === 'paciente' ? (
+              <LinkRow icon="group" label="Mis cuidadores" onPress={() => router.push('/permisos')} testID="cuenta-mis-cuidadores" />
+            ) : null}
+            {profile === 'paciente' ? (
               <LinkRow icon="medical-services" label="Mi médico" onPress={() => router.push('/mi-medico')} testID="cuenta-mi-medico" />
             ) : null}
             <LinkRow icon="accessibility-new" label="Accesibilidad" onPress={() => router.push('/accesibilidad')} testID="cuenta-accesibilidad" />

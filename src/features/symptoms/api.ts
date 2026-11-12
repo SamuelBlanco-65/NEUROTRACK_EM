@@ -16,6 +16,7 @@ function isPostgrestLikeError(error: unknown): error is PostgrestLikeError {
 type SymptomLogRow = {
   id: string;
   symptom_type: SymptomLog['symptomType'];
+  custom_label?: string | null;
   severity: SymptomLog['severity'];
   note: string | null;
   occurred_at: string;
@@ -25,6 +26,7 @@ function toSymptomLog(row: SymptomLogRow): SymptomLog {
   return {
     id: row.id,
     symptomType: row.symptom_type,
+    customLabel: row.custom_label ?? null,
     severity: row.severity,
     note: row.note,
     occurredAt: row.occurred_at,
@@ -66,13 +68,14 @@ export async function createSymptomLog(patientId: string, draft: SymptomLogDraft
     .insert({
       patient_id: patientId,
       symptom_type: draft.symptomType,
+      custom_label: draft.customLabel,
       severity: draft.severity,
       note: draft.note,
       // Reloj del dispositivo, no el del servidor: así coincide con el "hoy" que ve el
       // paciente en el calendario (evita que un registro caiga en otro día por desfase horario).
       occurred_at: new Date().toISOString(),
     })
-    .select('id, symptom_type, severity, note, occurred_at')
+    .select('id, symptom_type, custom_label, severity, note, occurred_at')
     .single();
 
   if (error) throw toSymptomsError(error);
@@ -90,7 +93,7 @@ export async function listSymptomLogsForMonth(
 
   const { data, error } = await supabase
     .from('symptom_logs')
-    .select('id, symptom_type, severity, note, occurred_at')
+    .select('id, symptom_type, custom_label, severity, note, occurred_at')
     .eq('patient_id', patientId)
     .gte('occurred_at', start)
     .lt('occurred_at', end)
@@ -129,7 +132,7 @@ export async function listSymptomLogsBetween(
 ): Promise<SymptomLog[]> {
   const { data, error } = await supabase
     .from('symptom_logs')
-    .select('id, symptom_type, severity, note, occurred_at')
+    .select('id, symptom_type, custom_label, severity, note, occurred_at')
     .eq('patient_id', patientId)
     .gte('occurred_at', startISO)
     .lt('occurred_at', endISO)

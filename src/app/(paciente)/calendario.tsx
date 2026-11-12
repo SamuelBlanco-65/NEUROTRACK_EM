@@ -10,7 +10,7 @@ import { ThemedView } from '@/components/themed-view';
 import { dayDetailScript } from '@/features/audio/screen-scripts';
 import { SpeakButton } from '@/features/audio/speak-button';
 import { buildMonthGrid, isoDateOfDate, leadingBlankCount, logsForIsoDate } from '@/features/symptoms/calendar';
-import { SYMPTOM_TYPE_ICON, severityLabel, symptomTypeLabel } from '@/features/symptoms/constants';
+import { SYMPTOM_TYPE_ICON, severityLabel, symptomDisplayLabel } from '@/features/symptoms/constants';
 import type { Severity, SymptomLog } from '@/features/symptoms/types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { draftReset, fetchMonthLogs, monthKey } from '@/store/slices/symptoms-slice';
@@ -207,7 +207,7 @@ export default function PacienteCalendarioScreen() {
               text={dayDetailScript(
                 selectedDate.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' }),
                 selectedDayLogs.map((log) => ({
-                  type: symptomTypeLabel(log.symptomType),
+                  type: symptomDisplayLabel(log.symptomType, log.customLabel),
                   severity: severityLabel(log.severity),
                   time: new Date(log.occurredAt).toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit' }),
                   note: log.note,
@@ -237,7 +237,7 @@ export default function PacienteCalendarioScreen() {
                           <MaterialIcons name={SYMPTOM_TYPE_ICON[log.symptomType]} size={20} color={colors.primary} />
                         </View>
                         <View>
-                          <ThemedText variant="labelLg">{symptomTypeLabel(log.symptomType)}</ThemedText>
+                          <ThemedText variant="labelLg">{symptomDisplayLabel(log.symptomType, log.customLabel)}</ThemedText>
                           <ThemedText variant="bodySm" colorRole="secondary">
                             {new Date(log.occurredAt).toLocaleTimeString('es-CO', {
                               hour: 'numeric',

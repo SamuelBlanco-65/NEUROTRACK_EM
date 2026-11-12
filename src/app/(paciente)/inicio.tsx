@@ -11,6 +11,7 @@ import { ThemedView } from '@/components/themed-view';
 import { homeScript } from '@/features/audio/screen-scripts';
 import { SpeakButton } from '@/features/audio/speak-button';
 import { CATEGORY_META } from '@/features/reminders/constants';
+import { reminderCategoryLabel } from '@/features/reminders/logic';
 import { SYMPTOM_TYPE_ICON, SYMPTOM_TYPE_OPTIONS } from '@/features/symptoms/constants';
 import { dismissCheer, fetchMyLatestCheer } from '@/store/slices/caregiver-slice';
 import { completeReminder, fetchReminders } from '@/store/slices/reminders-slice';
@@ -108,23 +109,21 @@ export default function PacienteInicioScreen() {
             Inicio
           </ThemedText>
           <View style={styles.headerActions}>
+            {/* Accesibilidad con texto visible y a un toque: es lo primero que debe encontrar quien la necesita. */}
             <Pressable
               onPress={() => router.push('/accesibilidad')}
               accessibilityRole="button"
-              accessibilityLabel="Accesibilidad: ajustar apariencia y lectura"
-              hitSlop={8}
-              style={[styles.profileButton, { backgroundColor: colors.surfaceContainerHigh }]}
+              accessibilityLabel="Accesibilidad"
+              accessibilityHint="Ajusta la apariencia, el tamaño del texto, el brillo y la lectura en voz alta"
+              style={({ pressed }) => [
+                styles.accessibilityButton,
+                { backgroundColor: colors.secondaryContainer, opacity: pressed ? 0.85 : 1 },
+              ]}
               testID="paciente-inicio-accesibilidad">
-              <MaterialIcons name="accessibility-new" size={18} color={colors.onSurface} />
-            </Pressable>
-            <Pressable
-              onPress={() => router.push('/permisos')}
-              accessibilityRole="button"
-              accessibilityLabel="Cuidadores: gestionar quién te acompaña"
-              hitSlop={8}
-              style={[styles.profileButton, { backgroundColor: colors.primary }]}
-              testID="paciente-inicio-cuidadores">
-              <MaterialIcons name="group" size={18} color={colors.onPrimary} />
+              <MaterialIcons name="accessibility-new" size={22} color={colors.onSecondaryContainer} />
+              <ThemedText variant="labelMd" colorRole="onSecondaryContainer">
+                Accesibilidad
+              </ThemedText>
             </Pressable>
             <AccountButton testID="paciente-inicio-cuenta" />
           </View>
@@ -240,7 +239,7 @@ export default function PacienteInicioScreen() {
                   <View style={styles.reminderBody}>
                     <ThemedText variant="labelMd">{reminder.title}</ThemedText>
                     <ThemedText variant="bodySm" colorRole="secondary">
-                      {CATEGORY_META[reminder.category].label}
+                      {reminderCategoryLabel(reminder.category, reminder.categoryLabel)}
                     </ThemedText>
                   </View>
                   {reminder.status === 'hecho' ? (
@@ -342,8 +341,10 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: Spacing.sm,
     paddingHorizontal: Spacing.margin,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xs,
@@ -351,14 +352,15 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
+    gap: Spacing.sm,
   },
-  profileButton: {
-    width: 32,
-    height: 32,
-    borderRadius: Radius.full,
+  accessibilityButton: {
+    minHeight: MinTouchSize,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: Spacing.xs,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.md,
   },
   body: {
     paddingHorizontal: Spacing.margin,

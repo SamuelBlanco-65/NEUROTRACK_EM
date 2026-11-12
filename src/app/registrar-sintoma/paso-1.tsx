@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useRef, type ComponentRef } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ProfileOption } from '@/components/profile-option';
@@ -9,19 +10,27 @@ import { SYMPTOM_TYPE_ICON, SYMPTOM_TYPE_OPTIONS } from '@/features/symptoms/con
 import { screenIntroScript } from '@/features/audio/screen-scripts';
 import { SpeakButton } from '@/features/audio/speak-button';
 import { WizardActions } from '@/features/symptoms/wizard-actions';
+import { CUSTOM_LABEL_MAX_LENGTH } from '@/features/symptoms/types';
 import { WizardHeader } from '@/features/symptoms/wizard-header';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { draftReset, draftSymptomTypeSet } from '@/store/slices/symptoms-slice';
-import { Spacing, useThemeColors } from '@/theme';
+import { draftCustomLabelSet, draftReset, draftSymptomTypeSet } from '@/store/slices/symptoms-slice';
+import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
 
 export default function RegistrarSintomaPaso1Screen() {
   const dispatch = useAppDispatch();
   const colors = useThemeColors();
   const symptomType = useAppSelector((state) => state.symptoms.draft.symptomType);
+  const customLabel = useAppSelector((state) => state.symptoms.draft.customLabel);
+  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
 
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
+        {/* Sube el contenido cuando aparece el teclado, para que el campo «Otro» no quede tapado. */}
+        <KeyboardAvoidingView
+          style={styles.keyboardArea}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}>
         <WizardHeader
           step={1}
           onClose={() => {
@@ -29,7 +38,11 @@ export default function RegistrarSintomaPaso1Screen() {
             router.back();
           }}
         />
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}>
           <View style={styles.heading}>
             <ThemedText variant="headlineLg" accessibilityRole="header">¿Qué estás sintiendo?</ThemedText>
             <ThemedText variant="bodyMd" colorRole="secondary">
@@ -62,6 +75,32 @@ export default function RegistrarSintomaPaso1Screen() {
               />
             ))}
           </View>
+          {symptomType === 'otro' ? (
+            <View style={[styles.customCard, { backgroundColor: colors.surfaceContainerLowest }]}>
+              <View style={styles.customHeader}>
+                <ThemedText variant="labelMd">¿Cómo lo describirías?</ThemedText>
+                <ThemedText variant="labelSm" colorRole="secondary">
+                  {customLabel.length}/{CUSTOM_LABEL_MAX_LENGTH}
+                </ThemedText>
+              </View>
+              <TextInput
+                value={customLabel}
+                onChangeText={(text) => dispatch(draftCustomLabelSet(text.slice(0, CUSTOM_LABEL_MAX_LENGTH)))}
+                placeholder="Escríbelo con tus palabras (opcional)"
+                placeholderTextColor={colors.onSurfaceVariant}
+                maxLength={CUSTOM_LABEL_MAX_LENGTH}
+                autoFocus
+                onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300)}
+                style={[styles.customInput, { backgroundColor: colors.surfaceContainerLow, color: colors.onSurface }]}
+                accessibilityLabel="Cómo describirías tu síntoma, con tus palabras. Opcional"
+                testID="sintoma-otro-texto"
+              />
+              <ThemedText variant="bodySm" colorRole="onSurfaceVariant">
+                Por ejemplo: «hormigueo en la mano izquierda» o «sensibilidad al calor». Si no escribes nada, se
+                guarda como «Otro».
+              </ThemedText>
+            </View>
+          ) : null}
         </ScrollView>
         <View style={styles.actions}>
           <WizardActions
@@ -71,6 +110,7 @@ export default function RegistrarSintomaPaso1Screen() {
             primaryTestID="sintoma-paso1-siguiente"
           />
         </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </ThemedView>
   );
@@ -84,6 +124,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: Spacing.margin,
     paddingTop: Spacing.md,
+  },
+  keyboardArea: {
+    flex: 1,
     gap: Spacing.lg,
   },
   scroll: {
@@ -99,6 +142,23 @@ const styles = StyleSheet.create({
   },
   options: {
     gap: Spacing.md,
+  },
+  customCard: {
+    borderRadius: Radius.default,
+    padding: Spacing.md,
+    gap: Spacing.sm,
+  },
+  customHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  customInput: {
+    minHeight: MinTouchSize + 8,
+    borderRadius: Radius.default,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    fontSize: 17,
   },
   actions: {
     paddingBottom: Spacing.md,

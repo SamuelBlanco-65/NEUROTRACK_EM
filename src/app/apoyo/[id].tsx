@@ -15,7 +15,7 @@ import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
 const TYPE_ICON: Record<GuideType, keyof typeof MaterialIcons.glyphMap> = {
   leer: 'menu-book',
   escuchar: 'headset',
-  ver: 'play-circle-outline',
+  ver: 'format-list-numbered',
 };
 
 export default function GuiaDeApoyoScreen() {
@@ -69,6 +69,7 @@ export default function GuiaDeApoyoScreen() {
               accessibilityLabel="Escuchar la guía completa"
               style={{ alignSelf: 'flex-start' }}
               testID="apoyo-guia-escuchar"
+              always={guide.type !== 'leer'}
             />
 
             {(guide.type === 'escuchar' || guide.type === 'ver') && (
@@ -76,8 +77,8 @@ export default function GuiaDeApoyoScreen() {
                 <MaterialIcons name="subtitles" size={18} color={colors.onSurfaceVariant} />
                 <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.transcriptText}>
                   {guide.type === 'escuchar'
-                    ? 'Este audio se entrega como transcripción completa, siempre disponible como texto.'
-                    : 'Este video se entrega como transcripción/subtítulos completos, siempre disponibles como texto.'}
+                    ? 'Esta guía se lee en voz alta con la voz de tu teléfono. El texto completo está siempre disponible aquí abajo.'
+                    : 'Guía paso a paso: no hay video, cada movimiento está escrito aquí abajo y también puedes escucharlo.'}
                 </ThemedText>
               </View>
             )}

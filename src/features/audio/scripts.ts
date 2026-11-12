@@ -27,8 +27,27 @@ export function atencionScript(optionsCount: number): string {
   return `Encuentra la figura distinta. Hay ${optionsCount} opciones. Tómate tu tiempo, sin prisas.`;
 }
 
-export function logicaScript(sequence: number[]): string {
-  return `Descubre qué número sigue en la serie. ${sequence.join(', ')}, y luego, ¿cuál sigue? Tómate tu tiempo, sin prisas.`;
+/** «Las opciones son: 12, 14, 15 y 18.» */
+export function logicaOptionsScript(options: number[]): string {
+  if (options.length === 0) return '';
+  if (options.length === 1) return `La opción es ${options[0]}.`;
+  return `Las opciones son: ${options.slice(0, -1).join(', ')} y ${options[options.length - 1]}.`;
+}
+
+/**
+ * Serie de Lógica. En la versión auditiva (V-D5) la serie no se ve, así que se pasan también las `options`
+ * y el guion las nombra; sin ellas se lee solo la serie (las opciones están a la vista).
+ */
+export function logicaScript(sequence: number[], options?: number[]): string {
+  const base = `Descubre qué número sigue en la serie. ${sequence.join(', ')}, y luego, ¿cuál sigue?`;
+  const extra = options && options.length > 0 ? ` ${logicaOptionsScript(options)}` : '';
+  return `${base}${extra} Tómate tu tiempo, sin prisas.`;
+}
+
+/** Aliento breve tras tocar una figura correcta que no cierra la ronda (versión auditiva de Memoria). */
+export function memoriaTapScript(shape: ShapeId): string {
+  const label = shapeWord(shape);
+  return `${label.charAt(0).toUpperCase()}${label.slice(1)}, bien.`;
 }
 
 export function resultScript(result: RoundResult): string {
@@ -65,19 +84,23 @@ export type Narration = { key: string; text: string };
  * identifica el momento: la pantalla solo vuelve a hablar cuando cambia la `key`, no con cada
  * toque que actualiza la sesión sin cambiar de momento (p. ej. tocar figuras en Memoria).
  */
-export function narrationFor(session: {
-  area: ActivityArea;
-  phase: 'memorizar' | 'responder' | 'resultado' | 'completada';
-  roundIndex: number;
-  roundsCorrect: number;
-  newLevel: number | null;
-  lastResult: RoundResult | null;
-  memoriaRound: { sequence: ShapeId[] } | null;
-  atencionRound: { options: unknown[] } | null;
-  logicaRound: { sequence: number[] } | null;
-  movimientoRound: { steps: string[] } | null;
-  completedStepIndices: number[];
-}): Narration | null {
+export function narrationFor(
+  session: {
+    area: ActivityArea;
+    phase: 'memorizar' | 'responder' | 'resultado' | 'completada';
+    roundIndex: number;
+    roundsCorrect: number;
+    newLevel: number | null;
+    lastResult: RoundResult | null;
+    memoriaRound: { sequence: ShapeId[] } | null;
+    atencionRound: { options: unknown[] } | null;
+    logicaRound: { sequence: number[]; options?: number[] } | null;
+    movimientoRound: { steps: string[] } | null;
+    completedStepIndices: number[];
+  },
+  /** `audioOnly`: versión auditiva; en Lógica el guion también nombra las opciones. */
+  mode: { audioOnly?: boolean } = {}
+): Narration | null {
   const { area, phase, roundIndex } = session;
 
   if (phase === 'completada') {
@@ -109,7 +132,8 @@ export function narrationFor(session: {
       return { key: `responder-${roundIndex}`, text: atencionScript(session.atencionRound.options.length) };
     }
     if (area === 'logica' && session.logicaRound) {
-      return { key: `responder-${roundIndex}`, text: logicaScript(session.logicaRound.sequence) };
+      const options = mode.audioOnly ? session.logicaRound.options : undefined;
+      return { key: `responder-${roundIndex}`, text: logicaScript(session.logicaRound.sequence, options) };
     }
   }
   return null;

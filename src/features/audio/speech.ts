@@ -1,4 +1,5 @@
 import * as Speech from 'expo-speech';
+import { AccessibilityInfo } from 'react-native';
 
 import { chooseSpanishVoice, splitForSpeech } from './voice';
 
@@ -42,6 +43,25 @@ export async function speak(text: string): Promise<void> {
   } catch {
     // Sin voz disponible no se bloquea nada: la actividad se puede hacer leyendo.
   }
+}
+
+/**
+ * Lectura para la versión auditiva de las actividades (V-D5). Con un lector de pantalla activo Android silencia
+ * `expo-speech` (TalkBack manda), pero aquí la voz ES el contenido (la secuencia no se ve): por eso, si hay
+ * TalkBack, el texto se entrega como un anuncio de accesibilidad y lo lee el propio lector; si no, con la voz
+ * del sistema como siempre. Nunca lanza.
+ */
+export async function speakForAudioMode(text: string): Promise<void> {
+  try {
+    if (await AccessibilityInfo.isScreenReaderEnabled()) {
+      latestRequest += 1; // descarta lecturas propias pendientes
+      AccessibilityInfo.announceForAccessibility(text);
+      return;
+    }
+  } catch {
+    // Si no se puede saber, se usa la voz del sistema.
+  }
+  await speak(text);
 }
 
 export function stopSpeaking(): void {

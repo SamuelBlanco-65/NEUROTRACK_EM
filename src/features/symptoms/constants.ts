@@ -30,6 +30,12 @@ export function symptomTypeLabel(id: SymptomType): string {
   return SYMPTOM_TYPE_OPTIONS.find((option) => option.id === id)?.title ?? id;
 }
 
+/** Lo que se muestra al paciente: su propio nombre si describió un síntoma «otro», si no la etiqueta estándar. */
+export function symptomDisplayLabel(type: SymptomType, customLabel?: string | null): string {
+  const custom = customLabel?.trim();
+  return type === 'otro' && custom ? custom : symptomTypeLabel(type);
+}
+
 export function severityLabel(id: Severity): string {
   return SEVERITY_OPTIONS.find((option) => option.id === id)?.title ?? id;
 }

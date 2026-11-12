@@ -8,6 +8,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import {
   audioGuidanceToggled,
+  audioOnlyToggled,
   brightnessChanged,
   colorSchemeChanged,
   highContrastToggled,
@@ -47,7 +48,7 @@ export default function AccesibilidadScreen() {
   function confirmarRestablecer() {
     Alert.alert(
       'Restablecer configuración',
-      'Esto vuelve la apariencia, el brillo, el contraste, el tamaño de texto, las animaciones y la lectura en voz alta a sus valores originales.',
+      'Esto vuelve la apariencia, el brillo, el contraste, el tamaño de texto, las animaciones, la lectura en voz alta y las actividades solo con audio a sus valores originales.',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -225,6 +226,20 @@ export default function AccesibilidadScreen() {
                 dispatch(audioGuidanceToggled());
               }}
               testID="accesibilidad-lectura-voz"
+            />
+          </View>
+
+          <View style={styles.section}>
+            <ToggleRow
+              icon="hearing"
+              title="Actividades solo con audio"
+              description="En Memoria y Lógica no se muestra la secuencia ni la serie: se dicen en voz alta y puedes repetirlas con «Escuchar». Para quien no puede ver la pantalla. Enciende también la lectura en voz alta."
+              value={settings.audioOnly}
+              onChange={() => {
+                if (settings.audioOnly) stopSpeaking();
+                dispatch(audioOnlyToggled());
+              }}
+              testID="accesibilidad-solo-audio"
             />
           </View>
 

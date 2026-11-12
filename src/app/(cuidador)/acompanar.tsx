@@ -1,6 +1,7 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import * as Haptics from 'expo-haptics';
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Animated, Easing, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ScreenState } from '@/components/screen-state';
@@ -16,13 +17,10 @@ import {
   sendCheerMessage,
 } from '@/store/slices/caregiver-slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
+import { MinTouchSize, Radius, Spacing, useReduceMotion, useThemeColors } from '@/theme';
 
-const CHEER_MESSAGES = [
-  '🌸 ¡Orgulloso de tu constancia!',
-  '☕ Tómate un rico descanso hoy',
-  '💛 Cada paso cuenta muchísimo',
-];
+/** Largo máximo de un mensaje de ánimo (igual que el check de `caregiver_cheers` en la base de datos). */
+const CHEER_MAX_LENGTH = 280;
 
 const AREAS = ACTIVITY_AREAS;
 
@@ -40,8 +38,14 @@ export default function CuidadorAcompanarScreen() {
     symptomsStatus,
   } = useAppSelector((state) => state.caregiver);
   const [cheerOpen, setCheerOpen] = useState(false);
+  const [cheerText, setCheerText] = useState('');
+  const [sendingCheer, setSendingCheer] = useState(false);
   const [sentMessage, setSentMessage] = useState<string | null>(null);
   const [cheerError, setCheerError] = useState<string | null>(null);
+  const reduceMotion = useReduceMotion();
+  // Avión de papel: sale volando hacia arriba y a la derecha al enviar (se omite con «Reducir animaciones»).
+  const [flight] = useState(() => new Animated.Value(0));
+  const [flying, setFlying] = useState(false);
 
   const activeLink = useMemo(
     () => myLinksAsCaregiver.find((link) => link.status === 'aceptado') ?? null,
@@ -57,14 +61,32 @@ export default function CuidadorAcompanarScreen() {
     if (activeLink?.shareSintomas) dispatch(fetchCaregiverPatientSymptoms(activeLink.patientId));
   }, [dispatch, activeLink]);
 
-  async function enviarAnimo(message: string) {
-    if (!activeLink) return;
+  function volarAvion() {
+    if (reduceMotion) return;
+    flight.setValue(0);
+    setFlying(true);
+    Animated.timing(flight, {
+      toValue: 1,
+      duration: 1200,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start(() => setFlying(false));
+  }
+
+  async function enviarAnimo() {
+    const message = cheerText.trim();
+    if (!activeLink || message.length === 0 || sendingCheer) return;
     setCheerError(null);
+    setSendingCheer(true);
     const result = await dispatch(
       sendCheerMessage({ linkId: activeLink.id, patientId: activeLink.patientId, message })
     );
+    setSendingCheer(false);
     if (sendCheerMessage.fulfilled.match(result)) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setSentMessage(message);
+      setCheerText('');
+      volarAvion();
     } else {
       setCheerError(result.payload?.message ?? 'No pudimos enviar el mensaje. Inténtalo de nuevo.');
     }
@@ -165,6 +187,27 @@ export default function CuidadorAcompanarScreen() {
         ) : (
           <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
             <View style={[styles.weekCard, { backgroundColor: colors.secondaryContainer }]}>
+              {flying ? (
+                <Animated.View
+                  pointerEvents="none"
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                  style={[
+                    styles.plane,
+                    {
+                      opacity: flight.interpolate({ inputRange: [0, 0.15, 0.8, 1], outputRange: [0, 1, 1, 0] }),
+                      transform: [
+                        { translateX: flight.interpolate({ inputRange: [0, 1], outputRange: [0, 240] }) },
+                        { translateY: flight.interpolate({ inputRange: [0, 1], outputRange: [0, -190] }) },
+                        { rotate: flight.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '-28deg'] }) },
+                        { scale: flight.interpolate({ inputRange: [0, 1], outputRange: [1, 0.55] }) },
+                      ],
+                    },
+                  ]}
+                  testID="acompanar-avion">
+                  <MaterialIcons name="send" size={40} color={colors.primary} />
+                </Animated.View>
+              ) : null}
               <ThemedText variant="headlineSm" colorRole="onSecondaryContainer">
                 {viewedWeekSessionCount === 0
                   ? 'Esta semana no ha practicado todavía.'
@@ -191,7 +234,7 @@ export default function CuidadorAcompanarScreen() {
                       testID="acompanar-animo-confirmacion">
                       <MaterialIcons name="check-circle" size={18} color={colors.primary} />
                       <ThemedText variant="labelSm" style={styles.cheerConfirmationText}>
-                        Mensaje enviado a su teléfono con ternura.
+                        Mensaje enviado. Le llegará a su inicio.
                       </ThemedText>
                       <Pressable
                         onPress={cerrarConfirmacion}
@@ -217,17 +260,38 @@ export default function CuidadorAcompanarScreen() {
                           </ThemedText>
                         </View>
                       ) : null}
-                      {CHEER_MESSAGES.map((message) => (
+                      <View style={[styles.cheerComposer, { backgroundColor: colors.surfaceContainerLowest }]}>
+                        <TextInput
+                          value={cheerText}
+                          onChangeText={(text) => setCheerText(text.slice(0, CHEER_MAX_LENGTH))}
+                          placeholder="Escríbele algo que le haga bien…"
+                          placeholderTextColor={colors.onSurfaceVariant}
+                          multiline
+                          maxLength={CHEER_MAX_LENGTH}
+                          style={[styles.cheerInput, { color: colors.onSurface }]}
+                          accessibilityLabel="Mensaje de ánimo para la persona que acompañas"
+                          testID="acompanar-animo-texto"
+                        />
+                        <ThemedText variant="labelSm" colorRole="secondary" style={styles.cheerCounter}>
+                          {cheerText.length}/{CHEER_MAX_LENGTH}
+                        </ThemedText>
+                      </View>
                       <Pressable
-                        key={message}
-                        onPress={() => enviarAnimo(message)}
+                        onPress={enviarAnimo}
+                        disabled={cheerText.trim().length === 0 || sendingCheer}
                         accessibilityRole="button"
-                        accessibilityLabel={message}
-                        style={[styles.cheerChip, { backgroundColor: colors.surfaceContainerLowest }]}
-                        testID={`acompanar-animo-opcion-${message.slice(0, 4)}`}>
-                        <ThemedText variant="bodySm">{message}</ThemedText>
+                        accessibilityLabel="Enviar mensaje"
+                        accessibilityState={{ disabled: cheerText.trim().length === 0 || sendingCheer, busy: sendingCheer }}
+                        style={[
+                          styles.cheerSend,
+                          { backgroundColor: colors.primary, opacity: cheerText.trim().length === 0 ? 0.5 : 1 },
+                        ]}
+                        testID="acompanar-animo-enviar">
+                        <MaterialIcons name="send" size={20} color={colors.onPrimary} />
+                        <ThemedText variant="labelLg" colorRole="onPrimary">
+                          {sendingCheer ? 'Enviando…' : 'Enviar mensaje'}
+                        </ThemedText>
                       </Pressable>
-                      ))}
                     </>
                   )}
                 </View>
@@ -404,6 +468,35 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     padding: Spacing.md,
     gap: Spacing.sm,
+    overflow: 'hidden',
+  },
+  plane: {
+    position: 'absolute',
+    left: Spacing.md,
+    bottom: Spacing.md,
+    zIndex: 2,
+  },
+  cheerComposer: {
+    borderRadius: Radius.default,
+    padding: Spacing.sm,
+    gap: Spacing.xs,
+  },
+  cheerInput: {
+    minHeight: 96,
+    textAlignVertical: 'top',
+    fontSize: 17,
+    paddingHorizontal: Spacing.xs,
+  },
+  cheerCounter: {
+    textAlign: 'right',
+  },
+  cheerSend: {
+    minHeight: 56,
+    borderRadius: Radius.full,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
   },
   cheerButton: {
     minHeight: MinTouchSize + 8,
@@ -415,12 +508,6 @@ const styles = StyleSheet.create({
   },
   cheerOptions: {
     gap: Spacing.xs,
-  },
-  cheerChip: {
-    minHeight: MinTouchSize,
-    borderRadius: Radius.full,
-    paddingHorizontal: Spacing.md,
-    justifyContent: 'center',
   },
   cheerConfirmation: {
     flexDirection: 'row',

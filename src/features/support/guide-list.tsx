@@ -10,14 +10,14 @@ import type { GuideType, SupportGuide } from './types';
 const TYPE_ICON: Record<GuideType, keyof typeof MaterialIcons.glyphMap> = {
   leer: 'menu-book',
   escuchar: 'headset',
-  ver: 'play-circle-outline',
+  ver: 'format-list-numbered',
 };
 
 const FILTERS: { id: GuideType | 'todo'; label: string }[] = [
   { id: 'todo', label: 'Todo' },
   { id: 'leer', label: 'Leer' },
   { id: 'escuchar', label: 'Escuchar' },
-  { id: 'ver', label: 'Ver' },
+  { id: 'ver', label: 'Paso a paso' },
 ];
 
 export function GuideList({ guides, testID }: { guides: SupportGuide[]; testID: string }) {

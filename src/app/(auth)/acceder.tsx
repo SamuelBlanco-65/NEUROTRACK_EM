@@ -417,22 +417,6 @@ export default function AccederScreen() {
           </Pressable>
         </View>
 
-        {mode === 'login' ? (
-          <View style={[styles.tip, { backgroundColor: colors.tertiaryFixed }]}>
-            <View style={[styles.tipIcon, { backgroundColor: colors.tertiaryFixedDim }]}>
-              <MaterialIcons name="spa" size={22} color={colors.onTertiaryFixed} />
-            </View>
-            <View style={styles.tipText}>
-              <ThemedText variant="labelSm" colorRole="onTertiaryFixed">
-                Un paso a la vez
-              </ThemedText>
-              <ThemedText variant="bodySm" colorRole="onTertiaryFixedVariant">
-                Tu evolución, tu proceso, tu camino.
-              </ThemedText>
-            </View>
-          </View>
-        ) : null}
-
         <View style={[styles.privacy, { backgroundColor: colors.surfaceContainerLow }]}>
           <MaterialIcons name="verified-user" size={22} color={colors.primary} />
           <ThemedText variant="bodySm" colorRole="onSurfaceVariant" style={styles.privacyText}>
@@ -554,24 +538,6 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     minHeight: MinTouchSize + 8,
     borderRadius: Radius.full,
-  },
-  tip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    padding: Spacing.md,
-    borderRadius: Radius.default,
-  },
-  tipIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tipText: {
-    flex: 1,
-    gap: 2,
   },
   privacy: {
     flexDirection: 'row',
