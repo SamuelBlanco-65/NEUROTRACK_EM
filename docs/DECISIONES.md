@@ -486,6 +486,78 @@ y se marca la anterior como **Reemplazada por D-00X**.
 
 ---
 
+## D-021 · Brillo propio de la app y rotación de pantalla libre
+
+- **Fecha:** 2026-11-11 (6ª sesión) · **Estado:** Vigente (probado por el usuario en celular; sin captura)
+- **Contexto:** la propuesta (§V-D4) prometía un control de brillo «disociado del brillo general del celular» y WCAG 1.3.4
+  prohíbe bloquear la orientación; la app estaba en `portrait` y sin control de brillo.
+- **Decisión:** opción «Brillo de la app» (Del teléfono / Bajo 50 % / Muy bajo 25 %) con `expo-brightness`
+  (`features/settings/brightness.ts`): en Android afecta solo a la actividad mientras la app está abierta, no cambia el ajuste
+  del sistema y no pide permisos. Tres botones y no un deslizador (más fácil con temblor y con TalkBack). `app.json`:
+  `orientation: default`.
+- **Alternativas:** deslizador continuo (descartado por accesibilidad); `setSystemBrightnessAsync` (pide `WRITE_SETTINGS` y cambia
+  el brillo global).
+- **Requisitos relacionados:** RNF-007, RNF-001 (1.3.4).
+
+---
+
+## D-022 · «Actividades solo con audio» (versión auditiva de Memoria y Lógica)
+
+- **Fecha:** 2026-11-11 (6ª sesión) · **Estado:** Vigente (probado por el usuario; sin captura)
+- **Contexto:** §V-D5 prometía una versión auditiva de las actividades (memoria con sonidos) para quien no ve la pantalla;
+  solo existía la lectura en voz alta de instrucciones.
+- **Decisión:** interruptor en Accesibilidad. Con él, Memoria y Lógica **no muestran** la secuencia ni la serie: se dicen en voz
+  alta (con las opciones, en Lógica) y se repiten con «Escuchar»; en Memoria cada acierto intermedio se confirma en voz.
+  Requiere «Lectura en voz alta» (activarlo la enciende; apagarla lo apaga). Con TalkBack activo `speakForAudioMode` usa
+  `announceForAccessibility` para que el lector lea el texto en vez de silenciar la voz (no se «arregla» el pisado de
+  TalkBack: aquí la voz ES el contenido). Atención no se adapta (es visual por naturaleza); Movimiento ya funciona con audio.
+- **Requisitos relacionados:** REC-002, RNF-009.
+
+---
+
+## D-023 · Campos libres: síntoma «Otro», mensaje de ánimo y recordatorios
+
+- **Fecha:** 2026-11-11 (6ª sesión) · **Estado:** Vigente (migración `20261118000000`)
+- **Contexto:** el paciente quedaba limitado a 6 tipos de síntoma, el cuidador a 3 mensajes de ánimo fijos, y los
+  recordatorios a 3 categorías y 4 horarios predeterminados.
+- **Decisión:** (1) «Otro» admite un nombre propio (`custom_label`, ≤ 60) que solo ve el paciente; (2) el cuidador escribe su
+  mensaje (≤ 280, el límite que ya tenía la base) y se envía con un avión de papel animado, omitido con «Reducir animaciones»;
+  (3) recordatorios con selector nativo de fecha y hora (`@react-native-community/datetimepicker`, incluido en Expo Go), sin
+  fechas pasadas, y categoría «Otro» con nombre (`category_label`, ≤ 40). El trigger `reminders_guard_caregiver_update`
+  cubre la columna nueva.
+- **Alternativas:** guardar el nombre propio dentro de la nota (frágil); selector de fecha casero con botones +/− (más código y
+  peor accesibilidad que el nativo).
+- **Consecuencias:** la migración es obligatoria; el cuidador y el médico ven «Otro» (no se amplió `shared_symptom_logs`).
+- **Requisitos relacionados:** RF-001, RF-006, RF-008.
+
+---
+
+## D-024 · Apoyo: guías reescritas y botón «Escuchar» siempre en las guías de audio
+
+- **Fecha:** 2026-11-11 (6ª sesión) · **Estado:** Vigente (contenido sin revisión profesional)
+- **Contexto:** las guías eran muy breves, las «Escuchar» no tenían audio con la lectura en voz alta apagada y los textos
+  hablaban de un audio y un video que no existen.
+- **Decisión:** 8 guías con pasos concretos y avisos de seguridad (todo sentado en Movimiento, 106 y 123 donde corresponde,
+  sin nombres de asociaciones no verificadas); los tipos «Escuchar» y «Paso a paso» (antes «Ver») muestran siempre «Escuchar
+  la guía» (`always` en `SpeakButton`); los textos dicen que se lee con la voz del teléfono.
+- **Requisitos relacionados:** RF-009, RF-010, RNF-009.
+
+---
+
+## D-025 · El perfil es una vista, no un permiso: la selección avisa con qué cuenta se entra
+
+- **Fecha:** 2026-11-11 (6ª sesión) · **Estado:** Vigente (probado por el usuario)
+- **Contexto:** con una sesión abierta se podía volver a la selección y entrar a otro perfil con la misma cuenta sin que se
+  notara.
+- **Decisión:** se mantiene que el perfil no va ligado a la cuenta (una persona puede ser paciente y cuidador de otra; los
+  permisos están en RLS y en los vínculos, y una cuenta no puede vincularse consigo misma). Se añade la tarjeta «Sesión
+  iniciada como…» con «Usar otra cuenta» y una confirmación al elegir un perfil con sesión abierta.
+- **Alternativas:** rol guardado en la cuenta (más estricto, pero rompe el caso paciente-que-cuida y exige rehacer las cuentas
+  de demo); pedir la contraseña otra vez (seguridad aparente, la cuenta es la misma).
+- **Requisitos relacionados:** RF-007, RF-012.
+
+---
+
 ## Cosas que el material pedía y quedan fuera (con su razón)
 - **Perfil del médico** — marcado como opcional/futuro en §I-C y §IV-C (REC-003). **Actualización 2026-11-11: el
   equipo lo hizo como extra, ver D-016.**

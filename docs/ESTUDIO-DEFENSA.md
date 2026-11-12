@@ -93,9 +93,9 @@ Lo que la hace distinta: **permisos que controla el paciente y que se aplican en
 | Dato | Valor | Dónde se verifica |
 |---|---|---|
 | SDK de Expo | 58 (`expo ~58.0.23`), React Native 0.88.1, React 19.3.0, TypeScript ~6.0.3 | `package.json` |
-| Pruebas automatizadas | **124 pruebas en 12 suites** (Jest) | `npm test` |
+| Pruebas automatizadas | **142 pruebas en 15 suites** (Jest) | `npm test` |
 | Slices de Redux | **9** (auth, profile, settings, symptoms, activities, progress, caregiver, doctor, reminders) | `src/store/slices/` |
-| Migraciones SQL | **10** | `supabase/migrations/` |
+| Migraciones SQL | **11** | `supabase/migrations/` |
 | Tablas de dominio | symptom_logs, activity_progress, activity_sessions, caregiver_links, caregiver_observations, caregiver_cheers, reminders, doctor_links, claim_attempts | migraciones |
 | Áreas de actividad | **4**: Memoria (5 niveles), Atención (5), Lógica (5), Movimiento (4) | `features/activities/constants.ts` |
 | Rondas por sesión / para subir de nivel | 3 / **2 de 3 correctas** | `ROUNDS_PER_SESSION`, `ROUNDS_TO_LEVEL_UP` |
@@ -203,7 +203,7 @@ El plan se organizó en tareas (T0…T11) pensando en que **siempre hubiera algo
 | **T10 Médico** | Perfil de solo lectura con permisos, caducidad y resumen comparativo | REC-003 | D-016 |
 | **T11 Cierre** | Contraste en oscuro (`primary`), gráfico de Progreso seleccionable, actividad Lógica, nombre del paciente al cuidador | RNF-003, RF-003 | D-017, D-018, D-019 |
 
-**Cómo se verificó:** `tsc --noEmit` y `eslint` limpios; **124 pruebas Jest**; pruebas manuales en **emulador Android** y en **celular real con Expo Go**; capturas en `artifacts/` (t0…t11, `talkback/`); y una **auditoría de accesibilidad de código** con un agente revisor.
+**Cómo se verificó:** `tsc --noEmit` y `eslint` limpios; **142 pruebas Jest**; pruebas manuales en **emulador Android** y en **celular real con Expo Go**; capturas en `artifacts/` (t0…t11, `talkback/`); y una **auditoría de accesibilidad de código** con un agente revisor.
 
 **Una frase para el profesor:** *«Construimos primero la base y la capa de datos, luego cada módulo de forma vertical (pantalla + estado + datos + permisos + prueba), y dejamos la accesibilidad como requisito transversal verificado en dispositivo real.»*
 
@@ -291,7 +291,7 @@ NEUROTRACK_EM/
 
 - La **pantalla** no sabe de red: si cambia el backend solo se toca `api.ts`.
 - El **slice** concentra los estados asíncronos (`cargando`, `listo`, `error`) y los traduce a la UI con `ScreenState`.
-- La **lógica pura** (`logic.ts`) no depende de React ni de Supabase, así que se puede **probar con Jest** (124 pruebas).
+- La **lógica pura** (`logic.ts`) no depende de React ni de Supabase, así que se puede **probar con Jest** (142 pruebas).
 - La **seguridad** no está en la app sino en Postgres: aunque alguien modifique la app, **RLS** impide leer datos ajenos.
 
 > **Excepciones reales que debes conocer** (por si el profesor busca imports de Supabase en pantallas): solo `src/app/_layout.tsx` importa `supabase` (para escuchar `onAuthStateChange` y detectar `SIGNED_OUT`), y `src/app/(auth)/acceder.tsx` llama a `resendConfirmationEmail` de `features/auth/api.ts` (reenviar el correo de confirmación). Todo lo demás pasa por thunks.
@@ -1002,21 +1002,22 @@ Funciona **desde cualquier dispositivo**. Costo: hay un componente extra que man
 
 ### 12.1 Por qué «lógica pura» (la idea)
 
-Una **función pura** devuelve siempre lo mismo para los mismos argumentos y **no tiene efectos** (ni red, ni UI, ni reloj oculto). El proyecto saca las reglas a `logic.ts` / `calendar.ts` / `summary.ts` **sin imports de React ni de Supabase**. Beneficios: se **prueban en milisegundos** con Jest, se reutilizan entre pantallas y no dependen del emulador. De ahí salen las **124 pruebas**.
+Una **función pura** devuelve siempre lo mismo para los mismos argumentos y **no tiene efectos** (ni red, ni UI, ni reloj oculto). El proyecto saca las reglas a `logic.ts` / `calendar.ts` / `summary.ts` **sin imports de React ni de Supabase**. Beneficios: se **prueban en milisegundos** con Jest, se reutilizan entre pantallas y no dependen del emulador. De ahí salen las **142 pruebas**.
 
 ### 12.2 Las suites (12) y qué prueban
 
 | Suite | Pruebas | Qué cubre |
 |---|---|---|
 | `features/doctor/__tests__/logic-test.ts` | 27 | Vigencia/caducidad de acceso, comparación de períodos con diferencias neutras, constancia de registro, notas |
-| `features/audio/__tests__/` (3 archivos) | 18 + 11 + 5 = **34** | Guiones de voz, qué se narra en cada momento, elección de voz en español, partición de textos largos |
+| `features/audio/__tests__/` (4 archivos) | 18 + 11 + 5 + 7 = **41** | Guiones de voz, qué se narra en cada momento, elección de voz en español, partición de textos largos, modo «solo audio» |
 | `features/progress/__tests__/logic-test.ts` | 14 | Rangos de período, buckets, agregación, insights, titular |
 | `features/activities/__tests__/logic-test.ts` | **22** | Generación de rondas de Memoria/Atención/Movimiento/**Lógica**, verificación de respuestas, `nextLevel` |
 | `features/legal/__tests__/legal-test.ts` | 7 | Términos y privacidad (versión, secciones) |
-| `features/symptoms/__tests__/` (2) | 6 + 3 = **9** | Grid del calendario; resumen de síntomas |
+| `features/symptoms/__tests__/` (3) | 6 + 3 + 3 = **12** | Grid del calendario; resumen de síntomas; nombre propio de «Otro» |
+| `features/reminders/__tests__/logic-test.ts` | 8 | Categoría propia, hora propuesta, unir fecha y hora, no aceptar fechas pasadas |
 | `features/auth/__tests__/` (2) | 3 + 5 = **8** | Validación de correo; análisis de enlaces |
 | `features/about/__tests__/content-test.ts` | 3 | Contenido «no diagnostica» |
-| **Total** | **124** | 12 suites |
+| **Total** | **142** | 15 suites |
 
 Se ejecutan con `npm test` (`jest` con preset `jest-expo`, configurado en `package.json`).
 
@@ -1156,11 +1157,27 @@ describe('generateMemoriaRound', () => {
 
 ### 13.9 Pantalla de Accesibilidad — D-011
 
-`src/app/accesibilidad.tsx`, con **6 controles reales** (todos con efecto verificable): **Apariencia** (claro/oscuro/automático), **Brillo de la app** (Del teléfono/Bajo/Muy bajo, `expo-brightness`, solo mientras la app está abierta), **Tamaño de texto** (normal/grande/extra grande), **Alto contraste**, **Reducir animaciones**, **Lectura en voz alta**; más **«Restablecer configuración»** (`settingsReset`). Se persisten con `AsyncStorage` (`features/settings/persistence.ts`) y se hidratan al abrir (`hydrateSettings`). **Se descartó** el mock original con «perfiles por diagnóstico» (Dislexia/TDAH/…) por ser el patrón de *accessibility overlay widget* que la comunidad critica, y los botones sin equivalente nativo (puntero grande, resaltar enlaces…): **un control que no hace nada es peor que no tenerlo**.
+`src/app/accesibilidad.tsx`, con **7 controles reales** (todos con efecto verificable): **Apariencia** (claro/oscuro/automático), **Brillo de la app** (Del teléfono/Bajo/Muy bajo, `expo-brightness`, solo mientras la app está abierta), **Tamaño de texto** (normal/grande/extra grande), **Alto contraste**, **Reducir animaciones**, **Lectura en voz alta**, **Actividades solo con audio** (Memoria y Lógica sin mostrar la secuencia; ver D-022); más **«Restablecer configuración»** (`settingsReset`). Se persisten con `AsyncStorage` (`features/settings/persistence.ts`) y se hidratan al abrir (`hydrateSettings`). **Se descartó** el mock original con «perfiles por diagnóstico» (Dislexia/TDAH/…) por ser el patrón de *accessibility overlay widget* que la comunidad critica, y los botones sin equivalente nativo (puntero grande, resaltar enlaces…): **un control que no hace nada es peor que no tenerlo**.
 
 ### 13.10 Cuenta, legal y «¿Qué es?»
 
-`src/app/cuenta.tsx` (cerrar sesión, **borrar cuenta** con confirmación `Alert`, accesos a Mi médico/Accesibilidad/Términos/Privacidad), `src/app/legal/[doc].tsx`, `src/app/acerca.tsx` + `features/about/` («¿Qué es Neurotrack EM?»: para quién es, funciones, privacidad, preguntas frecuentes y aviso médico con 123/106).
+`src/app/cuenta.tsx` (cerrar sesión, **borrar cuenta** con confirmación `Alert`, accesos a Mi médico/Accesibilidad/Términos/Privacidad), `src/app/legal/[doc].tsx`, `src/app/acerca.tsx` + `features/about/` («¿Qué es Neurotrack EM?»: para quién es, funciones, privacidad, preguntas frecuentes y aviso médico con 123/106). En Mi cuenta el paciente también tiene **«Mis cuidadores»** (antes era un botón del encabezado).
+
+### 13.11 Cambios de la última sesión (para que no te sorprendan en la defensa)
+
+| Cambio | Dónde está | Por qué (decisión) |
+|---|---|---|
+| **Brillo de la app** (Del teléfono / Bajo / Muy bajo) | `features/settings/brightness.ts`, `settings-slice.ts`, `accesibilidad.tsx`, efecto en `_layout.tsx` | D-021. `expo-brightness` afecta solo a la app abierta y no pide permisos |
+| **Rotación libre** | `app.json` → `orientation: "default"` | D-021. WCAG 1.3.4: no bloquear la orientación |
+| **Actividades solo con audio** | `speech.ts` (`speakForAudioMode`), `scripts.ts` (`logicaScript` con opciones, `memoriaTapScript`), `use-activity-narration.ts`, `actividad/[area].tsx` (`AudioOnlyNotice`) | D-022. Con TalkBack activo se usa `announceForAccessibility` para que el lector lea el texto |
+| **Selección de perfil con aviso de cuenta** | `src/app/index.tsx` (`choose`, tarjeta «Sesión iniciada como…») | D-025. El perfil es una vista, no un permiso: los permisos están en RLS |
+| **Encabezado del Inicio** | `(paciente)/inicio.tsx`, `components/account-button.tsx` | «Accesibilidad» con texto visible y Perfil de 48 dp: antes eran 3 círculos de 32 dp con áreas táctiles solapadas |
+| **Síntoma «Otro» con nombre propio** | `paso-1.tsx` (con `KeyboardAvoidingView`), `symptoms-slice.ts` (`customLabel`), `symptomDisplayLabel`, migración `20261118…` | D-023 |
+| **Mensaje de ánimo propio con avión de papel** | `(cuidador)/acompanar.tsx` (`Animated`, `useReduceMotion`) | D-023. El límite de 280 ya estaba en la base |
+| **Recordatorios con fecha/hora libres y categoría propia** | `(cuidador)/recordatorios.tsx`, `reminders/logic.ts`, `@react-native-community/datetimepicker`, migración `20261118…` | D-023. El botón «desaparecía» porque el formulario abría al final de la lista |
+| **Apoyo: 8 guías reescritas** | `features/support/constants.ts`, `speak-button.tsx` (`always`), `apoyo/[id].tsx` | D-024. Las guías «Escuchar» no tenían audio con la lectura apagada |
+
+**Pregunta probable:** *«¿Por qué una misma cuenta puede entrar como cuidador?»* → D-025: el perfil no es un permiso; lo que se ve lo deciden los vínculos y RLS, y una cuenta no puede vincularse consigo misma.
 
 ---
 
@@ -1173,7 +1190,7 @@ describe('generateMemoriaRound', () => {
 - **WCAG 2.2 nivel AA** (Web Content Accessibility Guidelines): pautas internacionales. Aunque nacieron para la web, se aplican a apps móviles. **POUR** = **P**erceptible, **O**perable, **C**omprensible (*Understandable*), **R**obusto.
 - **TalkBack** = lector de pantalla de **Android** (VoiceOver es el de iOS; no se verificó en iOS). Un lector de pantalla recorre la interfaz **elemento por elemento** (swipe), **lee** el nombre, el rol y el estado, y se activa con doble toque.
 - React Native expone la accesibilidad con **props nativas** que se traducen a las APIs de cada sistema; **no se usó ninguna librería externa** (V-D6: «apoyarse en lo que ya incluye el framework»).
-- **Cifras del repositorio** (conteo con `grep` sobre `src/`, 2026-11-11): `accessibilityRole` 211 líneas, `accessibilityLabel` 172, `accessibilityLiveRegion` 35, `hitSlop` 43, `testID` 309 referencias.
+- **Cifras del repositorio** (conteo con `grep` sobre `src/`, 2026-11-11): `accessibilityRole` 215 líneas, `accessibilityLabel` 179, `accessibilityLiveRegion` 35, `hitSlop` 41, `testID` 321 referencias.
 
 ### 14.2 Las props, una por una (qué hace cada una y dónde se ve)
 
@@ -1420,10 +1437,10 @@ Están en `docs/DECISIONES.md`. **El profesor puede preguntar por «decisiones d
 |---|---|
 | Tipado | TypeScript **estricto**; `npm run typecheck` (`tsc --noEmit`) limpio |
 | Lint | `npx expo lint` (ESLint flat config con `eslint-config-expo`) limpio |
-| Pruebas | `npm test` → 124 en verde |
+| Pruebas | `npm test` → 142 en verde |
 | Sin secretos | `.env` en `.gitignore` y **nunca commiteado** (`git log -- .env` vacío); solo `.env.example`; solo se usa la clave **publishable** (nunca `service_role`) |
 | Modular | `src/features/<módulo>/` con `api/logic/types/constants` |
-| README | `README.md`: qué hace, stack, requisitos, instalación, variables, **10 migraciones en orden**, autenticación, ejecución, arquitectura, privacidad, accesibilidad |
+| README | `README.md`: qué hace, stack, requisitos, instalación, variables, **11 migraciones en orden**, autenticación, ejecución, arquitectura, privacidad, accesibilidad |
 | Estructura | Rutas en `src/app/`, lo demás fuera (regla del proyecto) |
 
 ### 17.3 Git y co-autoría (D-007)
@@ -1700,7 +1717,7 @@ Samuel: síntomas, datos y autenticación; Amelyn: cuidador, recordatorios y apo
 
 **61. ¿Usaron IA?** El uso era libre (D-008); lo importante es que cada quien entienda y defienda su código. (Responde con honestidad y demuestra dominio.)
 
-**62. ¿Cómo verificaron que todo funciona?** `tsc`, `eslint`, 124 pruebas, pruebas manuales en emulador y celular, capturas en `artifacts/`.
+**62. ¿Cómo verificaron que todo funciona?** `tsc`, `eslint`, 142 pruebas, pruebas manuales en emulador y celular, capturas en `artifacts/`.
 
 **63. ¿Qué no probaron?** UI automatizada, integración con Supabase, iOS, fuente ampliada ni TalkBack en cuidador/médico.
 

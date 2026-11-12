@@ -139,3 +139,13 @@ el Markdown (insertado como JSON), dibuja los dos diagramas y se imprime con
 `chrome.exe --headless=new --disable-gpu --no-pdf-header-footer --virtual-time-budget=30000 --print-to-pdf=<salida>.pdf file:///<ruta>.html`.
 Necesita internet. Hoja A4, Georgia 11 pt, márgenes 18/17 mm, diagramas al 82 % de ancho. Para contar páginas no hay `pdfinfo`:
 `pdftotext -layout x.pdf x.txt` y contar los `\f`. El script de generación quedó en el scratchpad de la sesión, no en el repo.
+
+## Python y scripts de edición (2026-11-11, 6ª sesión)
+- Hay `python3` (3.14) en el Git Bash, pero **`python3 - <<EOF` (leer de stdin) se cuelga** en la herramienta Bash. Escribir el
+  script en un archivo `.py` con `Write` y ejecutarlo como `python3 ruta/script.py` funciona (sirve para reemplazos grandes
+  de bloques en un `.tsx`).
+- **`npx expo install <paquete>` puede añadir un plugin a `app.json`** (pasó con `@react-native-community/datetimepicker`);
+  es normal. Los módulos nuevos y los cambios de `app.json` (p. ej. `orientation`) solo se ven tras **cerrar del todo la app
+  en Expo Go y volver a abrirla**; un *reload* no basta.
+- **Metro en segundo plano:** `npx expo start --go --port 8081` con la herramienta Bash en segundo plano; comprobar con
+  `netstat -ano | grep -a ":8081.*LISTEN"`. Usar `grep -a` con la salida de `netstat`/`ipconfig` (es binaria por los acentos).

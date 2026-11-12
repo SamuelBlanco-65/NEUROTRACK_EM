@@ -74,6 +74,7 @@ En el **SQL Editor** de Supabase, ejecuta **en orden** cada archivo de `supabase
 | 8 | `20261115000000_doctor_links.sql` | Perfil del médico y lectura compartida de síntomas |
 | 9 | `20261116000000_activity_area_logica.sql` | Habilita el área «Lógica» en el progreso y el historial |
 | 10 | `20261117000000_caregiver_patient_name.sql` | Nombre del paciente en el vínculo aceptado, para mostrárselo al cuidador |
+| 11 | `20261118000000_custom_symptom_and_reminder_category.sql` | Nombre propio para el síntoma «Otro» y categoría «Otro» de los recordatorios |
 
 Son idempotentes (puedes volver a correrlas). No hay CLI de Supabase enlazada: se ejecutan a mano.
 
@@ -110,7 +111,7 @@ perfil en la primera pantalla.
 ```bash
 npm run typecheck    # tsc --noEmit
 npx expo lint        # ESLint (flat config)
-npm test             # 124 pruebas de lógica
+npm test             # 142 pruebas de lógica
 npx expo-doctor      # dependencias alineadas con el SDK
 ```
 
@@ -188,7 +189,7 @@ La accesibilidad es un requisito del dominio (EM: fatiga, temblor, visión, cogn
 - **Baja carga cognitiva:** una acción principal por pantalla, instrucciones cortas, actividades por pasos.
 - **Alternativas al audio y a la vista:** háptica en recordatorios y actividades, transcripción como texto en el
   contenido de apoyo, dictado con el micrófono del teclado y «Lectura en voz alta» opcional.
-- **Pantalla «Accesibilidad»:** apariencia, tamaño de texto, alto contraste, reducir animaciones y lectura en voz alta.
+- **Pantalla «Accesibilidad»:** apariencia, brillo de la app, tamaño de texto, alto contraste, reducir animaciones, lectura en voz alta y actividades solo con audio (Memoria y Lógica sin mostrar la secuencia). La app rota con el teléfono (no bloquea la orientación).
 
 Matriz de requisitos y evidencias en [`docs/REQUISITOS.md`](docs/REQUISITOS.md).
 

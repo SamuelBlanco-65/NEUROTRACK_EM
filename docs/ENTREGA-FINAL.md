@@ -12,7 +12,7 @@
 <p>Repositorio: https://github.com/SamuelBlanco-65/NEUROTRACK_EM</p>
 <p>Noviembre de 2026</p>
 <br>
-<p align="justify"><strong><em>Resumen</em></strong>—Neurotrack EM es una aplicación móvil (Expo, React Native y Supabase) para el seguimiento de síntomas, la estimulación cognitiva y motriz y el acompañamiento de personas con esclerosis múltiple (EM), sus cuidadores y, de forma opcional, su médico tratante, siempre con el consentimiento del paciente. Este documento consolida la visión del producto y el estado del arte (Fase 1), la arquitectura implementada, la auditoría de accesibilidad móvil basada en WCAG 2.2 nivel AA (Fase 2) y las pruebas realizadas: 124 pruebas automatizadas, casos ejecutados contra una base de datos real y un recorrido con TalkBack en un celular Android. Se declaran las limitaciones y el trabajo futuro.</p>
+<p align="justify"><strong><em>Resumen</em></strong>—Neurotrack EM es una aplicación móvil (Expo, React Native y Supabase) para el seguimiento de síntomas, la estimulación cognitiva y motriz y el acompañamiento de personas con esclerosis múltiple (EM), sus cuidadores y, de forma opcional, su médico tratante, siempre con el consentimiento del paciente. Este documento consolida la visión del producto y el estado del arte (Fase 1), la arquitectura implementada, la auditoría de accesibilidad móvil basada en WCAG 2.2 nivel AA (Fase 2) y las pruebas realizadas: 142 pruebas automatizadas, casos ejecutados contra una base de datos real y un recorrido con TalkBack en un celular Android. Se declaran las limitaciones y el trabajo futuro.</p>
 <p align="justify"><strong><em>Palabras clave</em></strong>—accesibilidad móvil, esclerosis múltiple, React Native, Row Level Security, TalkBack, WCAG 2.2.</p>
 
 </div>
@@ -138,7 +138,7 @@ erDiagram
     timestamptz expires_at "caducidad" }
 ```
 
-**Figura 2.** Esquema relacional (10 migraciones en `supabase/migrations/`; atributos omitidos salvo los de permisos). Todas las tablas referencian `auth.users` con `on delete cascade`: eliminar la cuenta borra todo (`delete_my_account`).
+**Figura 2.** Esquema relacional (11 migraciones en `supabase/migrations/`; atributos omitidos salvo los de permisos). Todas las tablas referencian `auth.users` con `on delete cascade`: eliminar la cuenta borra todo (`delete_my_account`).
 
 **Tabla 3.** Contratos de acceso (RLS y RPC).
 
@@ -160,9 +160,9 @@ La propuesta de la Fase 2 (§V) se basa en WCAG 2.2 nivel AA y los principios PO
 
 ### 3.1 Semántica para lectores de pantalla (TalkBack)
 
-- **Propiedades nativas [11] en todos los controles:** `accessibilityRole` en 211 líneas de código, `accessibilityLabel` en 172, `accessibilityState` (seleccionado, marcado, deshabilitado, ocupado) y `accessibilityHint` cuando la acción no es obvia (conteo con `grep` sobre `src/`). Roles con significado: `radiogroup`/`radio` (perfil, severidad, período), `switch` (permisos), `header`, `alert` y `progressbar`.
+- **Propiedades nativas [11] en todos los controles:** `accessibilityRole` en 215 líneas de código, `accessibilityLabel` en 179, `accessibilityState` (seleccionado, marcado, deshabilitado, ocupado) y `accessibilityHint` cuando la acción no es obvia (conteo con `grep` sobre `src/`). Roles con significado: `radiogroup`/`radio` (perfil, severidad, período), `switch` (permisos), `header`, `alert` y `progressbar`.
 - **Agrupamiento contra focos fragmentados:** tarjetas y filas son un solo elemento `accessible` con etiqueta completa. Cada permiso de «Mi médico» es un `Pressable` con rol `switch`, y el `Switch` visual se oculta al lector (`importantForAccessibility="no-hide-descendants"`) para que no se anuncie dos veces (`src/app/mi-medico.tsx`).
-- **Cambios dinámicos:** `accessibilityLiveRegion` en 35 lugares (carga, errores, cambio de período). **`testID`** estables (309 referencias) para la verificación.
+- **Cambios dinámicos:** `accessibilityLiveRegion` en 35 lugares (carga, errores, cambio de período). **`testID`** estables (321 referencias) para la verificación.
 
 ### 3.2 Diseño visual, contraste y tipografía adaptativa
 
@@ -179,7 +179,7 @@ const scaledLineHeight = lineHeight ? lineHeight * appTextScale * PixelRatio.get
 
 ### 3.3 Ergonomía táctil y navegación
 
-- **Área táctil y gestos:** `MinTouchSize = 48` dp en todos los botones; los íconos de 32 dp llevan `hitSlop={8}` (43 usos) y los principales miden 56 dp. Solo toques simples y sin tiempo límite: memoria y atención no tienen cronómetro (§V-C). La app **rota** (no bloquea la orientación, WCAG 1.3.4).
+- **Área táctil y gestos:** `MinTouchSize = 48` dp en todos los botones; los íconos de 32 dp llevan `hitSlop={8}` (41 usos) y los principales miden 56 dp. Solo toques simples y sin tiempo límite: memoria y atención no tienen cronómetro (§V-C). La app **rota** (no bloquea la orientación, WCAG 1.3.4).
 - **Retroalimentación multicanal:** `expo-haptics` en las actividades y al marcar un recordatorio; mensajes visibles de éxito y error; `ActivityIndicator` y `accessibilityState={{ busy }}` durante la carga.
 
 ### 3.4 Matriz trazable: propuesta del Corte 2 frente a implementación final
@@ -202,7 +202,7 @@ const scaledLineHeight = lineHeight ? lineHeight * appTextScale * PixelRatio.get
 | 12 | Apariencia independiente del sistema (§V-D4) | `features/settings/persistence.ts` | Prueba del equipo en emulador | C |
 | 13 | Lector de pantalla, etiquetas, orden lógico (§V-D5) | `accessibility*` en `src/app/**`, `src/components/**` | Auditoría y 14 capturas con TalkBack (`artifacts/talkback/`) | V |
 | 14 | Dictado para síntomas (§V-D5) | `features/audio/dictation-button.tsx` | `artifacts/talkback/08`, `10` | V |
-| 15 | Versión auditiva (§V-D5, extensión) | `expo-speech`, «Lectura en voz alta» | 34 pruebas Jest; confirmado en celular | C |
+| 15 | Versión auditiva de las actividades (§V-D5): Memoria y Lógica sin mostrar la secuencia | `speech.ts` (`speakForAudioMode`), `scripts.ts`, `actividad/[area].tsx`, `accesibilidad.tsx` | 41 pruebas Jest de audio; probado por el equipo en celular | C |
 
 ---
 
@@ -210,7 +210,7 @@ const scaledLineHeight = lineHeight ? lineHeight * appTextScale * PixelRatio.get
 
 ### 4.1 Pruebas automatizadas
 
-124 pruebas con Jest (`jest-expo`) en 12 suites, todas en verde (`npm test`), sobre la lógica de dominio y sin UI: perfil del médico (27), lectura en voz alta (34), progreso (14), actividades (22, incluida la lógica), términos y privacidad (7), calendario y resumen de síntomas (9), validación de acceso (8) y contenido «no diagnostica» (3). `tsc --noEmit` y ESLint pasan sin errores.
+142 pruebas con Jest (`jest-expo`) en 15 suites, todas en verde (`npm test`), sobre la lógica de dominio y sin UI: perfil del médico (27), lectura en voz alta y modo solo audio (41), progreso (14), actividades (22, incluida la lógica), recordatorios (8), términos y privacidad (7), calendario, resumen y nombres de síntomas (12), validación de acceso (8) y contenido «no diagnostica» (3). `tsc --noEmit` y ESLint pasan sin errores.
 
 ### 4.2 Casos de prueba ejecutados
 
@@ -247,7 +247,7 @@ Contra Supabase real, en emulador Android o en celular con Expo Go.
 
 Se construyó el MVP comprometido en §IV-C —síntomas y calendario, actividades cognitivas y motriz progresivas, módulo del cuidador con consentimiento, historial y comparación, apoyo y cuentas sincronizadas— y tres extensiones opcionales: dictado, lectura en voz alta y perfil del médico. De 39 requisitos trazados (`docs/REQUISITOS.md`), 35 están verificados con evidencia, 1 implementado sin probar (el README, sin seguir aún desde cero en un equipo limpio) y 3 pendientes por ser parte de la entrega misma (demo, defensa y equidad de commits).
 
-**Lecciones.** (1) Probar en dispositivo encuentra defectos que el código no muestra: los nueve de la sección 4.2. (2) La seguridad vive en el servidor: RLS filtra filas pero no columnas, y dejar que el cliente elija el código de invitación abre un oráculo para adivinarlo. (3) La accesibilidad requiere método: automatizar el cálculo de contraste en ambos esquemas evitó que el defecto de los botones en oscuro siguiera sin verse. (4) Mantener la lógica pura fuera de la UI hizo posibles las 124 pruebas. (5) El diseño generado con IA se filtra: del perfil médico de Stitch se descartó lo que inventaba datos que la app no recoge (edad, diagnóstico), el tono clínico, una pantalla que mostraba al médico las notas privadas del cuidador y afirmaciones falsas («cifrado de extremo a extremo»).
+**Lecciones.** (1) Probar en dispositivo encuentra defectos que el código no muestra: los nueve de la sección 4.2. (2) La seguridad vive en el servidor: RLS filtra filas pero no columnas, y dejar que el cliente elija el código de invitación abre un oráculo para adivinarlo. (3) La accesibilidad requiere método: automatizar el cálculo de contraste en ambos esquemas evitó que el defecto de los botones en oscuro siguiera sin verse. (4) Mantener la lógica pura fuera de la UI hizo posibles las 142 pruebas. (5) El diseño generado con IA se filtra: del perfil médico de Stitch se descartó lo que inventaba datos que la app no recoge (edad, diagnóstico), el tono clínico, una pantalla que mostraba al médico las notas privadas del cuidador y afirmaciones falsas («cifrado de extremo a extremo»).
 
 ### 5.2 Limitaciones conocidas
 
@@ -260,7 +260,7 @@ Se construyó el MVP comprometido en §IV-C —síntomas y calendario, actividad
 
 ### 5.3 *Roadmap*
 
-**v1.1:** código de invitación del cuidador generado en el servidor con límite atómico y recorrido TalkBack completo. **v1.2:** caché offline con cola de sincronización, notificaciones locales para recordatorios y `FlatList` para historiales largos. **v2.0:** versión auditiva completa de las actividades, verificación de profesionales y publicación en Google Play con EAS.
+**v1.1:** código de invitación del cuidador generado en el servidor con límite atómico y recorrido TalkBack completo. **v1.2:** caché offline con cola de sincronización, notificaciones locales para recordatorios y `FlatList` para historiales largos. **v2.0:** versión auditiva de Atención (Memoria y Lógica ya la tienen), verificación de profesionales y publicación en Google Play con EAS.
 
 ---
 
