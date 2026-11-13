@@ -85,11 +85,36 @@ La app pide confirmar el correo al registrarse. Elige una opción:
 
 - **Rápida, para probar:** *Authentication → Providers → Email* → desactiva **Confirm email**. Así el registro entra
   directo, sin SMTP ni Vercel.
-- **Completa (correos reales):** configura SMTP propio, despliega `web-auth/` en Vercel y pega las plantillas de
-  `supabase/email-templates/`. Paso a paso en [`docs/SUPABASE-CORREO.md`](docs/SUPABASE-CORREO.md). El correo integrado
-  de Supabase solo entrega a miembros de tu organización. `web-auth/` carga `supabase-js` con SRI (`integrity`) y una
+- **Completa (correos reales):** los correos de confirmar cuenta y recuperar contraseña llevan a una página web
+  (`web-auth/`, en Vercel), así el enlace funciona en cualquier dispositivo. La app solo pide el correo; la persona
+  confirma o cambia la contraseña en la web y luego inicia sesión en la app.
+
+  1. **SMTP propio** (el correo integrado de Supabase solo entrega a miembros de tu organización): *Project Settings →
+     Authentication → SMTP Settings → Enable custom SMTP*. Con Gmail: host `smtp.gmail.com`, puerto `465`, usuario = el
+     correo completo y clave = *contraseña de aplicación* (exige verificación en 2 pasos). Con Brevo: host
+     `smtp-relay.brevo.com`, puerto `587`, usuario = *Login* de SMTP y clave = *SMTP key*. El *sender email* debe ser una
+     dirección real que controles.
+  2. **Vercel:** *Add New → Project* → importa el repo; **Root Directory `web-auth`**, Framework *Other* (el `vercel.json`
+     ya fija el build). Variables de entorno **sin** el prefijo `EXPO_PUBLIC_`: `SUPABASE_URL` y
+     `SUPABASE_PUBLISHABLE_KEY` (los mismos valores del `.env`). El build genera `web-auth/config.js` (ignorado por git:
+     ni la URL ni la clave quedan en el repo); si cambias una variable, redespliega.
+  3. **URLs en Supabase:** *Authentication → URL Configuration*. *Site URL* = la URL de Vercel (sin barra final) y en
+     *Redirect URLs* agrega `https://tu-proyecto.vercel.app/**`.
+  4. **Plantillas:** *Authentication → Emails* → pega `supabase/email-templates/confirmar-correo.html` (*Confirm signup*)
+     y `restablecer-contrasena.html` (*Reset password*). Enlazan a `{{ .SiteURL }}/confirmar?token_hash=…&type=signup` y
+     `/restablecer?token_hash=…&type=recovery`.
+  5. **Recomendado:** *Providers → Email → Confirm email* activado y longitud mínima de contraseña 8.
+
+  La página no gasta el enlace al abrirse (así los revisores automáticos de correo no lo consumen): `confirmar` llama a
+  `verifyOtp` al tocar el botón y `restablecer` lo hace al enviar el formulario, luego `updateUser({ password })` y
+  `signOut({ scope: 'global' })`. No guarda sesión. `web-auth/` carga `supabase-js` con SRI (`integrity`) y una
   Content-Security-Policy (`vercel.json`); si cambias la versión del script, recalcula el hash:
-  `curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A`. Si tu URL de Supabase no termina en `supabase.co`, ajusta `connect-src`.
+  `curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A`. Si tu URL de Supabase no termina en `supabase.co`,
+  ajusta `connect-src`.
+
+  Prueba con una cuenta real: crear cuenta → llega el correo en español → abrir el enlace desde otro dispositivo →
+  «Confirmar mi correo» → iniciar sesión; luego «¿Olvidaste tu contraseña?» → contraseña nueva (la vieja debe fallar) y
+  reabrir el mismo enlace debe mostrar «El enlace venció o ya se usó».
 
 ### 4. Datos de demostración (opcional)
 
@@ -172,10 +197,10 @@ Datos de salud sensibles (Ley 1581 de 2012, Colombia). Todo está restringido po
   apagado por defecto.
 - Los intentos de reclamo de códigos están limitados y el límite es atómico. Los códigos de invitación los genera el
   servidor (`create_caregiver_invite` y `create_doctor_invite`), no la app. El del cuidador no caduca; el del médico caduca
-  a los 7 días. Detalle en `DOCUMENTO-ENTREGA-FINAL.pdf` (§2.3) y en `docs/DECISIONES.md`.
+  a los 7 días. Detalle en `DOCUMENTO-ENTREGA-FINAL.pdf` (§2.3).
 - La sesión se guarda cifrada (AES-256, clave en `expo-secure-store`).
 
-Decisiones con su razón en [`docs/DECISIONES.md`](docs/DECISIONES.md).
+Las decisiones de diseño y su razón están en `DOCUMENTO-ENTREGA-FINAL.pdf` (sección 2).
 
 ## Accesibilidad (WCAG 2.2 AA)
 
@@ -195,7 +220,7 @@ La accesibilidad es un requisito del dominio (EM: fatiga, temblor, visión, cogn
   contenido de apoyo, dictado con el micrófono del teclado y «Lectura en voz alta» opcional.
 - **Pantalla «Accesibilidad»:** apariencia, brillo de la app, tamaño de texto, alto contraste, reducir animaciones, lectura en voz alta y actividades solo con audio (Memoria y Lógica sin mostrar la secuencia). La app rota con el teléfono (no bloquea la orientación).
 
-Matriz de requisitos y evidencias en [`docs/REQUISITOS.md`](docs/REQUISITOS.md).
+Matriz trazable de accesibilidad (propuesta vs. implementación) en `DOCUMENTO-ENTREGA-FINAL.pdf` (sección 3) y capturas en `artifacts/`.
 
 ## Estructura del repositorio
 
@@ -203,15 +228,14 @@ Matriz de requisitos y evidencias en [`docs/REQUISITOS.md`](docs/REQUISITOS.md).
 src/            app, components, features, store, theme, lib
 supabase/       migrations/ · seed/ · email-templates/
 web-auth/       página estática de confirmación y restablecimiento (Vercel)
-docs/            BRIEF, REQUISITOS, DECISIONES, DESIGN, SUPABASE-CORREO y material del curso (enunciado)
-artifacts/       capturas de verificación por módulo
-DOCUMENTO-ENTREGA-FINAL.pdf   documento técnico final (Fase 3)
+artifacts/      capturas de verificación por módulo
+DOCUMENTO-ENTREGA-FINAL.pdf  documento técnico final (Fase 3)
 ```
 
 ## Estado
 
-Verificado en emulador Android y en celular con Expo Go. **No hay verificación en iOS.** El estado detallado de cada
-requisito (verificado / sin probar / pendiente) está en [`docs/REQUISITOS.md`](docs/REQUISITOS.md).
+Verificado en emulador Android y en celular con Expo Go. **No hay verificación en iOS.** El detalle de cada
+requisito, las pruebas y la evidencia están en `DOCUMENTO-ENTREGA-FINAL.pdf` (sección 4) y en `artifacts/`.
 
 ## Equipo
 

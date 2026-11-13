@@ -25,7 +25,7 @@ type SpeakButtonProps = {
 
 /**
  * Botón "Escuchar" (REC-002): lee `text` con la voz del teléfono. Solo existe si la preferencia
- * "Lectura en voz alta" de Accesibilidad está activa (ver D-013): con ella apagada no se pinta
+ * "Lectura en voz alta" de Accesibilidad está activa: con ella apagada no se pinta
  * en ninguna pantalla, así el interruptor hace exactamente lo que dice. Es ícono + texto, o
  * ícono con etiqueta accesible, y mide al menos 48dp (RNF-005). Al salir de la pantalla corta
  * la lectura en curso.

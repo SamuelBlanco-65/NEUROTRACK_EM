@@ -64,7 +64,7 @@ export const LightColors = {
  * pantallas (la más completa y coherente fue `cuidador_inicio_modo_oscuro`, que trae los 41
  * roles M3; los exports ya no están en el repo, siguen en su historial de git). Reemplaza la
  * primera versión (derivada a mano de los roles `inverse-*`), que se probó en emulador y se
- * rechazó (D-012): las superficies no se aclaraban con la elevación y las tarjetas
+ * rechazó: las superficies no se aclaraban con la elevación y las tarjetas
  * grandes con rol `tertiaryFixed` se veían como un recorte claro flotando sobre negro.
  *
  * Excepción deliberada a la convención M3 de roles "Fixed" (deberían ser constantes entre

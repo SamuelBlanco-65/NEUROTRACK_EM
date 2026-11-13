@@ -15,7 +15,7 @@ type DictationButtonProps = {
  * Entrada por voz para la nota del síntoma (REC-001). Usa el **dictado del teclado del
  * sistema** (el micrófono de Gboard u otro teclado), no un reconocedor propio: Expo SDK 58 no
  * trae reconocimiento de voz y las librerías de terceros exigen una build de desarrollo que
- * Expo Go no admite (ver D-013 en `docs/DECISIONES.md`). Por eso el botón enfoca el campo y
+ * Expo Go no admite. Por eso el botón enfoca el campo y
  * explica dónde tocar; el texto dictado entra como cualquier otro texto, se puede corregir
  * antes de guardar, y el audio lo procesa el teclado del propio teléfono, no esta app.
  */

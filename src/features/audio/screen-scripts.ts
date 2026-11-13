@@ -1,5 +1,5 @@
 /**
- * Guiones de las pantallas principales (REC-002, ver D-013). Igual que los de actividades
+ * Guiones de las pantallas principales (REC-002). Igual que los de actividades
  * (`scripts.ts`): funciones puras de texto, con las cadenas ya resueltas por la pantalla, para
  * poder probarlas sin voz ni UI. Frases cortas, en tono de acompañamiento (RNF-010).
  */

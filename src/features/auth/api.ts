@@ -4,7 +4,7 @@ import { buildConsentMetadata } from '@/features/legal/consent';
 import { supabase } from '@/lib/supabase';
 import type { AuthError, Session } from './types';
 
-// Los correos de confirmación y de recuperación llevan a la web `web-auth/` (D-014), no a la app:
+// Los correos de confirmación y de recuperación llevan a la web `web-auth/`, no a la app:
 // por eso aquí no hay `emailRedirectTo`/`redirectTo` ni manejo de enlaces profundos.
 
 function toAuthError(error: unknown): AuthError {
@@ -97,7 +97,7 @@ export async function signOut(): Promise<void> {
 
 /** Envía el correo de recuperación. Siempre "funciona" aunque el correo no exista (no revela cuentas). */
 export async function requestPasswordReset(email: string): Promise<void> {
-  // El enlace del correo apunta a la web (`web-auth/`, D-014) con la URL del sitio; no lleva `redirectTo`.
+  // El enlace del correo apunta a la web (`web-auth/`) con la URL del sitio; no lleva `redirectTo`.
   const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
   if (error) throw toAuthError(error);
 }
