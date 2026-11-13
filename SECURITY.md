@@ -18,4 +18,4 @@ publicarla primero:
 - **Sesión cifrada** en el teléfono (AES + `expo-secure-store`).
 - La web de confirmar correo y cambiar contraseña (`web-auth/`) usa una política de seguridad de contenido estricta y el script de la CDN con SRI.
 
-Límites conocidos: ver `DOCUMENTO-ENTREGA-FINAL.pdf` (sección 5) y `docs/STATUS.md`.
+Límites conocidos: ver `DOCUMENTO-ENTREGA-FINAL.pdf` (sección 5).

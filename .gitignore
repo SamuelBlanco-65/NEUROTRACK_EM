@@ -49,3 +49,8 @@ example
 
 # Generado en el build de Vercel (web-auth/build.js)
 web-auth/config.js
+
+# Configuracion local de la IA (no es parte de la entrega)
+.claude/
+CLAUDE.md
+AGENTS.md

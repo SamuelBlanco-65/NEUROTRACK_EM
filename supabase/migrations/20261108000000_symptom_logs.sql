@@ -1,6 +1,6 @@
 -- RF-001 / RF-002: registro y calendario de síntomas del paciente.
 -- RNF-012: el paciente es el único dueño de sus datos; RLS restringe todo a auth.uid().
--- Sin CLI de Supabase enlazado en este equipo (ver docs/STATUS.md): ejecutar este archivo
+-- Sin CLI de Supabase enlazado en este equipo: ejecutar este archivo
 -- a mano en el SQL Editor del proyecto de Supabase.
 
 create table if not exists public.symptom_logs (

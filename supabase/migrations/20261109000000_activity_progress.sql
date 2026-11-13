@@ -1,6 +1,6 @@
 -- RF-003 / RF-004: actividades de estimulación cognitiva y motriz, con nivel progresivo.
 -- RNF-012: el paciente es el único dueño de su progreso; RLS restringe todo a auth.uid().
--- Sin CLI de Supabase enlazado en este equipo (ver docs/STATUS.md): ejecutar este archivo
+-- Sin CLI de Supabase enlazado en este equipo: ejecutar este archivo
 -- a mano en el SQL Editor del proyecto de Supabase.
 
 create table if not exists public.activity_progress (

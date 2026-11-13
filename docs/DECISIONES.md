@@ -74,7 +74,7 @@ y se marca la anterior como **Reemplazada por D-00X**.
 - **Alternativas consideradas:** No tener pruebas — descartado porque incumple la regla de
   "terminado" del proyecto.
 - **Consecuencias:** Verificación más fuerte; algo más de setup (posible ajuste de
-  `transformIgnorePatterns` y tipos de jest en `tsconfig.json`, ver `docs/ENTORNO.md`).
+  `transformIgnorePatterns` y tipos de jest en `tsconfig.json`, ver el README).
 - **Requisitos relacionados:** Pruebas de RF-001..RF-012 y RNF-012
 
 ---
@@ -176,7 +176,7 @@ y se marca la anterior como **Reemplazada por D-00X**.
 ## D-010 · Vinculación paciente-cuidador (T4): código de 6 caracteres, sin tabla de perfiles, sin "notas" del paciente
 
 - **Fecha:** 2026-11-08
-- **Estado:** Vigente (RF-012 implementado sin probar, ver `docs/STATUS.md`)
+- **Estado:** Vigente (RF-012 implementado sin probar, ver `docs/REQUISITOS.md`)
 - **Contexto:** RF-012 exige vínculo con consentimiento explícito y acceso del cuidador
   restringido por RLS a lo que el paciente autorice (D-002). El export de Stitch sugiere un
   código de invitación de 6 caracteres y una pantalla de permisos granulares por categoría.
@@ -250,7 +250,7 @@ y se marca la anterior como **Reemplazada por D-00X**.
   con la elevación y las tarjetas grandes con rol `tertiaryFixed` (p. ej. "¿Necesitas hablar
   con alguien?" en Apoyo) se veían como un recorte claro flotando sobre un fondo casi negro.
   El usuario generó variantes oscuras reales en Stitch para ~35 pantallas
-  (`artifacts/modo-oscuro-stitch/`) y pidió aplicarlas.
+  (`artifacts/modo-oscuro-stitch/`, carpeta quitada del repo el 2026-11-12; sigue en el historial de git) y pidió aplicarlas.
 - **Decisión:**
   1. Las 35 exportaciones son inconsistentes entre sí (distintas sesiones de generación): unas
      traen la config Tailwind completa redefinida, otras un `<style id="dark-theme-overrides">`
@@ -403,7 +403,7 @@ y se marca la anterior como **Reemplazada por D-00X**.
 - **Consecuencias:** el perfil `medico` no está ligado a la cuenta (igual que los otros: se elige al abrir la app).
   `ProfileKind` ahora tiene tres valores y `features/profile/constants.ts` centraliza el inicio y la etiqueta de cada uno.
   La retención y el borrado de cuenta ya lo cubren: `doctor_links` referencia `auth.users` con `on delete cascade`.
-- **Diseño (2026-11-11):** se comparó con los exports de Stitch (`artifacts/stitch-medico/`). Base: la implementación
+- **Diseño (2026-11-11):** se comparó con los exports de Stitch (`artifacts/stitch-medico/`, carpeta quitada del repo el 2026-11-12; sigue en el historial de git). Base: la implementación
   propia. Adoptado de Stitch: chip de diferencia por síntoma, «% del período» en la constancia, barras verticales con
   «Ver como tabla» y frase de resumen, fecha en chip en las notas, avatares con iniciales, contadores («1 pendiente»),
   Aceptar/Rechazar lado a lado, «Quitar acceso» como botón con ícono, pasos «¿Cómo funciona?» en el vacío, ayuda

@@ -1,7 +1,7 @@
 -- REC-003: perfil del médico tratante (solo lectura, autorizado por el paciente, con caducidad).
 -- También arregla el permiso «Síntomas» del cuidador: `share_sintomas` no se aplicaba en ninguna política
 -- porque `symptom_logs` solo tenía políticas del propio paciente.
--- Sin CLI de Supabase enlazado en este equipo (ver docs/STATUS.md): ejecutar este archivo a mano en el
+-- Sin CLI de Supabase enlazado en este equipo: ejecutar este archivo a mano en el
 -- SQL Editor. Requiere haber corrido antes las migraciones anteriores (20261108 .. 20261114).
 -- Es seguro correrlo más de una vez.
 --

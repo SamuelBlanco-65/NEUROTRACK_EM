@@ -17,7 +17,7 @@ tableros clínicos densos. La lección de MSCopilot manda: menos texto, menos fa
 
 ## 2. Tokens (`src/theme/`)
 
-Implementados a partir del export de Stitch (`docs/diseno/stitch-export/`), paleta Material 3.
+Implementados a partir del export de Stitch (carpeta `docs/diseno/stitch-export/`, quitada del repo el 2026-11-12; sigue en el historial de git), paleta Material 3.
 Ver `src/theme/colors.ts`, `typography.ts`, `spacing.ts`.
 
 **Colores** — esquema claro tomado literal del export; el **oscuro/bajo brillo es derivado**
@@ -66,7 +66,7 @@ Para cada una se definirá: **qué muestra** y de dónde sale el dato (backend/c
 controles** tiene, y sus **estados** (carga, error, vacío, offline, y estados límite del
 dominio: sin síntomas registrados, actividad sin intentos previos, cuidador sin vínculo).
 
-Pantallas propuestas (ver `STATUS.md` para el orden):
+Pantallas propuestas (orden de implementación en `docs/REQUISITOS.md`):
 - Selección de perfil · Registro/Login
 - Paciente: Inicio · Calendario de síntomas · Actividades · Progreso · Apoyo/Info
 - Cuidador: Inicio · Observaciones · Acompañar · Recordatorios · Apoyo/Info

@@ -1,7 +1,7 @@
 -- RF-012: vinculación paciente-cuidador con consentimiento explícito.
 -- El paciente genera un código; el cuidador lo reclama ("solicitado"); solo el paciente
 -- puede pasar el vínculo a "aceptado" (o "rechazado"/"revocado" en cualquier momento después).
--- Sin CLI de Supabase enlazado en este equipo (ver docs/STATUS.md): ejecutar este archivo
+-- Sin CLI de Supabase enlazado en este equipo: ejecutar este archivo
 -- a mano en el SQL Editor del proyecto de Supabase.
 
 create table if not exists public.caregiver_links (

@@ -1,7 +1,7 @@
 -- RF-008: recordatorios (medicación/eventos) con alternativa visual + háptica (RNF-009).
 -- El paciente es siempre dueño de sus recordatorios; el cuidador solo puede crearlos/verlos/
 -- marcarlos hechos si el vínculo está "aceptado" y el paciente autorizó "Mis recordatorios".
--- Sin CLI de Supabase enlazado en este equipo (ver docs/STATUS.md): ejecutar este archivo
+-- Sin CLI de Supabase enlazado en este equipo: ejecutar este archivo
 -- a mano en el SQL Editor del proyecto de Supabase. Requiere haber corrido antes
 -- 20261111000000_caregiver_links.sql.
 

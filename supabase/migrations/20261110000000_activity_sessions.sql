@@ -1,7 +1,7 @@
 -- RF-005: historial de sesiones de actividad completadas, para agregarlas por período
 -- en la pantalla de Progreso (activity_progress solo guarda el nivel actual, no el historial).
 -- RNF-012: el paciente es el único dueño de su historial; RLS restringe todo a auth.uid().
--- Sin CLI de Supabase enlazado en este equipo (ver docs/STATUS.md): ejecutar este archivo
+-- Sin CLI de Supabase enlazado en este equipo: ejecutar este archivo
 -- a mano en el SQL Editor del proyecto de Supabase.
 
 create table if not exists public.activity_sessions (

@@ -1,5 +1,5 @@
 /**
- * Paleta Material 3 exportada de Stitch (ver docs/diseno/stitch-export/*\/code.html).
+ * Paleta Material 3 exportada de Stitch (diseño de referencia del equipo).
  * El esquema oscuro no vino en el export; se deriva de los roles `inverse-*` que sí
  * trae la paleta clara (son, por convención M3, el "otro esquema" visto desde el claro).
  * Validado por `accessibility-reviewer` (RNF-003, RNF-007): todos los pares texto/fondo
@@ -60,12 +60,11 @@ export const LightColors = {
 } as const;
 
 /**
- * Paleta oscura real, tomada del export de Stitch en `artifacts/modo-oscuro-stitch/`
- * (el usuario la generó pidiéndole a Stitch una variante oscura de cada pantalla; la
- * fuente más completa y coherente de las ~35 exportadas es `cuidador_inicio_modo_oscuro`,
- * que trae los 41 roles M3). Reemplaza la primera versión (derivada a mano de los roles
- * `inverse-*`), que el usuario probó en emulador y rechazó: ver nota de "paleta oscura"
- * en `docs/STATUS.md` T6 — las superficies no se aclaraban con la elevación y las tarjetas
+ * Paleta oscura real, tomada de las variantes oscuras que se generaron en Stitch para ~35
+ * pantallas (la más completa y coherente fue `cuidador_inicio_modo_oscuro`, que trae los 41
+ * roles M3; los exports ya no están en el repo, siguen en su historial de git). Reemplaza la
+ * primera versión (derivada a mano de los roles `inverse-*`), que se probó en emulador y se
+ * rechazó (D-012): las superficies no se aclaraban con la elevación y las tarjetas
  * grandes con rol `tertiaryFixed` se veían como un recorte claro flotando sobre negro.
  *
  * Excepción deliberada a la convención M3 de roles "Fixed" (deberían ser constantes entre
@@ -73,10 +72,10 @@ export const LightColors = {
  * SÍ cambian aquí. Es justo el problema de arriba — en light-mode-only estos roles están
  * pensados para acentos pequeños (ver comentario de T6), pero esta app los usa también para
  * tarjetas grandes (tip de "Un paso a la vez", "¿Necesitas hablar con alguien?", banner de
- * tranquilidad del wizard). El propio export oscuro de Stitch para esas pantallas (overrides
- * en `paciente_inicio_modo_oscuro/code.html`, `paciente_registrar_c_mo_me_siento_paso_2_modo_oscuro/
- * code.html`) confirma el arreglo: en vez de reusar el durazno claro constante, esas tarjetas
- * pasan a un marrón oscuro cálido con texto crema — se adoptan esos valores aquí tal cual.
+ * tranquilidad del wizard). El propio export oscuro de Stitch para esas pantallas
+ * (`paciente_inicio_modo_oscuro` y el paso 2 del registro de síntomas) confirma el arreglo:
+ * en vez de reusar el durazno claro constante, esas tarjetas pasan a un marrón oscuro
+ * cálido con texto crema — se adoptan esos valores aquí tal cual.
  */
 export const DarkColors = {
   primary: '#6ec6d6',

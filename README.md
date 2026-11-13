@@ -203,7 +203,7 @@ Matriz de requisitos y evidencias en [`docs/REQUISITOS.md`](docs/REQUISITOS.md).
 src/            app, components, features, store, theme, lib
 supabase/       migrations/ · seed/ · email-templates/
 web-auth/       página estática de confirmación y restablecimiento (Vercel)
-docs/            BRIEF, REQUISITOS, DECISIONES, DESIGN, ENTORNO, STATUS, enunciado y diseño (Stitch)
+docs/            BRIEF, REQUISITOS, DECISIONES, DESIGN, SUPABASE-CORREO y material del curso (enunciado)
 artifacts/       capturas de verificación por módulo
 DOCUMENTO-ENTREGA-FINAL.pdf   documento técnico final (Fase 3)
 ```
@@ -211,8 +211,7 @@ DOCUMENTO-ENTREGA-FINAL.pdf   documento técnico final (Fase 3)
 ## Estado
 
 Verificado en emulador Android y en celular con Expo Go. **No hay verificación en iOS.** El estado detallado de cada
-requisito (verificado / sin probar / pendiente) está en [`docs/REQUISITOS.md`](docs/REQUISITOS.md) y el avance por tarea
-en [`docs/STATUS.md`](docs/STATUS.md).
+requisito (verificado / sin probar / pendiente) está en [`docs/REQUISITOS.md`](docs/REQUISITOS.md).
 
 ## Equipo
 

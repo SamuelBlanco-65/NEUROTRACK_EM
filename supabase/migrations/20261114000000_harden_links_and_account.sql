@@ -1,5 +1,5 @@
 -- Endurecimiento de seguridad + borrado de cuenta (hallazgos de la auditoría 2026-11-10).
--- Sin CLI de Supabase enlazado en este equipo (ver docs/STATUS.md): ejecutar este archivo
+-- Sin CLI de Supabase enlazado en este equipo: ejecutar este archivo
 -- a mano en el SQL Editor del proyecto de Supabase. Requiere haber corrido antes todas las
 -- migraciones anteriores (20261108 .. 20261113). Es seguro correrlo más de una vez.
 

@@ -1,13 +1,13 @@
 -- RF-006: módulo del cuidador — observaciones privadas, mensajes de ánimo y acceso de
 -- lectura al progreso del paciente (solo si el vínculo está "aceptado" y el paciente
 -- autorizó ese permiso en caregiver_links). RNF-012: todo gateado por RLS.
--- Sin CLI de Supabase enlazado en este equipo (ver docs/STATUS.md): ejecutar este archivo
+-- Sin CLI de Supabase enlazado en este equipo: ejecutar este archivo
 -- a mano en el SQL Editor del proyecto de Supabase. Requiere haber corrido antes
 -- 20261111000000_caregiver_links.sql, 20261109000000_activity_progress.sql y
 -- 20261110000000_activity_sessions.sql.
 
 -- Bitácora privada del cuidador: notas que solo él puede ver (y comparte en consulta médica
--- por fuera de la app). El paciente NO tiene acceso, por diseño (ver docs/diseno/stitch-export).
+-- por fuera de la app). El paciente NO tiene acceso, por diseño.
 create table if not exists public.caregiver_observations (
   id uuid primary key default gen_random_uuid(),
   link_id uuid not null references public.caregiver_links (id) on delete cascade,
