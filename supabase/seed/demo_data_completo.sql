@@ -22,9 +22,10 @@
 --      médico (el médico se registra eligiendo el perfil «Médico»). Reemplaza los tres correos
 --      de abajo. Si no tienes cuenta de médico, deja el correo como está: se omite esa parte.
 --   2. Pega el archivo completo y ejecútalo UNA vez.
---   3. Si lo vuelves a correr, v_limpiar = true borra antes los datos de ESTE paciente
---      (síntomas, sesiones, recordatorios, observaciones, mensajes) y los regenera, así no se
---      duplican. Pon false si NO quieres borrar lo que ya tenga cargado.
+--   3. ⚠ DESTRUCTIVO: con v_limpiar = true (valor por defecto) borra antes TODO lo del paciente cuyo
+--      correo pongas abajo (síntomas, sesiones, recordatorios, observaciones, mensajes y vínculo con
+--      el médico) y lo regenera, así no se duplica al repetir. Úsalo solo con cuentas de DEMO. Pon false
+--      si la cuenta tiene datos reales que quieras conservar (entonces no lo repitas: duplicaría filas).
 --
 -- Fechas: el rango de síntomas/sesiones va de una fecha FIJA (2026-06-01) hasta "hoy" en hora
 -- de Bogotá, un registro por día calendario (no ventanas relativas por semana), así que todas

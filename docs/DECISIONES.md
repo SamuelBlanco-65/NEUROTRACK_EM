@@ -103,7 +103,8 @@ y se marca la anterior como **Reemplazada por D-00X**.
 - **Contexto:** Fase 3 §2/§7 exige un documento final de 5 secciones (5–8 págs, refs IEEE/APA)
   en `/docs` o la raíz. El formato puede ser PDF o Markdown con diagramas renderizados.
 - **Decisión:** Escribirlo como **`docs/ENTREGA-FINAL.md`** (Markdown versionado) y exportar a
-  PDF al final. Elegido por el usuario.
+  PDF al final. Elegido por el usuario. (2026-11-12: en el repo queda solo el PDF final, `DOCUMENTO-ENTREGA-FINAL.pdf`
+  en la raíz; el Markdown fuente sigue en el historial de git, commit `dd2b099`.)
 - **Alternativas consideradas:** PDF directo — mejor control visual pero no versiona junto al
   código ni evoluciona con el repo.
 - **Consecuencias:** El documento vive y cambia con el código; diagramas como imágenes o Mermaid.
@@ -388,8 +389,8 @@ y se marca la anterior como **Reemplazada por D-00X**.
      para que nadie pueda probar códigos ajenos fuera del límite de intentos), se reclama con `claim_doctor_invite`
      (límite de 10 fallos por 15 min, atómico con un candado por usuario) y un trigger impide que el paciente
      reescriba la identidad del médico o invente estados. El nombre del paciente solo se copia al aceptar.
-     **El mismo oráculo de códigos y la misma carrera del límite existen en `caregiver_links`/`claim_invite`
-     (migraciones anteriores, ya ejecutadas): quedan como deuda conocida.**
+     **El mismo oráculo de códigos y la misma carrera del límite existían en `caregiver_links`/`claim_invite`
+     (migraciones anteriores): se cerraron después, ver D-026.**
 - **Arreglo de un bug del cuidador en la misma migración:** `share_sintomas` no se aplicaba en ninguna política
   (el cuidador nunca podía leer `symptom_logs`). Ahora lo cubre `shared_symptom_logs`, sin notas, y la pantalla
   Acompañar muestra «Síntomas esta semana».
@@ -419,7 +420,7 @@ y se marca la anterior como **Reemplazada por D-00X**.
 - **Fecha:** 2026-11-11 (3ª sesión) · **Estado:** Vigente (implementado; visto en emulador oscuro el 2026-11-11, 4ª: `artifacts/t11/01`, `02`, `07`)
 - **Contexto:** `onPrimary` sobre `primaryContainer` daba ~1,1:1 en el esquema oscuro (`#00363f` sobre `#223a40`) en 25
   archivos de pantallas; los íconos y barras de nivel pintados con `primaryContainer` sobre `surface` eran casi invisibles.
-  Incumplía WCAG AA y lo prometido en la propuesta (§V-D3, §V-D4). La limitación estaba declarada en `ENTREGA-FINAL.md`.
+  Incumplía WCAG AA y lo prometido en la propuesta (§V-D3, §V-D4). La limitación estaba declarada en el documento final.
 - **Decisión:** sustituir `colors.primaryContainer` por `colors.primary` en `src/app/` y `src/features/` (no en
   `src/theme/`). La paleta de D-012 no se modifica. Resultado medido con `scripts/validar-paleta.mjs`: texto sobre botón
   principal 6,7:1 en oscuro y 11,1:1 en claro. También `placeholderTextColor` → `onSurfaceVariant`.
@@ -466,7 +467,7 @@ y se marca la anterior como **Reemplazada por D-00X**.
   del cliente, así nadie puede poner un nombre falso.
 - **Alternativas:** (a) join contra `auth.users` desde el cliente — imposible por RLS; (b) una función RPC — más código para
   un dato que ya cabe en la fila; (c) guardar el nombre en `profiles` — no existe esa tabla en el MVP.
-- **Consecuencias:** 10 migraciones (README y figura 2 de `ENTREGA-FINAL.md`). Quien instale desde cero debe correrla; sin
+- **Consecuencias:** 10 migraciones (README y figura 2 del documento final). Quien instale desde cero debe correrla; sin
   ella las pantallas del cuidador fallan al pedir la columna. El nombre se congela cuando el vínculo pasa a aceptado: si
   el paciente cambia su nombre después, no se actualiza hasta un nuevo vínculo.
 - **Requisitos relacionados:** RF-006, RF-012.
@@ -555,6 +556,26 @@ y se marca la anterior como **Reemplazada por D-00X**.
 - **Alternativas:** rol guardado en la cuenta (más estricto, pero rompe el caso paciente-que-cuida y exige rehacer las cuentas
   de demo); pedir la contraseña otra vez (seguridad aparente, la cuenta es la misma).
 - **Requisitos relacionados:** RF-007, RF-012.
+
+## D-026 · Revisión de seguridad del repositorio: el cuidador pasa al mismo modelo que el médico
+
+- **Fecha:** 2026-11-11 (7ª sesión) · **Estado:** Implementada en el repo; la migración 12 **no se ha ejecutado** en Supabase ni se
+  ha probado contra una base real (solo `tsc`, ESLint y Jest).
+- **Contexto:** una revisión de todo el repositorio encontró, además de higiene, tres huecos de servidor en `caregiver_links` y
+  `caregiver_cheers` (la deuda que D-016 dejó declarada) y dos defensas que faltaban en la web de contraseñas.
+- **Decisión:** (1) el código de invitación del cuidador lo genera el servidor (`create_caregiver_invite`, 8 caracteres) y se
+  quita la política de insert del cliente; (2) `claim_invite` usa el mismo candado por usuario que el del médico y limpia intentos
+  viejos; (3) un trigger impide que el paciente reescriba `caregiver_id`, correo, nombre o código del vínculo y limita sus
+  cambios de estado a transiciones válidas; en los mensajes de ánimo solo puede cambiar `read_at`; (4) límites de longitud y
+  de rango (`not valid`) y `search_path` terminado en `pg_temp` en las funciones `security definer`; (5) `web-auth/` carga
+  `supabase-js` con SRI, sin scripts en línea y con una Content-Security-Policy; (6) los errores inesperados ya no imprimen el
+  objeto completo (`lib/log.ts`).
+- **Limpieza:** se quitaron el flujo de enlaces profundos que ya no usaba nadie (`app/correo/*`, `deep-link.ts`, `consumeAuthLink`,
+  `setNewPassword`, `emailRedirectTo`), siete dependencias sin uso, tres seeds duplicados y se añadieron CI, `SECURITY.md` y la
+  licencia del equipo. `v_limpiar` del seed de demo se deja en `true` (es lo que permite repetirlo), con una advertencia.
+- **Alternativas:** dejarlo como «limitación conocida» (ya estaba declarado, pero era un hueco real); caducidad de 7 días también
+  para el cuidador (no se hizo: cambia el flujo y no era parte del hallazgo).
+- **Requisitos relacionados:** RT-007, RNF-012, RF-012.
 
 ---
 

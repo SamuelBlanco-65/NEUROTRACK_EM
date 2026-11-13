@@ -75,6 +75,7 @@ En el **SQL Editor** de Supabase, ejecuta **en orden** cada archivo de `supabase
 | 9 | `20261116000000_activity_area_logica.sql` | Habilita el área «Lógica» en el progreso y el historial |
 | 10 | `20261117000000_caregiver_patient_name.sql` | Nombre del paciente en el vínculo aceptado, para mostrárselo al cuidador |
 | 11 | `20261118000000_custom_symptom_and_reminder_category.sql` | Nombre propio para el síntoma «Otro» y categoría «Otro» de los recordatorios |
+| 12 | `20261119000000_harden_caregiver_links.sql` | Código de invitación del cuidador generado en el servidor, protección de columnas del vínculo y de los mensajes de ánimo, límites de longitud |
 
 Son idempotentes (puedes volver a correrlas). No hay CLI de Supabase enlazada: se ejecutan a mano.
 
@@ -86,7 +87,9 @@ La app pide confirmar el correo al registrarse. Elige una opción:
   directo, sin SMTP ni Vercel.
 - **Completa (correos reales):** configura SMTP propio, despliega `web-auth/` en Vercel y pega las plantillas de
   `supabase/email-templates/`. Paso a paso en [`docs/SUPABASE-CORREO.md`](docs/SUPABASE-CORREO.md). El correo integrado
-  de Supabase solo entrega a miembros de tu organización.
+  de Supabase solo entrega a miembros de tu organización. `web-auth/` carga `supabase-js` con SRI (`integrity`) y una
+  Content-Security-Policy (`vercel.json`); si cambias la versión del script, recalcula el hash:
+  `curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A`. Si tu URL de Supabase no termina en `supabase.co`, ajusta `connect-src`.
 
 ### 4. Datos de demostración (opcional)
 
@@ -111,7 +114,7 @@ perfil en la primera pantalla.
 ```bash
 npm run typecheck    # tsc --noEmit
 npx expo lint        # ESLint (flat config)
-npm test             # 142 pruebas de lógica
+npm test             # 143 pruebas de lógica (también corren en CI: .github/workflows/ci.yml)
 npx expo-doctor      # dependencias alineadas con el SDK
 ```
 
@@ -167,8 +170,9 @@ Datos de salud sensibles (Ley 1581 de 2012, Colombia). Todo está restringido po
   el único que puede aceptar, y puede retirar el acceso en cualquier momento. El acceso del médico además caduca.
 - Los síntomas de terceros solo se leen con la función `shared_symptom_logs`; las **notas** son un permiso aparte,
   apagado por defecto.
-- Los intentos de reclamo de códigos están limitados. El código del médico lo genera el servidor; el del cuidador lo
-  genera la app y su límite de intentos no es atómico (limitación conocida, `docs/ENTREGA-FINAL.md` §5.2).
+- Los intentos de reclamo de códigos están limitados y el límite es atómico. Los códigos de invitación los genera el
+  servidor (`create_caregiver_invite` y `create_doctor_invite`), no la app. El del cuidador no caduca; el del médico caduca
+  a los 7 días. Detalle en `DOCUMENTO-ENTREGA-FINAL.pdf` (§2.3) y en `docs/DECISIONES.md`.
 - La sesión se guarda cifrada (AES-256, clave en `expo-secure-store`).
 
 Decisiones con su razón en [`docs/DECISIONES.md`](docs/DECISIONES.md).
@@ -199,8 +203,9 @@ Matriz de requisitos y evidencias en [`docs/REQUISITOS.md`](docs/REQUISITOS.md).
 src/            app, components, features, store, theme, lib
 supabase/       migrations/ · seed/ · email-templates/
 web-auth/       página estática de confirmación y restablecimiento (Vercel)
-docs/           BRIEF, REQUISITOS, DECISIONES, DESIGN, ENTORNO, STATUS, enunciado y diseño (Stitch)
-artifacts/      capturas de verificación por módulo
+docs/            BRIEF, REQUISITOS, DECISIONES, DESIGN, ENTORNO, STATUS, enunciado y diseño (Stitch)
+artifacts/       capturas de verificación por módulo
+DOCUMENTO-ENTREGA-FINAL.pdf   documento técnico final (Fase 3)
 ```
 
 ## Estado

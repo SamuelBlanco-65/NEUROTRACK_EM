@@ -54,7 +54,7 @@ Comprobar con `adb devices`: debe aparecer un `emulator-*`.
 - Si Expo corre en segundo plano no hay QR visible: en Expo Go usar «Enter URL manually» con
   `exp://<IP-LAN>:8081`. Este equipo tiene adaptadores extra (VMware VMnet, Tailscale); la IP
   correcta es la de la red local (`ipconfig`; no la `100.x` de Tailscale ni las `192.168.72.x` /
-  `192.168.255.x` de VMware). Última vez: `192.168.40.71`.
+  `192.168.255.x` de VMware). Última vez: `<IP-LAN>`.
 - Si no conecta: permitir Node en el Firewall de Windows (redes privadas) o usar `--tunnel`
   (pide `@expo/ngrok`, más lento).
 - Antes de levantar, `netstat -ano | grep 8081`: un Metro viejo en el mismo puerto da errores raros.
@@ -66,7 +66,7 @@ Comprobar con `adb devices`: debe aparecer un `emulator-*`.
 ## Grabar video del emulador y editarlo
 - **ffmpeg** (Gyan, 9.0.2) se instaló con `winget install --id Gyan.FFmpeg -e` (2026-11-11). El PATH nuevo solo lo ven las
   terminales abiertas después. En la sesión actual usar la ruta completa:
-  `/c/Users/Samuel/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-9.0.2-full_build/bin`.
+  `/c/Users/<usuario>/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-9.0.2-full_build/bin`.
 - **Grabar:** `adb shell screenrecord --time-limit N /sdcard/x.mp4` y luego `adb pull /sdcard/x.mp4 <destino>`; límite de
   180 s por clip. Resolución del emulador Pixel: 1080×2400.
 - **Git Bash convierte `/sdcard/...` en `C:/Program Files/Git/sdcard/...`**: anteponer `MSYS_NO_PATHCONV=1` al comando
@@ -133,7 +133,8 @@ scratchpad. No sustituye una prueba en Gmail real (Gmail aplica su propio modo o
 _(Se llena con lo aprendido; evita repetir callejones sin salida entre proyectos.)_
 - Instalar paquetes con `npm install <paquete>` en un proyecto Expo: usar `npx expo install`.
 
-## Exportar `docs/ENTREGA-FINAL.md` a PDF (2026-11-11)
+## Exportar el documento final a PDF (2026-11-11)
+El Markdown fuente (`docs/ENTREGA-FINAL.md`) ya no está en el árbol: recuperarlo con `git show dd2b099:docs/ENTREGA-FINAL.md`.
 No hay pandoc. Se genera con Chrome headless: una página HTML que carga `marked@12.0.2` y `mermaid@10.9.1` desde jsDelivr, convierte
 el Markdown (insertado como JSON), dibuja los dos diagramas y se imprime con
 `chrome.exe --headless=new --disable-gpu --no-pdf-header-footer --virtual-time-budget=30000 --print-to-pdf=<salida>.pdf file:///<ruta>.html`.
@@ -147,5 +148,9 @@ Necesita internet. Hoja A4, Georgia 11 pt, márgenes 18/17 mm, diagramas al 82 %
 - **`npx expo install <paquete>` puede añadir un plugin a `app.json`** (pasó con `@react-native-community/datetimepicker`);
   es normal. Los módulos nuevos y los cambios de `app.json` (p. ej. `orientation`) solo se ven tras **cerrar del todo la app
   en Expo Go y volver a abrirla**; un *reload* no basta.
+- **Simular el CI sin tocar `.env`:** `env -i PATH="$PATH" SYSTEMROOT="$SYSTEMROOT" EXPO_PUBLIC_SUPABASE_URL=https://example.supabase.co
+  EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=x npx jest --ci` (mover o renombrar `.env` lo deniega el permiso de la herramienta). Un
+  `python3 - <<EOF` en Bash se cuelga: para editar texto usar `Edit` o `sed`. En `jest.mock`, las variables que usa la fábrica
+  deben llamarse `mock…`. `npm uninstall` pide permiso (está en `ask`).
 - **Metro en segundo plano:** `npx expo start --go --port 8081` con la herramienta Bash en segundo plano; comprobar con
   `netstat -ano | grep -a ":8081.*LISTEN"`. Usar `grep -a` con la salida de `netstat`/`ipconfig` (es binaria por los acentos).

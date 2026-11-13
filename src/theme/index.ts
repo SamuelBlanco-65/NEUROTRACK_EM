@@ -1,4 +1,3 @@
-import { useColorScheme as useSystemColorScheme } from '@/hooks/use-color-scheme';
 import { useAppSelector } from '@/store/hooks';
 import { TEXT_SCALE_MULTIPLIER } from '@/store/slices/settings-slice';
 import { applyHighContrast, DarkColors, LightColors, type ResolvedColorRoles } from './colors';
@@ -9,12 +8,9 @@ export { Radius, MinTouchSize, Spacing } from './spacing';
 export { FontFamily, TypeScale } from './typography';
 export type { TypeScaleName } from './typography';
 
-/** Resuelve el esquema de color efectivo: preferencia guardada o el del sistema (RNF-007). */
+/** Esquema de color elegido en Accesibilidad: claro u oscuro (RNF-007). */
 export function useAppColorScheme(): 'light' | 'dark' {
-  const systemScheme = useSystemColorScheme();
-  const preference = useAppSelector((state) => state.settings.colorScheme);
-  if (preference === 'light' || preference === 'dark') return preference;
-  return systemScheme === 'dark' ? 'dark' : 'light';
+  return useAppSelector((state) => state.settings.colorScheme);
 }
 
 /** Tokens de color resueltos para el esquema activo, con alto contraste si está activado. */

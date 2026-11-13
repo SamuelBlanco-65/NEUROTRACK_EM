@@ -1,3 +1,4 @@
+import { logUnexpected } from '@/lib/log';
 import { supabase } from '@/lib/supabase';
 import type { ActivitiesError, ActivityArea, ActivitySession, AreaProgress } from './types';
 
@@ -23,7 +24,7 @@ function toActivitiesError(error: unknown): ActivitiesError {
   if (error instanceof TypeError) {
     return { errorClass: 'sin-conexion', message: 'Revisa tu conexión e inténtalo de nuevo' };
   }
-  console.warn('[activities] error inesperado', error);
+  logUnexpected('activities', error);
   return { errorClass: 'inesperado', message: 'Algo salió mal, inténtalo de nuevo' };
 }
 

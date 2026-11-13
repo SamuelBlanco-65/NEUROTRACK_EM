@@ -2,7 +2,7 @@
 
 14 capturas tomadas por el equipo en un celular Android físico con **TalkBack activo** (el rectángulo verde es el foco del
 lector de pantalla), en modo oscuro y con Expo Go, de las 10:31 a las 10:43. Perfil paciente. Sirven de evidencia de
-RNF-004 (semántica y orden de lectura), RNF-006, RNF-009, REC-001 y de la sección 4.3 de `docs/ENTREGA-FINAL.md`.
+RNF-004 (semántica y orden de lectura), RNF-006, RNF-009, REC-001 y de la sección 4.3 de `DOCUMENTO-ENTREGA-FINAL.pdf`.
 
 | # | Pantalla | Qué muestra el foco de TalkBack |
 |---|---|---|

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/tool
 
 import { loadSettings } from '@/features/settings/persistence';
 
-export type ColorSchemePreference = 'auto' | 'light' | 'dark';
+export type ColorSchemePreference = 'light' | 'dark';
 export type TextScalePreference = 'normal' | 'grande' | 'extra-grande';
 /** Brillo de la pantalla SOLO mientras la app está abierta; `sistema` respeta el del teléfono (V-D4). */
 export type BrightnessPreference = 'sistema' | 'bajo' | 'muy-bajo';
@@ -26,7 +26,7 @@ export type SettingsState = {
 type SettingsSliceState = SettingsState & { _hydrated: boolean };
 
 export const DEFAULT_SETTINGS: SettingsState = {
-  colorScheme: 'auto',
+  colorScheme: 'light',
   highContrast: false,
   reduceMotion: false,
   textScale: 'normal',
@@ -91,6 +91,10 @@ const settingsSlice = createSlice({
     builder
       .addCase(hydrateSettings.fulfilled, (state, action) => {
         if (action.payload) Object.assign(state, action.payload);
+        // Las preferencias guardadas antes de quitar «Automático» traen 'auto': pasan a Claro.
+        if (state.colorScheme !== 'light' && state.colorScheme !== 'dark') {
+          state.colorScheme = DEFAULT_SETTINGS.colorScheme;
+        }
         state._hydrated = true;
       })
       .addCase(hydrateSettings.rejected, (state) => {

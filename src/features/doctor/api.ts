@@ -1,5 +1,6 @@
 import { listActivitySessionsBetween, listAreaProgress } from '@/features/activities/api';
 import { listSharedSymptomLogs } from '@/features/symptoms/api';
+import { logUnexpected } from '@/lib/log';
 import { supabase } from '@/lib/supabase';
 import type { DoctorError, DoctorLink, DoctorPermissions, PatientSummaryData } from './types';
 
@@ -57,7 +58,7 @@ function toDoctorError(error: unknown): DoctorError {
   if (error instanceof TypeError) {
     return { errorClass: 'sin-conexion', message: 'Revisa tu conexión e inténtalo de nuevo' };
   }
-  console.warn('[doctor] error inesperado', error);
+  logUnexpected('doctor', error);
   return { errorClass: 'inesperado', message: 'Algo salió mal, inténtalo de nuevo' };
 }
 

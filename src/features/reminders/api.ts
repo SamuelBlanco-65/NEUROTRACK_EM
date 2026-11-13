@@ -1,3 +1,4 @@
+import { logUnexpected } from '@/lib/log';
 import { supabase } from '@/lib/supabase';
 import type { Reminder, ReminderDraft, RemindersError } from './types';
 
@@ -32,7 +33,7 @@ function toRemindersError(error: unknown): RemindersError {
   if (error instanceof TypeError) {
     return { errorClass: 'sin-conexion', message: 'Revisa tu conexión e inténtalo de nuevo' };
   }
-  console.warn('[reminders] error inesperado', error);
+  logUnexpected('reminders', error);
   return { errorClass: 'inesperado', message: 'Algo salió mal, inténtalo de nuevo' };
 }
 

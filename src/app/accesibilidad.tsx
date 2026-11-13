@@ -25,7 +25,6 @@ import { MinTouchSize, Radius, Spacing, useThemeColors } from '@/theme';
 const COLOR_SCHEME_OPTIONS: { id: ColorSchemePreference; label: string; icon: keyof typeof MaterialIcons.glyphMap }[] = [
   { id: 'light', label: 'Claro', icon: 'light-mode' },
   { id: 'dark', label: 'Oscuro', icon: 'dark-mode' },
-  { id: 'auto', label: 'Automático', icon: 'brightness-auto' },
 ];
 
 const BRIGHTNESS_OPTIONS: { id: BrightnessPreference; label: string; icon: keyof typeof MaterialIcons.glyphMap }[] = [

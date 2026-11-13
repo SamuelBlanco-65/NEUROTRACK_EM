@@ -1,23 +1,11 @@
-import {
-  AuthApiError,
-  AuthPKCECodeVerifierMissingError,
-  AuthRetryableFetchError,
-  AuthError as SupabaseAuthError,
-} from '@supabase/supabase-js';
-import * as Linking from 'expo-linking';
+import { AuthApiError, AuthRetryableFetchError } from '@supabase/supabase-js';
 
 import { buildConsentMetadata } from '@/features/legal/consent';
 import { supabase } from '@/lib/supabase';
-import { parseAuthLink } from './deep-link';
 import type { AuthError, Session } from './types';
 
-/**
- * A dónde manda la app los enlaces de los correos. `Linking.createURL` da `neurotrackem://...` en una
- * build instalada y `exp://<ip>:8081/--/...` en Expo Go. Ambas formas deben estar en
- * Authentication > URL Configuration > Redirect URLs de Supabase (ver docs/SUPABASE-CORREO.md).
- */
-const CONFIRM_REDIRECT_PATH = 'correo/confirmar';
-const RESET_REDIRECT_PATH = 'correo/restablecer';
+// Los correos de confirmación y de recuperación llevan a la web `web-auth/` (D-014), no a la app:
+// por eso aquí no hay `emailRedirectTo`/`redirectTo` ni manejo de enlaces profundos.
 
 function toAuthError(error: unknown): AuthError {
   if (error instanceof AuthRetryableFetchError) {
@@ -57,15 +45,6 @@ function toAuthError(error: unknown): AuthError {
     }
     return { authClass: 'validacion', message: 'No pudimos procesar la solicitud, revisa los datos' };
   }
-  if (error instanceof AuthPKCECodeVerifierMissingError) {
-    return {
-      authClass: 'validacion',
-      message: 'Abre el enlace en el mismo teléfono donde lo pediste, o pide uno nuevo',
-    };
-  }
-  if (error instanceof SupabaseAuthError) {
-    return { authClass: 'inesperado', message: 'Algo salió mal, inténtalo de nuevo' };
-  }
   return { authClass: 'inesperado', message: 'Algo salió mal, inténtalo de nuevo' };
 }
 
@@ -94,7 +73,6 @@ export async function signUp(name: string, email: string, password: string): Pro
     options: {
       // `buildConsentMetadata` deja constancia de cuándo y qué versión de los términos aceptó la persona.
       data: { full_name: name, ...buildConsentMetadata() },
-      emailRedirectTo: Linking.createURL(CONFIRM_REDIRECT_PATH),
     },
   });
   if (error) throw toAuthError(error);
@@ -108,11 +86,7 @@ export async function signUp(name: string, email: string, password: string): Pro
 
 /** Reenvía el correo de confirmación de una cuenta recién creada. */
 export async function resendConfirmationEmail(email: string): Promise<void> {
-  const { error } = await supabase.auth.resend({
-    type: 'signup',
-    email: email.trim(),
-    options: { emailRedirectTo: Linking.createURL(CONFIRM_REDIRECT_PATH) },
-  });
+  const { error } = await supabase.auth.resend({ type: 'signup', email: email.trim() });
   if (error) throw toAuthError(error);
 }
 
@@ -123,56 +97,9 @@ export async function signOut(): Promise<void> {
 
 /** Envía el correo de recuperación. Siempre "funciona" aunque el correo no exista (no revela cuentas). */
 export async function requestPasswordReset(email: string): Promise<void> {
-  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-    redirectTo: Linking.createURL(RESET_REDIRECT_PATH),
-  });
+  // El enlace del correo apunta a la web (`web-auth/`, D-014) con la URL del sitio; no lleva `redirectTo`.
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
   if (error) throw toAuthError(error);
-}
-
-/**
- * Abre la sesión que trae el enlace de un correo (confirmación o recuperación): canjea el `code` de un
- * solo uso, o usa los tokens si vinieran directos. Si el enlace trae un error (vencido, ya usado),
- * lo traduce.
- */
-export async function consumeAuthLink(url: string): Promise<void> {
-  const params = parseAuthLink(url);
-
-  if (params.error || params.errorCode) {
-    const expired = params.errorCode === 'otp_expired' || params.error === 'access_denied';
-    throw {
-      authClass: 'validacion',
-      message: expired
-        ? 'El enlace venció o ya se usó. Pide uno nuevo desde la pantalla de acceso'
-        : 'No pudimos abrir el enlace. Pide uno nuevo desde la pantalla de acceso',
-    } satisfies AuthError;
-  }
-
-  if (params.code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(params.code);
-    if (error) throw toAuthError(error);
-    return;
-  }
-
-  if (params.accessToken && params.refreshToken) {
-    const { error } = await supabase.auth.setSession({
-      access_token: params.accessToken,
-      refresh_token: params.refreshToken,
-    });
-    if (error) throw toAuthError(error);
-    return;
-  }
-
-  throw { authClass: 'validacion', message: 'El enlace está incompleto. Pide uno nuevo' } satisfies AuthError;
-}
-
-/**
- * Cambia la contraseña de la sesión de recuperación y cierra TODAS las sesiones de la cuenta (también
- * las de otros teléfonos): quien tuviera la contraseña vieja pierde el acceso.
- */
-export async function setNewPassword(password: string): Promise<void> {
-  const { error } = await supabase.auth.updateUser({ password });
-  if (error) throw toAuthError(error);
-  await supabase.auth.signOut({ scope: 'global' });
 }
 
 /**

@@ -90,10 +90,10 @@ export default function VincularmeScreen() {
           </View>
 
           <TextField
-            label="Código de 6 caracteres"
+            label="Código de invitación"
             icon="key"
             value={code}
-            onChangeText={(value) => setCode(value.toUpperCase().slice(0, 6))}
+            onChangeText={(value) => setCode(value.toUpperCase().slice(0, 8))}
             placeholder="N7K2QX"
             autoComplete="off"
             errorText={claimError?.message}

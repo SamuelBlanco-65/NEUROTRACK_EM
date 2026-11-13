@@ -107,7 +107,7 @@ export const fetchPatientCaregiverData = createAsyncThunk<
 
   try {
     const [invite, incomingRequests, myCaregivers] = await Promise.all([
-      getOrCreatePatientInvite(patientId),
+      getOrCreatePatientInvite(),
       listIncomingRequests(patientId),
       listAcceptedCaregivers(patientId),
     ]);
@@ -127,7 +127,7 @@ export const regenerateMyInvite = createAsyncThunk<
   if (!patientId || !inviteId) return rejectWithValue({ errorClass: 'inesperado', message: 'No hay invitación activa' });
 
   try {
-    return await regeneratePatientInvite(patientId, inviteId);
+    return await regeneratePatientInvite(inviteId);
   } catch (error) {
     return rejectWithValue(error as CaregiverError);
   }

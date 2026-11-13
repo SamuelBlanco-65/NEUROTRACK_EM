@@ -1,3 +1,4 @@
+import { logUnexpected } from '@/lib/log';
 import { supabase } from '@/lib/supabase';
 import type {
   CaregiverCheer,
@@ -48,7 +49,7 @@ function toCaregiverError(error: unknown): CaregiverError {
   if (error instanceof TypeError) {
     return { errorClass: 'sin-conexion', message: 'Revisa tu conexión e inténtalo de nuevo' };
   }
-  console.warn('[caregiver] error inesperado', error);
+  logUnexpected('caregiver', error);
   return { errorClass: 'inesperado', message: 'Algo salió mal, inténtalo de nuevo' };
 }
 
@@ -89,46 +90,23 @@ function toCaregiverLink(row: CaregiverLinkRow): CaregiverLink {
   };
 }
 
-const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sin 0/O ni 1/I: se confunden al transcribir a mano
-
-/** Aleatoriedad criptográfica (polyfill importado en `@/lib/supabase`); 256 es múltiplo de 32, sin sesgo. */
-export function generateInviteCode(): string {
-  const bytes = new Uint8Array(6);
-  crypto.getRandomValues(bytes);
-  let code = '';
-  for (let i = 0; i < bytes.length; i++) {
-    code += CODE_ALPHABET[bytes[i] % CODE_ALPHABET.length];
-  }
-  return code;
-}
-
-/** El paciente siempre tiene como máximo una invitación pendiente sin reclamar a la vez. */
-export async function getOrCreatePatientInvite(patientId: string): Promise<CaregiverLink> {
-  const { data: existing, error: selectError } = await supabase
-    .from('caregiver_links')
-    .select(LINK_COLUMNS)
-    .eq('patient_id', patientId)
-    .eq('status', 'pendiente')
-    .is('caregiver_id', null)
-    .maybeSingle();
-
-  if (selectError) throw toCaregiverError(selectError);
-  if (existing) return toCaregiverLink(existing as CaregiverLinkRow);
-
-  const { data, error } = await supabase
-    .from('caregiver_links')
-    .insert({ patient_id: patientId, invite_code: generateInviteCode() })
-    .select(LINK_COLUMNS)
-    .single();
-
+/**
+ * El paciente siempre tiene como máximo una invitación pendiente sin reclamar a la vez. El código lo
+ * genera el servidor con `create_caregiver_invite`: si el cliente lo eligiera, podría probar códigos
+ * ajenos (el índice único respondería «ya existe») sin pasar por el límite de intentos.
+ */
+export async function getOrCreatePatientInvite(): Promise<CaregiverLink> {
+  const { data, error } = await supabase.rpc('create_caregiver_invite');
   if (error) throw toCaregiverError(error);
-  return toCaregiverLink(data as CaregiverLinkRow);
+  const row = (Array.isArray(data) ? data[0] : data) as CaregiverLinkRow | undefined;
+  if (!row) throw toCaregiverError({ code: 'PGRST116', message: 'sin invitación' });
+  return toCaregiverLink(row);
 }
 
-export async function regeneratePatientInvite(patientId: string, inviteId: string): Promise<CaregiverLink> {
+export async function regeneratePatientInvite(inviteId: string): Promise<CaregiverLink> {
   const { error: deleteError } = await supabase.from('caregiver_links').delete().eq('id', inviteId);
   if (deleteError) throw toCaregiverError(deleteError);
-  return getOrCreatePatientInvite(patientId);
+  return getOrCreatePatientInvite();
 }
 
 export async function listIncomingRequests(patientId: string): Promise<CaregiverLink[]> {

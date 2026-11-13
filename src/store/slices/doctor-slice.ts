@@ -20,6 +20,7 @@ import type {
   DoctorPermissions,
   PatientSummaryData,
 } from '@/features/doctor/types';
+import { logUnexpected } from '@/lib/log';
 import type { RootState } from '@/store/store';
 
 type LoadStatus = 'idle' | 'cargando' | 'listo' | 'error';
@@ -172,7 +173,7 @@ export const markPatientViewed = createAsyncThunk<void, string>('doctor/markView
   try {
     await markDoctorViewed(linkId);
   } catch (error) {
-    console.warn('[doctor] no se pudo registrar la visita', error);
+    logUnexpected('doctor.markViewed', error);
   }
 });
 

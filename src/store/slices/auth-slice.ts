@@ -1,10 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import {
-  consumeAuthLink,
   deleteAccount,
   getActiveSession,
-  setNewPassword,
   signIn,
   signOut,
   signUp,
@@ -13,22 +11,11 @@ import type { AuthError, Session } from '@/features/auth/types';
 
 type AuthStatus = 'bootstrapping' | 'unauthenticated' | 'authenticating' | 'authenticated';
 
-/** Flujo de los enlaces que llegan por correo (confirmar cuenta / recuperar contraseña). */
-type LinkFlowStatus = 'idle' | 'verificando' | 'listo' | 'error' | 'guardando' | 'hecho';
-
-type LinkFlow = {
-  status: LinkFlowStatus;
-  message: string | null;
-  /** Último enlace procesado: el `code` es de un solo uso, así que no se canjea dos veces. */
-  handledUrl: string | null;
-};
-
 type AuthState = {
   status: AuthStatus;
   session: Session | null;
   error: AuthError | null;
   pendingConfirmationEmail: string | null;
-  linkFlow: LinkFlow;
 };
 
 const initialState: AuthState = {
@@ -36,7 +23,6 @@ const initialState: AuthState = {
   session: null,
   error: null,
   pendingConfirmationEmail: null,
-  linkFlow: { status: 'idle', message: null, handledUrl: null },
 };
 
 export const bootstrapSession = createAsyncThunk<Session | null>('auth/bootstrap', async () => {
@@ -85,29 +71,6 @@ export const removeAccount = createAsyncThunk<void, void, { rejectValue: AuthErr
   }
 );
 
-export const openAuthLink = createAsyncThunk<void, string, { state: { auth: AuthState }; rejectValue: AuthError }>(
-  'auth/openLink',
-  async (url, { rejectWithValue }) => {
-    try {
-      await consumeAuthLink(url);
-    } catch (error) {
-      return rejectWithValue(error as AuthError);
-    }
-  },
-  { condition: (url, { getState }) => getState().auth.linkFlow.handledUrl !== url }
-);
-
-export const changePasswordFromLink = createAsyncThunk<void, string, { rejectValue: AuthError }>(
-  'auth/changePasswordFromLink',
-  async (password, { rejectWithValue }) => {
-    try {
-      await setNewPassword(password);
-    } catch (error) {
-      return rejectWithValue(error as AuthError);
-    }
-  }
-);
-
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -121,9 +84,6 @@ const authSlice = createSlice({
     },
     confirmationNoticeCleared(state) {
       state.pendingConfirmationEmail = null;
-    },
-    linkFlowReset(state) {
-      state.linkFlow = { status: 'idle', message: null, handledUrl: null };
     },
   },
   extraReducers: (builder) => {
@@ -170,32 +130,9 @@ const authSlice = createSlice({
       .addCase(removeAccount.fulfilled, (state) => {
         state.session = null;
         state.status = 'unauthenticated';
-      })
-      .addCase(openAuthLink.pending, (state, action) => {
-        state.linkFlow = { status: 'verificando', message: null, handledUrl: action.meta.arg };
-      })
-      .addCase(openAuthLink.fulfilled, (state) => {
-        state.linkFlow.status = 'listo';
-      })
-      .addCase(openAuthLink.rejected, (state, action) => {
-        if (action.meta.condition) return; // enlace ya procesado: no se toca el estado
-        state.linkFlow.status = 'error';
-        state.linkFlow.message = action.payload?.message ?? 'No pudimos abrir el enlace';
-      })
-      .addCase(changePasswordFromLink.pending, (state) => {
-        state.linkFlow.status = 'guardando';
-        state.linkFlow.message = null;
-      })
-      .addCase(changePasswordFromLink.fulfilled, (state) => {
-        state.linkFlow.status = 'hecho';
-      })
-      .addCase(changePasswordFromLink.rejected, (state, action) => {
-        // Se vuelve al formulario con el motivo; el enlace sigue abierto para reintentar.
-        state.linkFlow.status = 'listo';
-        state.linkFlow.message = action.payload?.message ?? 'No pudimos cambiar la contraseña';
       });
   },
 });
 
-export const { authErrorCleared, sessionEnded, confirmationNoticeCleared, linkFlowReset } = authSlice.actions;
+export const { authErrorCleared, sessionEnded, confirmationNoticeCleared } = authSlice.actions;
 export default authSlice.reducer;

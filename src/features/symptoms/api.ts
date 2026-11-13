@@ -1,3 +1,4 @@
+import { logUnexpected } from '@/lib/log';
 import { supabase } from '@/lib/supabase';
 import type { SymptomLog, SymptomLogDraft, SymptomsError } from './types';
 
@@ -58,7 +59,7 @@ function toSymptomsError(error: unknown): SymptomsError {
   if (error instanceof TypeError) {
     return { errorClass: 'sin-conexion', message: 'Revisa tu conexión e inténtalo de nuevo' };
   }
-  console.warn('[symptoms] error inesperado', error);
+  logUnexpected('symptoms', error);
   return { errorClass: 'inesperado', message: 'Algo salió mal, inténtalo de nuevo' };
 }
 

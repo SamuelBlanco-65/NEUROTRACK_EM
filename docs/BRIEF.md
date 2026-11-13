@@ -29,7 +29,7 @@ Fuera: biomarcadores digitales, sensores/wearables, validación clínica. El per
 (D-016), no como parte del MVP.
 
 ## Entregables (Fase 3, §6 — 100% de la nota final)
-1. **Documento Técnico Final** — Markdown en `/docs` (`ENTREGA-FINAL.md`), 5 secciones, 5–8 págs,
+1. **Documento Técnico Final** — PDF en la raíz (`DOCUMENTO-ENTREGA-FINAL.pdf`), 5 secciones, 5–8 págs,
    refs IEEE/APA. **20%**
 2. **Repositorio funcional** — app 100% E2E sin mocks, código limpio/tipado, README completo,
    historial de commits equitativo de los 3. **30%**
